@@ -7,7 +7,6 @@ export const providerOptions: IProviderOptions = {
     package: WalletConnectProvider,
     options: {
       rpc: {
-        1: SUPPORTED_NETWORKS[1].rpc,
         4: SUPPORTED_NETWORKS[4].rpc,
         1337: SUPPORTED_NETWORKS[1337].rpc,
       },

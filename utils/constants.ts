@@ -1,17 +1,37 @@
 export const ROUTES = [
   {
-    path: '/pre-auction',
-    name: 'Pre-Auction',
-    description: 'Mint Song a new song',
+    path: '/image/create',
+    name: 'Create Image',
+    description: 'Create a new image and metadata from attributes',
   },
   {
-    path: '/manage-auctions',
-    name: 'Manage Auction',
+    path: '/upload',
+    name: 'Upload to IPFS',
+    description: 'Upload anything to IPFS (Video, Image, Metadata)',
+  },
+  {
+    path: '/mint',
+    name: 'Mint Song',
+    description: 'Mint a new song by giving IPFS hash of the metadata',
+  },
+  {
+    path: '/auctions',
+    name: 'Auctions',
     description: 'Create, Start and End the Auction',
   },
   {
-    path: '/bulk-illustrations',
-    name: 'Bulk Illustrations',
-    description: 'Generate illustrations in bulk by uploading a big JSON',
+    path: '/images/bulk',
+    name: 'Bulk Images',
+    description: 'Generate images in bulk by uploading a big JSON',
   },
 ]
+
+export const AUCTION_ROUTES = [
+  {
+    path: '/auctions/create',
+    name: 'Create Auction',
+    description: 'Create auction for a newly minted song',
+  },
+]
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'

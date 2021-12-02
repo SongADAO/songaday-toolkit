@@ -7,7 +7,7 @@ type NextApiHandlerWithSession<T> = (
 ) => void | Promise<void>
 
 function errorHandler(err: any, res: NextApiResponse) {
-  return res.status(err.status).json(err.response)
+  return res.status(err.status || 500).json({ error: err.message })
 }
 
 const apiHandler = (handler: NextApiHandler) => {

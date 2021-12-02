@@ -7,13 +7,6 @@ export const SUPPORTED_NETWORKS: {
     rpc: string
   }
 } = {
-  1: {
-    chainId: 1,
-    name: 'Mainnet',
-    symbol: 'ETH',
-    explorer: 'https://etherscan.io/',
-    rpc: 'https://mainnet.infura.io/v3/f8a8e8f3f0e94b0c9b8d4c3c2b7a8d12',
-  },
   4: {
     chainId: 4,
     name: 'Rinkeby',
@@ -30,5 +23,5 @@ export const SUPPORTED_NETWORKS: {
   },
 }
 
-export const AUTO_UPDATE_BALANCE_INTERVAL = 1000 * 15 // 15 seconds
-export const DEFAULT_NETWORK = 1337
+export const AUTO_UPDATE_BALANCE_INTERVAL = 1000 * 10 // 15 seconds
+export const DEFAULT_NETWORK = 4

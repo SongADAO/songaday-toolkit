@@ -1,8 +1,9 @@
 import { AppLayout } from '@/components/AppLayout'
+import fetchJson from '@/utils/fetchJson'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
-import { Box, Heading, HStack, Stack, Text, Wrap } from '@chakra-ui/layout'
+import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import {
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -10,6 +11,8 @@ import {
   NumberInputField,
   NumberInputStepper,
 } from '@chakra-ui/number-input'
+import { toast } from 'react-hot-toast'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 
 type Attributes = {
@@ -19,12 +22,12 @@ type Attributes = {
   location: string
   topic: string
   instrument: string
-  otherInstruments?: string[]
+  otherInstruments?: string
   mood: string
   beard: string
   genre: string
   style: string
-  otherStyles?: string[]
+  otherStyles?: string
   noun?: string
   properNoun?: string
   inKey?: string
@@ -40,28 +43,62 @@ type Attributes = {
   }
 }
 
-export const PreAuction = () => {
-  const { register, watch, handleSubmit } = useForm<Attributes>({
+export const CreateImage = () => {
+  const { register, handleSubmit } = useForm<Attributes>({
     defaultValues: {
+      songNbr: '1',
+      date: '2009-01-01',
+      title: 'In the Time of the Gods',
+      location: 'Los Angeles',
+      topic: 'Poetic',
+      otherInstruments: 'Vocals',
+      mood: 'Pensive',
+      beard: 'na',
+      instrument: 'Baritone Ukulele',
+      genre: 'Folk',
+      style: 'Delicate',
+      otherStyles: 'Narrative, Myth',
+      videoUrl: 'https://youtu.be/v6Lk_OP4ZKc',
       layer: {
         location: '0',
         topic: '1',
-        instrument: '2',
-        mood: '3',
-        beard: '4',
+        mood: '2',
+        beard: '3',
+        instrument: '4',
         genre: '5',
         style: '6',
       },
     },
   })
-  console.log(watch())
-  const onSubmit = (data: Attributes) => {
-    console.log(data)
+
+  const [loading, setLoading] = useState(false)
+
+  const [generatedImage, setGeneratedImage] = useState<string>()
+  const onSubmit = async (data: Attributes) => {
+    setGeneratedImage(undefined)
+    setLoading(true)
+    try {
+      const response = await fetchJson<{ image: string }>(
+        '/api/generate-image',
+        {
+          method: 'POST',
+          body: JSON.stringify(data),
+        }
+      )
+
+      console.log({ response })
+      setGeneratedImage(response.image)
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).response.error)
+    } finally {
+      setLoading(false)
+    }
   }
   return (
     <Stack spacing="6">
       <Stack>
-        <Heading>Step 1 - Add Attributes</Heading>
+        <Heading>Add Attributes</Heading>
         <Text>
           Enter attributes for the song, define the order against it, the base
           layer starts with 0, layer on top of base is 1 and so on. Currently no
@@ -154,42 +191,7 @@ export const PreAuction = () => {
                   </FormControl>
                 </Box>
               </Wrap>
-              <Wrap>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Main Instrument</FormLabel>
-                    <Input
-                      placeholder="Guitalele"
-                      type="text"
-                      {...register('instrument', { required: true })}
-                    />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Layer Order</FormLabel>
-                    <NumberInput w="28">
-                      <NumberInputField
-                        {...register('layer.instrument', { required: true })}
-                      />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl>
-                    <FormLabel>Other Instruments</FormLabel>
-                    <Input
-                      placeholder="Electric Guitar, Synths, Drums"
-                      type="text"
-                      {...register('otherInstruments')}
-                    />
-                  </FormControl>
-                </Box>
-              </Wrap>
+
               <Wrap>
                 <Box>
                   <FormControl isRequired>
@@ -239,6 +241,42 @@ export const PreAuction = () => {
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
+                  </FormControl>
+                </Box>
+              </Wrap>
+              <Wrap>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Main Instrument</FormLabel>
+                    <Input
+                      placeholder="Guitalele"
+                      type="text"
+                      {...register('instrument', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Layer Order</FormLabel>
+                    <NumberInput w="28">
+                      <NumberInputField
+                        {...register('layer.instrument', { required: true })}
+                      />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl>
+                    <FormLabel>Other Instruments</FormLabel>
+                    <Input
+                      placeholder="Electric Guitar, Synths, Drums"
+                      type="text"
+                      {...register('otherInstruments')}
+                    />
                   </FormControl>
                 </Box>
               </Wrap>
@@ -326,31 +364,59 @@ export const PreAuction = () => {
                   </FormControl>
                 </Box>
                 <Box>
-                  <FormControl isRequired>
+                  <FormControl>
                     <FormLabel>Video URL</FormLabel>
                     <Input
                       placeholder="https://youtu.be/RmVC1kAbKC8"
                       type="text"
-                      {...register('videoUrl', { required: true })}
+                      {...register('videoUrl')}
                     />
                   </FormControl>
                 </Box>
               </Wrap>
             </Stack>
-            <Text>
-              Note: Make sure you have a layers folder in the same directory as
-              this application with all the layer files, and an output folder
-              where the illustration will be saved.
-            </Text>
+            <Stack>
+              <Text>
+                Note 1: Make sure you have a layers folder in the same directory
+                as this application with all the layer files, and an output
+                folder where the image will be saved.
+              </Text>
+            </Stack>
             <Wrap>
-              <Button type="submit"> Generate Illustration </Button>
+              <Button
+                loadingText="Generating"
+                isLoading={loading}
+                disabled={loading}
+                onClick={handleSubmit(onSubmit)}
+              >
+                Generate Image and Metadata
+              </Button>
             </Wrap>
+            <Stack>
+              {generatedImage && (
+                <>
+                  <img src={generatedImage} alt="Generated" />{' '}
+                  <Text>Next Steps:</Text>
+                  <Text>
+                    1. If the image is wrongly generated, either there is a bug
+                    in the code, or you did not enter the attributes correctly.
+                    Please fix it and generate it again.
+                  </Text>
+                  <Text>
+                    2. Your image and the the song attributes json will be saved
+                    in the output folder. You will need this in the next step to
+                    upload the image to IPFS (pinata)
+                  </Text>
+                </>
+              )}
+            </Stack>
           </Stack>
         </form>
+        <Wrap></Wrap>
       </Stack>
     </Stack>
   )
 }
 
-PreAuction.Layout = AppLayout
-export default PreAuction
+CreateImage.Layout = AppLayout
+export default CreateImage
