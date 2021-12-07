@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { AuctionHouse } from '@zoralabs/zdk'
 import { ethers } from 'ethers'
-import { ZERO_ADDRESS } from '@/utils/constants'
+import { SONG_CONTRACT, ZERO_ADDRESS } from '@/utils/constants'
 import { DEFAULT_NETWORK } from '@/web3/constants'
 
 const CreateAuction = () => {
@@ -20,7 +20,7 @@ const CreateAuction = () => {
 
   const { isConnected, chainId, provider } = useWallet()
   const { contract: songContract } = useContract(
-    '0x0B0c157A275B749D8DF3154bf45B1702927e6CBc',
+    SONG_CONTRACT,
     SongADay__factory
   )
 

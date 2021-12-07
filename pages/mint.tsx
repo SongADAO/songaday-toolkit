@@ -1,5 +1,6 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay__factory } from '@/types'
+import { SONG_CONTRACT } from '@/utils/constants'
 import { useContract, useWriteContract } from '@/web3/hooks'
 import { useWallet } from '@/web3/WalletContext'
 import { Button } from '@chakra-ui/button'
@@ -23,7 +24,7 @@ const Mint = () => {
 
   const { isConnected } = useWallet()
   const { contract: songContract } = useContract(
-    '0x0B0c157A275B749D8DF3154bf45B1702927e6CBc',
+    SONG_CONTRACT,
     SongADay__factory
   )
 
