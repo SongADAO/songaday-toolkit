@@ -62,7 +62,7 @@ const CreateAuction = () => {
       setCreated(true)
       toast.success('Auction created')
     } catch (error) {
-      toast.error((error as any).error.message)
+      toast.error((error as any).error?.message || (error as any)?.message)
     } finally {
       setLoading(false)
     }

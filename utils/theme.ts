@@ -36,6 +36,15 @@ const Input = {
   },
 }
 
+const Textarea = {
+  variants: {
+    outline: {
+      borderRadius: 'none',
+      borderColor: 'black',
+    },
+  },
+}
+
 const NumberInput = {
   variants: {
     outline: {
@@ -58,6 +67,7 @@ export const theme = extendTheme(
       Heading,
       Input,
       NumberInput,
+      Textarea,
     },
     fonts: {
       heading: 'Inter',

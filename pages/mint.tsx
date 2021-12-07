@@ -32,7 +32,7 @@ const Mint = () => {
     // TODO: check if treasury owns the minted song
   }
   const handleError = (error: any) => {
-    toast.error(error.error.message)
+    toast.error(error.error?.message || error.message)
   }
   const handleResponse = () => toast.success('Waiting for tx to confirm')
 

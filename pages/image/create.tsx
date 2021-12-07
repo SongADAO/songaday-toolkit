@@ -14,9 +14,11 @@ import {
 import { toast } from 'react-hot-toast'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { Textarea } from '@chakra-ui/textarea'
 
 type Attributes = {
   songNbr: string
+  description?: string
   date: string
   title: string
   location: string
@@ -30,7 +32,9 @@ type Attributes = {
   otherStyles?: string
   noun?: string
   properNoun?: string
-  inKey?: string
+  length: string
+  tempo: string
+  inKey: string
   videoUrl: string
   layer: {
     location: string
@@ -38,8 +42,6 @@ type Attributes = {
     instrument: string
     mood: string
     beard: string
-    genre: string
-    style: string
   }
 }
 
@@ -51,13 +53,16 @@ export const CreateImage = () => {
       title: 'In the Time of the Gods',
       location: 'Los Angeles',
       topic: 'Poetic',
+      instrument: 'Baritone Ukulele',
       otherInstruments: 'Vocals',
       mood: 'Pensive',
-      beard: 'na',
-      instrument: 'Baritone Ukulele',
+      beard: 'Clean',
       genre: 'Folk',
       style: 'Delicate',
       otherStyles: 'Narrative, Myth',
+      length: '2:36',
+      inKey: 'C',
+      tempo: '61',
       videoUrl: 'https://youtu.be/v6Lk_OP4ZKc',
       layer: {
         location: '0',
@@ -65,8 +70,6 @@ export const CreateImage = () => {
         mood: '2',
         beard: '3',
         instrument: '4',
-        genre: '5',
-        style: '6',
       },
     },
   })
@@ -139,6 +142,15 @@ export const CreateImage = () => {
                   </FormControl>
                 </Box>
               </Wrap>
+              <Box>
+                <FormControl>
+                  <FormLabel>Description</FormLabel>
+                  <Textarea
+                    placeholder="Description of the song"
+                    {...register('description')}
+                  />
+                </FormControl>
+              </Box>
               <Wrap>
                 <Box>
                   <FormControl isRequired>
@@ -218,32 +230,7 @@ export const CreateImage = () => {
                   </FormControl>
                 </Box>
               </Wrap>
-              <Wrap>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Beard</FormLabel>
-                    <Input
-                      placeholder="Shadow"
-                      type="text"
-                      {...register('beard', { required: true })}
-                    />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Layer Order</FormLabel>
-                    <NumberInput w="28">
-                      <NumberInputField
-                        {...register('layer.beard', { required: true })}
-                      />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-                </Box>
-              </Wrap>
+
               <Wrap>
                 <Box>
                   <FormControl isRequired>
@@ -283,11 +270,11 @@ export const CreateImage = () => {
               <Wrap>
                 <Box>
                   <FormControl isRequired>
-                    <FormLabel>Genre</FormLabel>
+                    <FormLabel>Beard</FormLabel>
                     <Input
-                      placeholder="Folk"
+                      placeholder="Shadow"
                       type="text"
-                      {...register('genre', { required: true })}
+                      {...register('beard', { required: true })}
                     />
                   </FormControl>
                 </Box>
@@ -296,13 +283,25 @@ export const CreateImage = () => {
                     <FormLabel>Layer Order</FormLabel>
                     <NumberInput w="28">
                       <NumberInputField
-                        {...register('layer.genre', { required: true })}
+                        {...register('layer.beard', { required: true })}
                       />
                       <NumberInputStepper>
                         <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
+                  </FormControl>
+                </Box>
+              </Wrap>
+              <Wrap>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Genre</FormLabel>
+                    <Input
+                      placeholder="Folk"
+                      type="text"
+                      {...register('genre', { required: true })}
+                    />
                   </FormControl>
                 </Box>
               </Wrap>
@@ -317,20 +316,7 @@ export const CreateImage = () => {
                     />
                   </FormControl>
                 </Box>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>Layer Order</FormLabel>
-                    <NumberInput w="28">
-                      <NumberInputField
-                        {...register('layer.style', { required: true })}
-                      />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-                </Box>
+
                 <Box>
                   <FormControl>
                     <FormLabel>Other Styles</FormLabel>
@@ -364,12 +350,44 @@ export const CreateImage = () => {
                   </FormControl>
                 </Box>
                 <Box>
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Video URL</FormLabel>
                     <Input
                       placeholder="https://youtu.be/RmVC1kAbKC8"
                       type="text"
-                      {...register('videoUrl')}
+                      {...register('videoUrl', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+              </Wrap>
+              <Wrap>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Length</FormLabel>
+                    <Input
+                      placeholder="3:38"
+                      type="text"
+                      {...register('length', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>InKey</FormLabel>
+                    <Input
+                      placeholder="C"
+                      type="text"
+                      {...register('inKey', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Tempo</FormLabel>
+                    <Input
+                      placeholder="61"
+                      type="text"
+                      {...register('tempo', { required: true })}
                     />
                   </FormControl>
                 </Box>

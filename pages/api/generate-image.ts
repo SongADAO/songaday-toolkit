@@ -16,27 +16,17 @@ import {
   formatInstrument,
   formatLocation,
   formatMood,
+  formatRecord,
   formatTopic,
   getBackground,
   resolveTopic,
 } from '@/utils/generator/image'
 import { DateTime } from 'luxon'
-import { compact, last, trim } from 'lodash'
+import { findKey, trim } from 'lodash'
 
 export default withSession<{ image: string }>(async (req, res) => {
-  console.log(JSON.parse(req.body))
-
   const record = JSON.parse(req.body)
-
   const songNbr = parseInt(record.songNbr)
-  const description = trim(record.description).replace(/^N\/A$/, '')
-  const isQueryParam = record.videoUrl.includes('?v=')
-  const videoUrl = isQueryParam
-    ? last(record.videoUrl.split('?v='))
-    : last(record.videoUrl.split('/'))
-  const instruments = compact(
-    trim(record.otherInstruments).split(',').map(formatInstrument)
-  )
 
   // TODO: Add composite based on the order of the layers.
 
@@ -48,8 +38,7 @@ export default withSession<{ image: string }>(async (req, res) => {
   const topic = formatTopic(record.topic)
   const dateStr = date.toISODate()
   const background = getBackground(year, dateStr)
-  const title = record.title
-  const genre = record.genre
+  const layer = record.layer
 
   const instrument = formatInstrument(record.instrument)
 
@@ -63,44 +52,72 @@ export default withSession<{ image: string }>(async (req, res) => {
   const newBackground = background.startsWith('#')
     ? await tempBackgroundColor(background)
     : pathFromKey(year, 'special', background)
-  const locationPath = pathFromKey(year, 'location', location)
-  const topicPath = pathFromKey(
-    year,
-    'topic',
-    resolveTopic(year, topic, dateStr)
-  )
-  const moodPath = pathFromKey(year, 'mood', mood)
-  const beardPath = pathFromKey(year, 'beard', beard)
+  // base layer
+  await composite(newBackground, newBackground, temp)
 
-  await composite(newBackground, locationPath, temp)
-  await composite(temp, topicPath, temp)
-  await composite(temp, moodPath, temp)
-  await composite(temp, beardPath, temp)
-
-  if (instrument !== 'Vocals') {
-    const instrumentPath = pathFromKey(year, 'instrument', instrument)
-    await composite(temp, instrumentPath, temp)
+  const getLayerPath = (order: number) => {
+    const type = findKey(layer, (o) => o === order.toString()) ?? ''
+    if (type === 'location') {
+      const locationPath = pathFromKey(year, 'location', location)
+      return locationPath
+    }
+    if (type === 'topic') {
+      const topicPath = pathFromKey(
+        year,
+        'topic',
+        resolveTopic(year, topic, dateStr)
+      )
+      return topicPath
+    }
+    if (type === 'mood') {
+      const moodPath = pathFromKey(year, 'mood', mood)
+      return moodPath
+    }
+    if (type === 'beard') {
+      const beardPath = pathFromKey(year, 'beard', beard)
+      return beardPath
+    }
+    if (type === 'instrument') {
+      const instrumentPath = pathFromKey(year, 'instrument', instrument)
+      return instrumentPath
+    }
+    return ''
   }
+
+  await composite(temp, getLayerPath(0), temp)
+  await composite(temp, getLayerPath(1), temp)
+  await composite(temp, getLayerPath(2), temp)
+  await composite(temp, getLayerPath(3), temp)
+  await composite(temp, getLayerPath(4), temp)
 
   renameSync(temp, final)
 
   const base64Image = readFileSync(final, { encoding: 'base64' })
 
+  const description = trim(record.description).replace(/^N\/A$/, '')
+
   const attrs = {
     songNbr,
+    date: date.toFormat('yyyy-MM-dd'),
+    title: formatRecord(record.title),
     description,
-    videoUrl,
-    instruments,
-    date,
+    location: formatRecord(record.location),
+    topic: formatRecord(record.topic),
+    mood: formatRecord(record.mood),
+    instrument: formatRecord(record.instrument),
+    otherInstruments: formatRecord(record.otherInstruments),
+    beard: formatRecord(record.beard),
+    genre: formatRecord(record.genre),
+    style: formatRecord(record.style),
+    otherStyles: formatRecord(record.otherStyles),
+    noun: formatRecord(record.noun),
+    properNoun: formatRecord(record.properNoun),
+    videoUrl: formatRecord(record.videoUrl),
+    length: formatRecord(record['length']),
+    inKey: formatRecord(record.inKey),
+    tempo: formatRecord(record.tempo),
     year,
-    mood,
-    beard,
-    location,
-    topic,
     background,
-    instrument,
-    title,
-    genre,
   }
 
   writeFileSync(

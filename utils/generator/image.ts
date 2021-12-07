@@ -148,9 +148,7 @@ export const getBackground = (year: number, releasedAt: string): string => {
 }
 
 export const formatBeard = (text: string) =>
-  toPascalCase(
-    trim(text).toLowerCase().replace('n/a', 'Clean').replace('na', 'Clean')
-  )
+  toPascalCase(trim(text).toLowerCase())
 export const formatMood = (text: string) => toPascalCase(trim(text))
 export const formatTag = (text: string) => trim(text)
 export const formatLocation = (text: string) =>
@@ -159,6 +157,8 @@ export const formatTopic = (text: string) =>
   trim(text)
     .replace(/ /gi, '')
     .replace(/^Object$/, 'Objects')
+
+export const formatRecord = (text: string) => trim(text)
 
 const toPascalCase = (text: string) =>
   text
