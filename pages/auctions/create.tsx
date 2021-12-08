@@ -1,23 +1,26 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay, SongADay__factory } from '@/types'
-import { useContract, useReadContract, useWriteContract } from '@/web3/hooks'
+import { SONG_CONTRACT, ZERO_ADDRESS } from '@/utils/constants'
+import { DEFAULT_NETWORK } from '@/web3/constants'
+import { useContract } from '@/web3/hooks'
 import { useWallet } from '@/web3/WalletContext'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
 import { AuctionHouse } from '@zoralabs/zdk'
 import { ethers } from 'ethers'
-import { SONG_CONTRACT, ZERO_ADDRESS } from '@/utils/constants'
-import { DEFAULT_NETWORK } from '@/web3/constants'
+import { DateTime } from 'luxon'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 const CreateAuction = () => {
   const [created, setCreated] = useState(false)
   const [songNbr, setSongNbr] = useState<string>()
+  const [date, setDate] = useState<string>(
+    `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
+  )
   const [loading, setLoading] = useState(false)
-
   const { isConnected, chainId, provider } = useWallet()
   const { contract: songContract } = useContract(
     SONG_CONTRACT,
@@ -38,7 +41,6 @@ const CreateAuction = () => {
       const approvedAddress = await (songContract as SongADay)?.getApproved(
         songNbr as string
       )
-      console.log({ approvedAddress, auctionHouseAccount })
       if (approvedAddress !== auctionHouseAccount) {
         toast.success('Approving the Auction house to use the Song Contract')
         const tx = await (songContract as SongADay)?.approve(
@@ -48,9 +50,10 @@ const CreateAuction = () => {
         await tx.wait()
       }
       toast.success('Creating the auction')
+      const duration = DateTime.fromISO(date).diff(DateTime.local())
       const tx = await auctionHouseContract.createAuction(
         songNbr as string,
-        86400, // 24 hours
+        duration.as('seconds'),
         ethers.utils.parseEther('0.2'),
         ZERO_ADDRESS,
         0,
@@ -86,6 +89,16 @@ const CreateAuction = () => {
                       type="text"
                       value={songNbr}
                       onChange={(e) => setSongNbr(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>End Datetime</FormLabel>
+                    <Input
+                      type="datetime-local"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
                     />
                   </FormControl>
                 </Box>

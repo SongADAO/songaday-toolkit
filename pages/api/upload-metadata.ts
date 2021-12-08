@@ -69,7 +69,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
       value: attributes.tempo,
     },
     {
-      trait_type: 'Song #',
+      trait_type: 'Song A Day',
       value: tokenId.toString(),
     },
     {
