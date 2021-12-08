@@ -43,7 +43,7 @@ export default withSession<{ image: string }>(async (req, res) => {
   const instrument = formatInstrument(record.instrument)
 
   ensureDir(join(projectPath, `/output/${songNbr}`))
-  if (MISSING_INSTRUMENTS_FOR_YEAR[year].includes(instrument))
+  if (MISSING_INSTRUMENTS_FOR_YEAR[year]?.includes(instrument))
     return skip(songNbr.toString(), 'instrument', instrument)
 
   const temp = tempy.file({ extension: 'png' })
@@ -64,7 +64,7 @@ export default withSession<{ image: string }>(async (req, res) => {
     if (type === 'topic') {
       const topicPath = pathFromKey(
         year,
-        'topic',
+        'topics',
         resolveTopic(year, topic, dateStr)
       )
       return topicPath

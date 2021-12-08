@@ -153,10 +153,7 @@ export const formatMood = (text: string) => toPascalCase(trim(text))
 export const formatTag = (text: string) => trim(text)
 export const formatLocation = (text: string) =>
   trim(text).replace(/ /gi, '').replace(/,/gi, '')
-export const formatTopic = (text: string) =>
-  trim(text)
-    .replace(/ /gi, '')
-    .replace(/^Object$/, 'Objects')
+export const formatTopic = (text: string) => trim(text).replace(/ /gi, '')
 
 export const formatRecord = (text: string) => trim(text)
 

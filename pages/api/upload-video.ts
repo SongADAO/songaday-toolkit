@@ -1,13 +1,13 @@
-import fetchJson from '@/utils/fetchJson'
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { createReadStream, renameSync, writeFileSync } from 'fs'
-import FormData from 'form-data'
+import { readFileSync, renameSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import os from 'os'
 import { projectPath } from '@/utils/generator/helpers'
 import { last } from 'lodash'
 import { nanoid } from 'nanoid'
+import { NFTStorage } from 'nft.storage'
+import { Blob } from '@web-std/file'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const { files, fields } = await new Promise(function (resolve, reject) {
@@ -29,31 +29,21 @@ export default withSession<{ hash: string }>(async (req, res) => {
     )}`
   )
 
-  // rename the file so that its easier to browse assets on pinata
+  // rename the file so that its easier to browse assets on nft.storage
   renameSync(files.file.filepath, newFilePath)
-
-  const formdata = new FormData()
-  formdata.append('file', createReadStream(newFilePath))
-
-  const response = await fetchJson<{ IpfsHash: string }>(
-    process.env.PINATA_BASE_URI + '/pinFileToIPFS',
-    {
-      method: 'POST',
-      // @ts-ignore
-      body: formdata,
-      headers: {
-        pinata_api_key: String(process.env.PINATA_API_KEY),
-        pinata_secret_api_key: String(process.env.PINATA_SECRET_KEY),
-      },
-    }
-  )
+  const nftStorageClient = new NFTStorage({
+    token: String(process.env.NFTSTORAGE_API_KEY),
+  })
+  const fileBuffer = readFileSync(newFilePath)
+  const blob = new Blob([fileBuffer])
+  const ipfsHash = await nftStorageClient.storeBlob(blob)
 
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/video_hash.txt`),
-    response.IpfsHash
+    ipfsHash
   )
 
-  res.status(200).json({ hash: response.IpfsHash })
+  res.status(200).json({ hash: ipfsHash })
 })
 
 export const config = {

@@ -423,7 +423,7 @@ export const CreateImage = () => {
                   <Text>
                     2. Your image and the the song attributes json will be saved
                     in the output folder. You will need this in the next step to
-                    upload the image to IPFS (pinata)
+                    upload the image to IPFS (nft.storage)
                   </Text>
                 </>
               )}

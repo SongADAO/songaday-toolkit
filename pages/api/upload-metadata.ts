@@ -1,12 +1,12 @@
-import fetchJson from '@/utils/fetchJson'
 import { projectPath } from '@/utils/generator/helpers'
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
 import { readFileSync, writeFileSync } from 'fs'
 import { trim } from 'lodash'
 import { DateTime } from 'luxon'
-import { nanoid } from 'nanoid'
+import { NFTStorage } from 'nft.storage'
 import { join } from 'path'
+import { Blob } from '@web-std/file'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const { files, fields } = await new Promise(function (resolve, reject) {
@@ -94,47 +94,34 @@ export default withSession<{ hash: string }>(async (req, res) => {
   attributePusher('Proper Noun', attributes.properNoun)
 
   const metadata = {
-    pinataMetadata: {
-      name: `metadata_${tokenId}__${nanoid(6)}.json`,
-    },
-    pinataContent: {
-      name: attributes.title,
-      created_by: 'Jonathan Mann',
-      description: attributes.description,
-      external_url: externalURL,
-      token_id: tokenId,
-      image: `ipfs://${fields.imageHash}`,
-      animation_url: `ipfs://${fields.videoHash}`,
-      youtube_url: attributes.videoUrl,
-      attributes: attributesArray,
-    },
+    name: attributes.title,
+    created_by: 'Jonathan Mann',
+    description: attributes.description,
+    external_url: externalURL,
+    token_id: tokenId,
+    image: `ipfs://${fields.imageHash}`,
+    animation_url: `ipfs://${fields.videoHash}`,
+    youtube_url: attributes.videoUrl,
+    attributes: attributesArray,
   }
 
-  const response = await fetchJson<{ IpfsHash: string }>(
-    process.env.PINATA_BASE_URI + '/pinJSONToIPFS',
-    {
-      method: 'POST',
-      // @ts-ignore
-      body: JSON.stringify(metadata),
-      headers: {
-        'Content-type': 'application/json',
-        pinata_api_key: String(process.env.PINATA_API_KEY),
-        pinata_secret_api_key: String(process.env.PINATA_SECRET_KEY),
-      },
-    }
-  )
+  const nftStorageClient = new NFTStorage({
+    token: String(process.env.NFTSTORAGE_API_KEY),
+  })
+  const blob = new Blob([JSON.stringify(metadata)])
+  const ipfsHash = await nftStorageClient.storeBlob(blob)
 
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/metadata_hash.txt`),
-    response.IpfsHash
+    ipfsHash
   )
 
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/metadata.json`),
-    JSON.stringify(metadata.pinataContent)
+    JSON.stringify(metadata)
   )
 
-  res.status(200).json({ hash: response.IpfsHash })
+  res.status(200).json({ hash: ipfsHash })
 })
 
 export const config = {
