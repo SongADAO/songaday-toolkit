@@ -15,5 +15,5 @@ export const MISSING_INSTRUMENTS_FOR_YEAR: { [year: number]: string[] } = {
   ],
 }
 
-export const INITIAL_WIDTH = 1792
-export const INITIAL_HEIGHT = 768
+export const INITIAL_WIDTH = 4000
+export const INITIAL_HEIGHT = 1715

@@ -51,10 +51,11 @@ const CreateAuction = () => {
       }
       toast.success('Creating the auction')
       const duration = DateTime.fromISO(date).diff(DateTime.local())
+      // TODO: make reserve price configurable
       const tx = await auctionHouseContract.createAuction(
         songNbr as string,
-        duration.as('seconds'),
-        ethers.utils.parseEther('0.2'),
+        parseInt(duration.as('seconds').toString()),
+        ethers.utils.parseEther('0.000000001'),
         ZERO_ADDRESS,
         0,
         ZERO_ADDRESS,
