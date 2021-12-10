@@ -1,8 +1,8 @@
-import { INITIAL_HEIGHT, INITIAL_WIDTH } from '@/utils/generator/constants'
 import gm from 'gm'
 import tempy from 'tempy'
 import { join, resolve } from 'path'
 import { existsSync, mkdirSync } from 'fs'
+import config from '../../config.json'
 
 export const projectPath = resolve(process.cwd())
 
@@ -25,10 +25,13 @@ export function skip(songNbr: string, prop: string, value: string) {
 export function tempBackgroundColor(color: string): Promise<string> {
   const path = tempy.file({ extension: 'png' })
   return new Promise((resolve, reject) =>
-    gm(INITIAL_WIDTH, INITIAL_HEIGHT, color).write(path, (err) => {
-      if (err) return reject(err)
-      return resolve(path)
-    })
+    gm(config.INITIAL_WIDTH, config.INITIAL_HEIGHT, color).write(
+      path,
+      (err) => {
+        if (err) return reject(err)
+        return resolve(path)
+      }
+    )
   )
 }
 

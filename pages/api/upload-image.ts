@@ -8,10 +8,11 @@ import { last } from 'lodash'
 import { nanoid } from 'nanoid'
 import { NFTStorage } from 'nft.storage'
 import { Blob } from '@web-std/file'
+import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const nftStorageClient = new NFTStorage({
-    token: String(process.env.NFTSTORAGE_API_KEY),
+    token: String(externalConfig.NFTSTORAGE_API_KEY),
   })
   const { files, fields } = await new Promise(function (resolve, reject) {
     const form = new formidable.IncomingForm({ keepExtensions: true })

@@ -23,12 +23,11 @@ import {
 } from '@/utils/generator/image'
 import { DateTime } from 'luxon'
 import { findKey, trim } from 'lodash'
+import sharp from 'sharp'
 
 export default withSession<{ image: string }>(async (req, res) => {
   const record = JSON.parse(req.body)
   const songNbr = parseInt(record.songNbr)
-
-  // TODO: Add composite based on the order of the layers.
 
   const date = DateTime.fromFormat(record.date, 'yyyy-MM-dd')
   const year = date.year - 2008
@@ -90,8 +89,16 @@ export default withSession<{ image: string }>(async (req, res) => {
   await composite(temp, getLayerPath(3), temp)
   await composite(temp, getLayerPath(4), temp)
 
-  renameSync(temp, final)
+  await sharp(temp)
+    .png({
+      quality: 100,
+    })
+    .toFile(final)
 
+  // TODO: why video is not showing up on opensea
+  // TODO: deployment
+  // TODO: Switch between rinkeby / mainnet.
+  // TODO: cancel auction
   const base64Image = readFileSync(final, { encoding: 'base64' })
 
   const description = trim(record.description).replace(/^N\/A$/, '')

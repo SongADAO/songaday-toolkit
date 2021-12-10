@@ -165,8 +165,4 @@ const toPascalCase = (text: string) =>
     )
     .join(' ')
 export const formatInstrument = (text: string) =>
-  toPascalCase(trim(text))
-    .replace(/ /gi, '')
-    .replace('Ukulele', 'Uke')
-    .replace(/^Synth$/, 'Synths')
-    .replace(/^Drum$/, 'Drums')
+  toPascalCase(trim(text)).replace(/ /gi, '')

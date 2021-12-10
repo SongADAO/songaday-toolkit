@@ -48,22 +48,6 @@ type Attributes = {
 export const CreateImage = () => {
   const { register, handleSubmit } = useForm<Attributes>({
     defaultValues: {
-      songNbr: '1',
-      date: '2009-01-01',
-      title: 'In the Time of the Gods',
-      location: 'Los Angeles',
-      topic: 'Poetic',
-      instrument: 'Baritone Ukulele',
-      otherInstruments: 'Vocals',
-      mood: 'Pensive',
-      beard: 'Clean',
-      genre: 'Folk',
-      style: 'Delicate',
-      otherStyles: 'Narrative, Myth',
-      length: '2:36',
-      inKey: 'C',
-      tempo: '61',
-      videoUrl: 'https://youtu.be/v6Lk_OP4ZKc',
       layer: {
         location: '0',
         topic: '1',

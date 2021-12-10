@@ -16,6 +16,7 @@
     "@types/form-data": "^2.5.0",
     "@types/luxon": "^2.0.7",
     "@types/nanoid": "^3.0.0",
+    "@types/sharp": "^0.29.4",
     "@types/tempy": "^0.3.0",
     "@walletconnect/web3-provider": "^1.6.6",
     "@web-std/file": "^3.0.0",
@@ -36,6 +37,7 @@
     "react-hook-form": "^7.19.5",
     "react-hot-toast": "^2.1.1",
     "react-icons": "^4.3.1",
+    "sharp": "^0.29.3",
     "swr": "^1.0.1",
     "tempy": "^2.0.0",
     "web3modal": "^1.9.4"

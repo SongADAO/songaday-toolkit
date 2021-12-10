@@ -8,6 +8,7 @@ import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
+import { Checkbox } from '@chakra-ui/react'
 import { AuctionHouse } from '@zoralabs/zdk'
 import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
@@ -17,6 +18,7 @@ import toast from 'react-hot-toast'
 const CreateAuction = () => {
   const [created, setCreated] = useState(false)
   const [songNbr, setSongNbr] = useState<string>()
+  const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
   )
@@ -51,10 +53,9 @@ const CreateAuction = () => {
       }
       toast.success('Creating the auction')
       const duration = DateTime.fromISO(date).diff(DateTime.local())
-      // TODO: make reserve price configurable
       const tx = await auctionHouseContract.createAuction(
         songNbr as string,
-        parseInt(duration.as('seconds').toString()),
+        checked ? 86400 : parseInt(duration.as('seconds').toString()),
         ethers.utils.parseEther('0.000000001'),
         ZERO_ADDRESS,
         0,
@@ -72,7 +73,6 @@ const CreateAuction = () => {
     }
   }
 
-  // TODO: add time and date selector
   return (
     <Stack spacing="6">
       {isConnected && (
@@ -93,17 +93,28 @@ const CreateAuction = () => {
                     />
                   </FormControl>
                 </Box>
-                <Box>
-                  <FormControl isRequired>
-                    <FormLabel>End Datetime</FormLabel>
-                    <Input
-                      type="datetime-local"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                    />
-                  </FormControl>
-                </Box>
               </Wrap>
+              <Checkbox
+                colorScheme="green"
+                isChecked={checked}
+                onChange={(e) => setChecked(e.target.checked)}
+              >
+                Run the auction for 24 hours (86400 seconds)
+              </Checkbox>
+              {!checked && (
+                <Wrap>
+                  <Box>
+                    <FormControl isRequired>
+                      <FormLabel>End Datetime</FormLabel>
+                      <Input
+                        type="datetime-local"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                      />
+                    </FormControl>
+                  </Box>
+                </Wrap>
+              )}
             </Stack>
             <Stack>
               <Text>
