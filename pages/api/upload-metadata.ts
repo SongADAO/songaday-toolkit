@@ -7,6 +7,7 @@ import { DateTime } from 'luxon'
 import { NFTStorage } from 'nft.storage'
 import { join } from 'path'
 import { Blob } from '@web-std/file'
+import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const { files, fields } = await new Promise(function (resolve, reject) {
@@ -106,7 +107,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
   }
 
   const nftStorageClient = new NFTStorage({
-    token: String(process.env.NFTSTORAGE_API_KEY),
+    token: String(externalConfig.NFTSTORAGE_API_KEY),
   })
   const blob = new Blob([JSON.stringify(metadata)])
   const ipfsHash = await nftStorageClient.storeBlob(blob)

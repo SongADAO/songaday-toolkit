@@ -8,6 +8,7 @@ import { last } from 'lodash'
 import { nanoid } from 'nanoid'
 import { NFTStorage } from 'nft.storage'
 import { Blob } from '@web-std/file'
+import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const { files, fields } = await new Promise(function (resolve, reject) {
@@ -32,7 +33,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
   // rename the file so that its easier to browse assets on nft.storage
   renameSync(files.file.filepath, newFilePath)
   const nftStorageClient = new NFTStorage({
-    token: String(process.env.NFTSTORAGE_API_KEY),
+    token: String(externalConfig.NFTSTORAGE_API_KEY),
   })
   const fileBuffer = readFileSync(newFilePath)
   const blob = new Blob([fileBuffer])
