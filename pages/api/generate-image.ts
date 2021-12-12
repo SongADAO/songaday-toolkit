@@ -63,7 +63,7 @@ export default withSession<{ image: string }>(async (req, res) => {
     if (type === 'topic') {
       const topicPath = pathFromKey(
         year,
-        'topics',
+        'topic',
         resolveTopic(year, topic, dateStr)
       )
       return topicPath
@@ -76,18 +76,18 @@ export default withSession<{ image: string }>(async (req, res) => {
       const beardPath = pathFromKey(year, 'beard', beard)
       return beardPath
     }
-    if (type === 'instrument') {
+    if (type === 'instrument' && instrument !== 'Vocals') {
       const instrumentPath = pathFromKey(year, 'instrument', instrument)
       return instrumentPath
     }
     return ''
   }
 
-  await composite(temp, getLayerPath(0), temp)
-  await composite(temp, getLayerPath(1), temp)
-  await composite(temp, getLayerPath(2), temp)
-  await composite(temp, getLayerPath(3), temp)
-  await composite(temp, getLayerPath(4), temp)
+  getLayerPath(0) && (await composite(temp, getLayerPath(0), temp))
+  getLayerPath(1) && (await composite(temp, getLayerPath(1), temp))
+  getLayerPath(2) && (await composite(temp, getLayerPath(2), temp))
+  getLayerPath(3) && (await composite(temp, getLayerPath(3), temp))
+  getLayerPath(4) && (await composite(temp, getLayerPath(4), temp))
 
   await sharp(temp)
     .png({
