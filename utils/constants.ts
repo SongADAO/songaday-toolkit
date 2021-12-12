@@ -20,7 +20,7 @@ export const ROUTES = [
     description: 'Create, Start and End the Auction',
   },
   {
-    path: '/images/bulk',
+    path: '/image/bulk',
     name: 'Bulk Images',
     description: 'Generate images in bulk by uploading a big JSON',
   },
