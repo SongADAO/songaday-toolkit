@@ -24,6 +24,11 @@ export const ROUTES = [
     name: 'Bulk Images',
     description: 'Generate images in bulk by uploading a big JSON',
   },
+  {
+    path: '/admin',
+    name: 'Admin',
+    description: 'Other contract admin actions like changing the owner',
+  },
 ]
 
 export const AUCTION_ROUTES = [
@@ -31,6 +36,14 @@ export const AUCTION_ROUTES = [
     path: '/auctions/create',
     name: 'Create Auction',
     description: 'Create auction for a newly minted song',
+  },
+]
+
+export const ADMIN_ROUTES = [
+  {
+    path: '/admin/change-owner',
+    name: 'Change Owner',
+    description: 'Change the owner of the contract',
   },
 ]
 
