@@ -12,7 +12,7 @@ export const SUPPORTED_NETWORKS: {
     name: 'Rinkeby',
     symbol: 'ETH',
     explorer: 'https://rinkeby.etherscan.io/',
-    rpc: 'https://rinkeby.infura.io/v3/f8a8e8f3f0e94b0c9b8d4c3c2b7a8d12',
+    rpc: 'https://rinkeby.infura.io/v3/e039ebf983d0477ca69a543b1c62101a',
   },
   1337: {
     chainId: 1337,
