@@ -14,7 +14,8 @@ const FindOwner = () => {
   const [tokenOwner, setTokenOwner] = useState<string>()
   const { contract: songContract } = useContract(
     SONG_CONTRACT,
-    SongADay__factory
+    SongADay__factory,
+    { useStaticProvider: true }
   )
 
   const { response: contractOwner } = useReadContract(songContract, 'owner')
