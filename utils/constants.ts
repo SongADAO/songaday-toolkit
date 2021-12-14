@@ -1,6 +1,6 @@
 export const ROUTES = [
   {
-    path: '/image/create',
+    path: '/create-image',
     name: 'Create Image',
     description: 'Create a new image and metadata from attributes',
   },
@@ -20,9 +20,10 @@ export const ROUTES = [
     description: 'Create, Start and End the Auction',
   },
   {
-    path: '/image/bulk',
-    name: 'Bulk Images',
-    description: 'Generate images in bulk by uploading a big JSON',
+    path: '/bulk',
+    name: 'Bulk Actions',
+    description:
+      'Generate images, metadata in bulk by uploading the CSV of the year',
   },
   {
     path: '/admin',
@@ -44,6 +45,24 @@ export const ADMIN_ROUTES = [
     path: '/admin/change-owner',
     name: 'Change Owner',
     description: 'Change the owner of the contract',
+  },
+  {
+    path: '/admin/find-owner',
+    name: 'Find Owner',
+    description: 'Find the owner of the song and the contract',
+  },
+]
+
+export const BULK_ROUTES = [
+  {
+    path: '/bulk/image',
+    name: 'Generate Images',
+    description: 'Generate images from CSV file',
+  },
+  {
+    path: '/bulk/metadata',
+    name: 'Generate Metadata',
+    description: 'Generate metadata from CSV file',
   },
 ]
 

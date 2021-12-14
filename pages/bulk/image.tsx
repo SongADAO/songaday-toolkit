@@ -26,7 +26,7 @@ type FormValues = {
   file_: FileList
 }
 
-export default function Bulk() {
+export default function BulkImages() {
   const {
     register,
     handleSubmit,
@@ -37,12 +37,10 @@ export default function Bulk() {
 
   const router = useRouter()
 
-  const [hash, setHash] = useState<string>()
   const [loading, setLoading] = useState(false)
   const selectedFile = watch('file_')
 
   const onSubmit = async (data: FormValues) => {
-    setHash(undefined)
     setLoading(true)
     try {
       const csv = await new Promise((resolve, reject) => {
@@ -53,7 +51,7 @@ export default function Bulk() {
         })
       })
 
-      const response = await fetchJson<{ hash: string }>('/api/bulk-image', {
+      await fetchJson<{ hash: string }>('/api/bulk-image', {
         method: 'POST',
         body: JSON.stringify({
           csv,
@@ -62,7 +60,6 @@ export default function Bulk() {
           'Content-Type': 'application/json',
         },
       })
-      setHash(response.hash)
     } catch (error) {
       toast.error('There were errors in your csv')
       setError('file_', { message: (error as any).response.error })
@@ -70,8 +67,6 @@ export default function Bulk() {
       setLoading(false)
     }
   }
-
-  console.log(errors)
 
   return (
     <Stack>
@@ -127,4 +122,4 @@ export default function Bulk() {
   )
 }
 
-Bulk.Layout = AppLayout
+BulkImages.Layout = AppLayout

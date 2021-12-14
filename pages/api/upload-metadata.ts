@@ -26,7 +26,6 @@ export default withSession<{ hash: string }>(async (req, res) => {
   const attributes = JSON.parse(attributesStr)
   const tokenId = fields.songNbr
   const externalURL = 'https://songaday.world/song/' + tokenId
-  console.log(attributes)
   const attributesArray = [
     { trait_type: 'Date', value: attributes.date },
     {
