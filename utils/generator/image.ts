@@ -166,3 +166,10 @@ const toPascalCase = (text: string) =>
     .join(' ')
 export const formatInstrument = (text: string) =>
   toPascalCase(trim(text)).replace(/ /gi, '')
+
+export const formatNoun = (text: string) => {
+  return toPascalCase(trim(text)).replace(/ /gi, '')
+}
+
+export const formatShirt = (text: string) =>
+  text.trim().toLowerCase().replace(/ /gi, '')

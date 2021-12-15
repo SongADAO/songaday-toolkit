@@ -154,7 +154,7 @@ const CreateAuction = () => {
                 disabled={loading || approved}
                 onClick={() => approveAuctionHandler()}
               >
-                Create Auction
+                Approve Auction
               </Button>
               <Button
                 loadingText="Creating"

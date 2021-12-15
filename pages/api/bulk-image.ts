@@ -10,6 +10,8 @@ import {
   formatInstrument,
   formatLocation,
   formatMood,
+  formatNoun,
+  formatShirt,
   formatTopic,
   getBackground,
   resolveTopic,
@@ -42,6 +44,7 @@ type SongCSVType = {
   'other styles'?: string
   noun?: string
   'proper noun'?: string
+  shirt?: string
   tempo: string
   topic: string
   videoID: string
@@ -167,6 +170,8 @@ export default withSession<{ image: string }>(async (req, res) => {
         const background = getBackground(year, dateStr)
         const songNbr = parseInt(song.number)
         const instrument = formatInstrument(song['main instrument'])
+        const noun = formatNoun(song.noun ?? '')
+        const shirt = formatShirt(song.shirt ?? '')
         const layerorder = song.layerorder
           .split(',')
           .map((x) => trim(x).toLowerCase())
@@ -210,6 +215,30 @@ export default withSession<{ image: string }>(async (req, res) => {
             const instrumentPath = pathFromKey(year, 'instrument', instrument)
             return instrumentPath
           }
+          if (type === 'backgroundadjustlayer') {
+            const backgroundAdjustPath = join(
+              projectPath,
+              `/layers/${year}/backgroundadjustlayer.png`
+            )
+            return backgroundAdjustPath
+          }
+          if (type === 'frametoplayer') {
+            const backgroundAdjustPath = join(
+              projectPath,
+              `/layers/${year}/FrameTopLayer.png`
+            )
+            return backgroundAdjustPath
+          }
+
+          if (type === 'shirt') {
+            const shirtPath = pathFromKey(year, 'shirt', shirt)
+            return shirtPath
+          }
+
+          if (type === 'noun') {
+            const nounPath = pathFromKey(year, 'noun', noun)
+            return nounPath
+          }
           return ''
         }
         getLayerPath(1) && (await composite(temp, getLayerPath(1), temp))
@@ -217,6 +246,11 @@ export default withSession<{ image: string }>(async (req, res) => {
         getLayerPath(3) && (await composite(temp, getLayerPath(3), temp))
         getLayerPath(4) && (await composite(temp, getLayerPath(4), temp))
         getLayerPath(5) && (await composite(temp, getLayerPath(5), temp))
+        getLayerPath(6) && (await composite(temp, getLayerPath(6), temp))
+        getLayerPath(7) && (await composite(temp, getLayerPath(7), temp))
+        getLayerPath(8) && (await composite(temp, getLayerPath(8), temp))
+        getLayerPath(9) && (await composite(temp, getLayerPath(9), temp))
+        getLayerPath(10) && (await composite(temp, getLayerPath(10), temp))
 
         await sharp(temp)
           .png({
