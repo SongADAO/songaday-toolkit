@@ -95,12 +95,12 @@ export default withSession<{ hash: string }>(async (req, res) => {
 
   const metadata = {
     name: attributes.title,
-    created_by: 'Jonathan Mann',
     description: attributes.description,
-    external_url: externalURL,
-    token_id: tokenId,
+    created_by: 'Jonathan Mann',
+    token_id: Number(tokenId),
     image: `ipfs://${fields.imageHash}`,
     animation_url: `ipfs://${fields.videoHash}`,
+    external_url: externalURL,
     youtube_url: attributes.videoUrl,
     attributes: attributesArray,
   }

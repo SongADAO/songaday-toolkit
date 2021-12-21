@@ -251,11 +251,13 @@ export default withSession<{ image: string }>(async (req, res) => {
 
         const metadata = {
           name: attributes.title,
+          description:
+            'Song A Day is a growing collection of songs that live on the Ethereum Blockchain.',
           created_by: 'Jonathan Mann',
-          external_url: externalURL,
-          token_id: tokenId,
+          token_id: Number(tokenId),
           image: `ipfs://${imageFolderHash}/${tokenId}`,
           animation_url: `ipfs://${videoFolderHash}/${tokenId}`,
+          external_url: externalURL,
           youtube_url: attributes.videoUrl,
           attributes: attributesArray,
         }
