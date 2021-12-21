@@ -275,3 +275,11 @@ export default withSession<{ image: string }>(async (req, res) => {
 
   res.status(200).json({ image: `data:image/png;base64` })
 })
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '5mb',
+    },
+  },
+}
