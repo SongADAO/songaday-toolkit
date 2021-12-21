@@ -1,7 +1,16 @@
-import { ensureDir, projectPath } from '@/utils/generator/helpers'
-import { formatRecord, getBackground } from '@/utils/generator/image'
+import { ensureDir, pathFromKey, projectPath } from '@/utils/generator/helpers'
+import {
+  formatBeard,
+  formatInstrument,
+  formatLocation,
+  formatMood,
+  formatRecord,
+  formatTopic,
+  getBackground,
+  resolveTopic,
+} from '@/utils/generator/image'
 import withSession from '@/utils/withSession'
-import { writeFileSync } from 'fs'
+import { existsSync, writeFileSync } from 'fs'
 import { trim } from 'lodash'
 import { DateTime } from 'luxon'
 import pMap from 'p-map'
@@ -66,76 +75,74 @@ export default withSession<{ image: string }>(async (req, res) => {
       }
     })
 
-    // ASSUMING EVERYTHING IS VALID
+    const date = DateTime.fromFormat(song.date, 'M/d/yyyy')
+    const year = date.year - 2008
+    const mood = formatMood(song.mood)
+    const beard = formatBeard(song.beard)
+    const location = formatLocation(song.location)
+    const topic = formatTopic(song.topic)
+    const dateStr = date.toISODate()
+    const background = getBackground(year, dateStr)
+    const instrument = formatInstrument(song['main instrument'])
 
-    // const date = DateTime.fromFormat(song.date, 'M/d/yyyy')
-    // const year = date.year - 2008
-    // const mood = formatMood(song.mood)
-    // const beard = formatBeard(song.beard)
-    // const location = formatLocation(song.location)
-    // const topic = formatTopic(song.topic)
-    // const dateStr = date.toISODate()
-    // const background = getBackground(year, dateStr)
-    // const instrument = formatInstrument(song['main instrument'])
+    // check if all the attribute layers are present.
+    if (!background.startsWith('#')) {
+      const backgroundPath = pathFromKey(year, 'special', background)
+      const bgExists = existsSync(backgroundPath)
+      if (!bgExists) {
+        errors.push(
+          `${indexStr}: Missing background layer for ${background}, looking for ${backgroundPath}`
+        )
+      }
+    }
 
-    // // check if all the attribute layers are present.
-    // if (!background.startsWith('#')) {
-    //   const backgroundPath = pathFromKey(year, 'special', background)
-    //   const bgExists = existsSync(backgroundPath)
-    //   if (!bgExists) {
-    //     errors.push(
-    //       `${indexStr}: Missing background layer for ${background}, looking for ${backgroundPath}`
-    //     )
-    //   }
-    // }
+    // TODO: create a generate metadata section that takes the image and the video cid hash and the csv again.
 
-    // // TODO: create a generate metadata section that takes the image and the video cid hash and the csv again.
+    const locationPath = pathFromKey(year, 'location', location)
+    const locationExists = existsSync(locationPath)
+    if (!locationExists) {
+      errors.push(
+        `${indexStr}: Missing location layer for ${location}, looking for ${locationPath}`
+      )
+    }
 
-    // const locationPath = pathFromKey(year, 'location', location)
-    // const locationExists = existsSync(locationPath)
-    // if (!locationExists) {
-    //   errors.push(
-    //     `${indexStr}: Missing location layer for ${location}, looking for ${locationPath}`
-    //   )
-    // }
+    const moodPath = pathFromKey(year, 'mood', mood)
+    const moodExists = existsSync(moodPath)
+    if (!moodExists) {
+      errors.push(
+        `${indexStr}: Missing mood layer for ${mood}, looking for ${moodPath}`
+      )
+    }
 
-    // const moodPath = pathFromKey(year, 'mood', mood)
-    // const moodExists = existsSync(moodPath)
-    // if (!moodExists) {
-    //   errors.push(
-    //     `${indexStr}: Missing mood layer for ${mood}, looking for ${moodPath}`
-    //   )
-    // }
+    const beardPath = pathFromKey(year, 'beard', beard)
+    const beardExists = existsSync(beardPath)
+    if (!beardExists) {
+      errors.push(
+        `${indexStr}: Missing beard layer for ${beard}, looking for ${beardPath}`
+      )
+    }
 
-    // const beardPath = pathFromKey(year, 'beard', beard)
-    // const beardExists = existsSync(beardPath)
-    // if (!beardExists) {
-    //   errors.push(
-    //     `${indexStr}: Missing beard layer for ${beard}, looking for ${beardPath}`
-    //   )
-    // }
+    const topicPath = pathFromKey(
+      year,
+      'topic',
+      resolveTopic(year, topic, dateStr)
+    )
+    const topicExists = existsSync(topicPath)
+    if (!topicExists) {
+      errors.push(
+        `${indexStr}: Missing topic layer for ${topic}, looking for ${topicPath}`
+      )
+    }
 
-    // const topicPath = pathFromKey(
-    //   year,
-    //   'topic',
-    //   resolveTopic(year, topic, dateStr)
-    // )
-    // const topicExists = existsSync(topicPath)
-    // if (!topicExists) {
-    //   errors.push(
-    //     `${indexStr}: Missing topic layer for ${topic}, looking for ${topicPath}`
-    //   )
-    // }
-
-    // if (instrument !== 'Vocals') {
-    //   const instrumentPath = pathFromKey(year, 'instrument', instrument)
-    //   const instrumentExists = existsSync(instrumentPath)
-    //   if (!instrumentExists) {
-    //     errors.push(
-    //       `${indexStr}: Missing instrument layer for ${instrument}, looking for ${instrumentPath}`
-    //     )
-    //   }
-    // }
+    if (instrument !== 'Vocals') {
+      const instrumentPath = pathFromKey(year, 'instrument', instrument)
+      const instrumentExists = existsSync(instrumentPath)
+      if (!instrumentExists) {
+        errors.push(
+          `${indexStr}: Missing instrument layer for ${instrument}, looking for ${instrumentPath}`
+        )
+      }
+    }
   }
 
   if (errors.length > 0) {
