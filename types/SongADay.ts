@@ -23,33 +23,28 @@ export interface SongADayInterface extends utils.Interface {
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "batchMint(uint256[],address[])": FunctionFragment;
-    "burnToken(uint256)": FunctionFragment;
     "dailyMint(uint256,string)": FunctionFragment;
     "frequency()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "maxPublicSupply()": FunctionFragment;
     "name()": FunctionFragment;
-    "openStoreTokenIds(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "ownerOf(uint256)": FunctionFragment;
     "previousTreasuryMint()": FunctionFragment;
     "priceAmount()": FunctionFragment;
-    "publicClaim(uint256[])": FunctionFragment;
+    "publicClaim(uint256[],uint256[],bytes32[][])": FunctionFragment;
     "publicMint(uint256)": FunctionFragment;
-    "publicSale()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "repairMetadata(uint256[],string[])": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeTransferFrom(address,address,uint256)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
     "setFrequency(uint256)": FunctionFragment;
-    "setOpenStoreTokenId(uint256[],uint256[])": FunctionFragment;
+    "setMerkleRoot(bytes32)": FunctionFragment;
     "setPrice(uint256)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
-    "toggleSale()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
-    "totalPublicMinted()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -66,10 +61,6 @@ export interface SongADayInterface extends utils.Interface {
     values: [BigNumberish[], string[]]
   ): string;
   encodeFunctionData(
-    functionFragment: "burnToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "dailyMint",
     values: [BigNumberish, string]
   ): string;
@@ -82,15 +73,7 @@ export interface SongADayInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
-  encodeFunctionData(
-    functionFragment: "maxPublicSupply",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "openStoreTokenIds",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownerOf",
@@ -106,19 +89,19 @@ export interface SongADayInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "publicClaim",
-    values: [BigNumberish[]]
+    values: [BigNumberish[], BigNumberish[], BytesLike[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "publicMint",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "publicSale",
+    functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "renounceOwnership",
-    values?: undefined
+    functionFragment: "repairMetadata",
+    values: [BigNumberish[], string[]]
   ): string;
   encodeFunctionData(
     functionFragment: "royaltyInfo",
@@ -137,8 +120,8 @@ export interface SongADayInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "setOpenStoreTokenId",
-    values: [BigNumberish[], BigNumberish[]]
+    functionFragment: "setMerkleRoot",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setPrice",
@@ -150,16 +133,8 @@ export interface SongADayInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "toggleSale",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "tokenURI",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "totalPublicMinted",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "totalSupply",
@@ -181,7 +156,6 @@ export interface SongADayInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "batchMint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "burnToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "dailyMint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "frequency", data: BytesLike): Result;
   decodeFunctionResult(
@@ -192,15 +166,7 @@ export interface SongADayInterface extends utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "maxPublicSupply",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "openStoreTokenIds",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
@@ -216,9 +182,12 @@ export interface SongADayInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "publicMint", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "publicSale", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "repairMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -238,7 +207,7 @@ export interface SongADayInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setOpenStoreTokenId",
+    functionFragment: "setMerkleRoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPrice", data: BytesLike): Result;
@@ -247,12 +216,7 @@ export interface SongADayInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "toggleSale", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "totalPublicMinted",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -353,11 +317,6 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    burnToken(
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     dailyMint(
       _tokenId: BigNumberish,
       _ipfsMetadataHash: string,
@@ -377,14 +336,7 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    maxPublicSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     name(overrides?: CallOverrides): Promise<[string]>;
-
-    openStoreTokenIds(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -398,7 +350,9 @@ export interface SongADay extends BaseContract {
     priceAmount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     publicClaim(
+      _openStoreIds: BigNumberish[],
       _tokenIds: BigNumberish[],
+      _proofs: BytesLike[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -407,9 +361,13 @@ export interface SongADay extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    publicSale(overrides?: CallOverrides): Promise<[boolean]>;
-
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    repairMetadata(
+      _tokenIds: BigNumberish[],
+      _tokenURIs: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -445,9 +403,8 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setOpenStoreTokenId(
-      _tokenIds: BigNumberish[],
-      _openStoreIds: BigNumberish[],
+    setMerkleRoot(
+      _root: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -463,16 +420,10 @@ export interface SongADay extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<[string]>;
 
-    toggleSale(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    totalPublicMinted(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -507,11 +458,6 @@ export interface SongADay extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  burnToken(
-    _tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   dailyMint(
     _tokenId: BigNumberish,
     _ipfsMetadataHash: string,
@@ -531,14 +477,7 @@ export interface SongADay extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  maxPublicSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
   name(overrides?: CallOverrides): Promise<string>;
-
-  openStoreTokenIds(
-    arg0: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   owner(overrides?: CallOverrides): Promise<string>;
 
@@ -549,7 +488,9 @@ export interface SongADay extends BaseContract {
   priceAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
   publicClaim(
+    _openStoreIds: BigNumberish[],
     _tokenIds: BigNumberish[],
+    _proofs: BytesLike[][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -558,9 +499,13 @@ export interface SongADay extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  publicSale(overrides?: CallOverrides): Promise<boolean>;
-
   renounceOwnership(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  repairMetadata(
+    _tokenIds: BigNumberish[],
+    _tokenURIs: string[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -596,9 +541,8 @@ export interface SongADay extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setOpenStoreTokenId(
-    _tokenIds: BigNumberish[],
-    _openStoreIds: BigNumberish[],
+  setMerkleRoot(
+    _root: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -614,13 +558,7 @@ export interface SongADay extends BaseContract {
 
   symbol(overrides?: CallOverrides): Promise<string>;
 
-  toggleSale(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-  totalPublicMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -655,8 +593,6 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    burnToken(_tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
-
     dailyMint(
       _tokenId: BigNumberish,
       _ipfsMetadataHash: string,
@@ -676,14 +612,7 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    maxPublicSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<string>;
-
-    openStoreTokenIds(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -694,15 +623,21 @@ export interface SongADay extends BaseContract {
     priceAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     publicClaim(
+      _openStoreIds: BigNumberish[],
       _tokenIds: BigNumberish[],
+      _proofs: BytesLike[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
     publicMint(_amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
-    publicSale(overrides?: CallOverrides): Promise<boolean>;
-
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    repairMetadata(
+      _tokenIds: BigNumberish[],
+      _tokenURIs: string[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     royaltyInfo(
       arg0: BigNumberish,
@@ -736,11 +671,7 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    setOpenStoreTokenId(
-      _tokenIds: BigNumberish[],
-      _openStoreIds: BigNumberish[],
-      overrides?: CallOverrides
-    ): Promise<void>;
+    setMerkleRoot(_root: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     setPrice(_wei: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -751,11 +682,7 @@ export interface SongADay extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<string>;
 
-    toggleSale(overrides?: CallOverrides): Promise<void>;
-
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
-
-    totalPublicMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -833,11 +760,6 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    burnToken(
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     dailyMint(
       _tokenId: BigNumberish,
       _ipfsMetadataHash: string,
@@ -857,14 +779,7 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    maxPublicSupply(overrides?: CallOverrides): Promise<BigNumber>;
-
     name(overrides?: CallOverrides): Promise<BigNumber>;
-
-    openStoreTokenIds(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -878,7 +793,9 @@ export interface SongADay extends BaseContract {
     priceAmount(overrides?: CallOverrides): Promise<BigNumber>;
 
     publicClaim(
+      _openStoreIds: BigNumberish[],
       _tokenIds: BigNumberish[],
+      _proofs: BytesLike[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -887,9 +804,13 @@ export interface SongADay extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    publicSale(overrides?: CallOverrides): Promise<BigNumber>;
-
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    repairMetadata(
+      _tokenIds: BigNumberish[],
+      _tokenURIs: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -925,9 +846,8 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setOpenStoreTokenId(
-      _tokenIds: BigNumberish[],
-      _openStoreIds: BigNumberish[],
+    setMerkleRoot(
+      _root: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -943,16 +863,10 @@ export interface SongADay extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<BigNumber>;
 
-    toggleSale(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    totalPublicMinted(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -991,11 +905,6 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    burnToken(
-      _tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     dailyMint(
       _tokenId: BigNumberish,
       _ipfsMetadataHash: string,
@@ -1015,14 +924,7 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    maxPublicSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    openStoreTokenIds(
-      arg0: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -1038,7 +940,9 @@ export interface SongADay extends BaseContract {
     priceAmount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     publicClaim(
+      _openStoreIds: BigNumberish[],
       _tokenIds: BigNumberish[],
+      _proofs: BytesLike[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1047,9 +951,13 @@ export interface SongADay extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    publicSale(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     renounceOwnership(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repairMetadata(
+      _tokenIds: BigNumberish[],
+      _tokenURIs: string[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1085,9 +993,8 @@ export interface SongADay extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setOpenStoreTokenId(
-      _tokenIds: BigNumberish[],
-      _openStoreIds: BigNumberish[],
+    setMerkleRoot(
+      _root: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1103,16 +1010,10 @@ export interface SongADay extends BaseContract {
 
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    toggleSale(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     tokenURI(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    totalPublicMinted(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 

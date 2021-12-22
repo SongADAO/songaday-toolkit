@@ -21,6 +21,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721__factory>;
     getContractFactory(
+      name: "ERC721Burnable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721Burnable__factory>;
+    getContractFactory(
       name: "ERC721URIStorage",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC721URIStorage__factory>;
@@ -45,9 +49,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
     getContractFactory(
-      name: "OpenStore",
+      name: "IOpenStore",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OpenStore__factory>;
+    ): Promise<Contracts.IOpenStore__factory>;
     getContractFactory(
       name: "SongADay",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -63,6 +67,11 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "ERC721Burnable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721Burnable>;
     getContractAt(
       name: "ERC721URIStorage",
       address: string,
@@ -94,10 +103,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
     getContractAt(
-      name: "OpenStore",
+      name: "IOpenStore",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.OpenStore>;
+    ): Promise<Contracts.IOpenStore>;
     getContractAt(
       name: "SongADay",
       address: string,

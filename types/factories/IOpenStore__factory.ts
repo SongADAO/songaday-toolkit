@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { OpenStore, OpenStoreInterface } from "../OpenStore";
+import type { IOpenStore, IOpenStoreInterface } from "../IOpenStore";
 
 const _abi = [
   {
@@ -26,6 +26,30 @@ const _abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+    ],
+    name: "isApprovedForAll",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",
@@ -64,17 +88,35 @@ const _abi = [
     stateMutability: "nonpayable",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "approved",
+        type: "bool",
+      },
+    ],
+    name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-export class OpenStore__factory {
+export class IOpenStore__factory {
   static readonly abi = _abi;
-  static createInterface(): OpenStoreInterface {
-    return new utils.Interface(_abi) as OpenStoreInterface;
+  static createInterface(): IOpenStoreInterface {
+    return new utils.Interface(_abi) as IOpenStoreInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): OpenStore {
-    return new Contract(address, _abi, signerOrProvider) as OpenStore;
+  ): IOpenStore {
+    return new Contract(address, _abi, signerOrProvider) as IOpenStore;
   }
 }

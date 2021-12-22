@@ -17,10 +17,12 @@ import { FunctionFragment, Result } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export interface OpenStoreInterface extends utils.Interface {
+export interface IOpenStoreInterface extends utils.Interface {
   functions: {
     "balanceOf(address,uint256)": FunctionFragment;
+    "isApprovedForAll(address,address)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "setApprovalForAll(address,bool)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -28,25 +30,41 @@ export interface OpenStoreInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "isApprovedForAll",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
     functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setApprovalForAll",
+    values: [string, boolean]
   ): string;
 
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
 
   events: {};
 }
 
-export interface OpenStore extends BaseContract {
+export interface IOpenStore extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: OpenStoreInterface;
+  interface: IOpenStoreInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -74,12 +92,24 @@ export interface OpenStore extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
     safeTransferFrom(
       from: string,
       to: string,
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -90,12 +120,24 @@ export interface OpenStore extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  isApprovedForAll(
+    account: string,
+    operator: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   safeTransferFrom(
     from: string,
     to: string,
     id: BigNumberish,
     amount: BigNumberish,
     data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setApprovalForAll(
+    operator: string,
+    approved: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -106,12 +148,24 @@ export interface OpenStore extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
     safeTransferFrom(
       from: string,
       to: string,
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -125,12 +179,24 @@ export interface OpenStore extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     safeTransferFrom(
       from: string,
       to: string,
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -142,12 +208,24 @@ export interface OpenStore extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     safeTransferFrom(
       from: string,
       to: string,
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
