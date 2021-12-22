@@ -258,8 +258,7 @@ export default withSession<{ image: string }>(async (req, res) => {
 
         const metadata = {
           name: attributes.title,
-          description:
-            'Song A Day is a growing collection of songs that live on the Ethereum Blockchain.',
+          description: `Song A Day is an ever-growing collection of unique songs created by Jonathan Mann, starting on January 1st, 2009. Each NFT is a 1:1 representation of that day’s song, and grants access to SongADAO, the organization which owns all rights and revenue to the songs. Own a piece of the collection to help govern the future of music. A new song, every day, forever.`,
           created_by: 'Jonathan Mann',
           token_id: Number(tokenId),
           image: `ipfs://${imageFolderHash}/${tokenId}`,
