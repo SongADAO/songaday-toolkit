@@ -45,6 +45,7 @@ export interface SongADayInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "tokenURI(uint256)": FunctionFragment;
+    "totalRemaining()": FunctionFragment;
     "totalSupply()": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -137,6 +138,10 @@ export interface SongADayInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "totalRemaining",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "totalSupply",
     values?: undefined
   ): string;
@@ -217,6 +222,10 @@ export interface SongADayInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "totalRemaining",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "totalSupply",
     data: BytesLike
@@ -425,6 +434,8 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    totalRemaining(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     transferFrom(
@@ -560,6 +571,8 @@ export interface SongADay extends BaseContract {
 
   tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
+  totalRemaining(overrides?: CallOverrides): Promise<BigNumber>;
+
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
   transferFrom(
@@ -683,6 +696,8 @@ export interface SongADay extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<string>;
 
     tokenURI(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
+
+    totalRemaining(overrides?: CallOverrides): Promise<BigNumber>;
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -868,6 +883,8 @@ export interface SongADay extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    totalRemaining(overrides?: CallOverrides): Promise<BigNumber>;
+
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
     transferFrom(
@@ -1014,6 +1031,8 @@ export interface SongADay extends BaseContract {
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    totalRemaining(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
