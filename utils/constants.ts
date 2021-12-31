@@ -57,6 +57,11 @@ export const ADMIN_ROUTES = [
     description:
       'Mint pre determined songs before the SAD drop (One Time Action)',
   },
+  {
+    path: '/admin/refresh-metadata',
+    name: 'Refresh Metadata',
+    description: 'Refresh the metadata of all the songs on opensea',
+  },
 ]
 
 export const BULK_ROUTES = [
