@@ -12,7 +12,10 @@ import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
   const { files, fields } = await new Promise(function (resolve, reject) {
-    const form = new formidable.IncomingForm({ keepExtensions: true })
+    const form = new formidable.IncomingForm({
+      keepExtensions: true,
+      maxFileSize: 1024 * 1024 * 1024 * 30,
+    })
     form.parse(req, function (err, fields, files) {
       if (err) return reject(err)
       resolve({ files, fields })
