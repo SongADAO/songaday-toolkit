@@ -14,13 +14,53 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
-import { WalletProvider } from '@/web3/WalletContext'
+import { NetworkConfig, WalletProvider } from '@raidguild/quiver'
+import { IProviderOptions } from 'web3modal'
+import WalletConnectProvider from '@walletconnect/web3-provider'
 
 const Noop: FC = ({ children }) => <>{children}</>
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
+
+  const networks: NetworkConfig = {
+    1: {
+      chainId: 1,
+      name: 'Mainnet',
+      symbol: 'ETH',
+      explorer: 'https://etherscan.io/tx/',
+      rpc: 'https://mainnet.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
+    },
+    4: {
+      chainId: 4,
+      name: 'Rinkeby',
+      symbol: 'ETH',
+      explorer: 'https://rinkeby.etherscan.io/',
+      rpc: 'https://rinkeby.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
+    },
+    1337: {
+      chainId: 1337,
+      name: 'Hardhat',
+      symbol: 'ETH',
+      explorer: 'http://localhost:1234/',
+      rpc: 'http://localhost:8545',
+    },
+  }
+
+  const providerOptions: IProviderOptions = {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
+        rpc: {
+          1: networks[1].rpc,
+          4: networks[4].rpc,
+          1337: networks[1337].rpc,
+        },
+      },
+    },
+  }
+
   return (
     <SWRConfig
       value={{
@@ -29,7 +69,15 @@ function MyApp({ Component, pageProps }: AppProps) {
         revalidateOnFocus: false,
       }}
     >
-      <WalletProvider>
+      <WalletProvider
+        web3modalOptions={{
+          cacheProvider: true,
+          providerOptions: providerOptions,
+          theme: 'dark',
+        }}
+        networks={networks}
+        defaultNetwork={1}
+      >
         <ChakraProvider theme={theme}>
           <Layout>
             <Component {...pageProps} />

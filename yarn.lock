@@ -1581,6 +1581,14 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
+"@raidguild/quiver@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@raidguild/quiver/-/quiver-0.1.1.tgz#16a29051f347ceb0788eea5f41ec9101843b52ae"
+  integrity sha512-ET5eluWt0Jpw50RPgq5h1nyQpi+DwTWSirwsz7T+i6Ae+oMxMZibUbbMN/5fk1YULYqX85uyIaaOsyUqw3obxA==
+  dependencies:
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+
 "@reach/alert@0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/alert/-/alert-0.13.2.tgz#71c4a848d51341f1d6d9eaae060975391c224870"
@@ -6500,6 +6508,11 @@ locate-path@^5.0.0:
   integrity sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==
   dependencies:
     p-locate "^4.1.0"
+
+lodash-es@^4.17.21:
+  version "4.17.21"
+  resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
+  integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
 
 lodash.debounce@^4.0.8:
   version "4.0.8"

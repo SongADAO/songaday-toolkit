@@ -1,9 +1,8 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay, SongADay__factory } from '@/types'
 import { SONG_CONTRACT, ZERO_ADDRESS } from '@/utils/constants'
-import { DEFAULT_NETWORK } from '@/web3/constants'
-import { useContract } from '@/web3/hooks'
-import { useWallet } from '@/web3/WalletContext'
+import { useContract } from '@raidguild/quiver'
+import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -32,7 +31,7 @@ const CreateAuction = () => {
 
   const auctionHouseContract = new AuctionHouse(
     provider?.getSigner() as any,
-    (chainId as number) || DEFAULT_NETWORK
+    (chainId as number) || 1
   )
 
   const auctionHouseAccount = auctionHouseContract.auctionHouse.address

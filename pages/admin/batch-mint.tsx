@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay__factory } from '@/types'
 import { BATCH_IDS, BATCH_OWNERS, SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useWriteContract } from '@/web3/hooks'
+import { useContract, useWriteContract } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { Table, Thead, Tr, Td, Th, Tbody } from '@chakra-ui/react'
@@ -25,7 +25,7 @@ const BatchMint = () => {
   }
   const handleResponse = () => toast.success('Waiting for tx to confirm')
 
-  const [batchMint] = useWriteContract(songContract, 'batchMint', {
+  const { mutate: batchMint } = useWriteContract(songContract, 'batchMint', {
     onError: handleError,
     onResponse: handleResponse,
     onConfirmation: handleConfirm,

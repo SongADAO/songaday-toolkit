@@ -3,8 +3,8 @@ import { Box, Flex, HStack, Text } from '@chakra-ui/layout'
 import { FC } from 'react'
 import { HiX } from 'react-icons/hi'
 
-import { useWallet } from '@/web3/WalletContext'
-import { formatAddress } from '@/web3/helpers'
+import { useWallet } from '@raidguild/quiver'
+import { formatAddress } from '@raidguild/quiver'
 
 export const ConnectWallet: FC = () => {
   const { connectWallet, isConnecting, isConnected, disconnect, address } =

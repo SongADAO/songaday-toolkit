@@ -1,8 +1,8 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay__factory } from '@/types'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useWriteContract } from '@/web3/hooks'
-import { useWallet } from '@/web3/WalletContext'
+import { useContract, useWriteContract } from '@raidguild/quiver'
+import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -37,7 +37,7 @@ const Mint = () => {
   }
   const handleResponse = () => toast.success('Waiting for tx to confirm')
 
-  const [mint] = useWriteContract(songContract, 'dailyMint', {
+  const { mutate: mint } = useWriteContract(songContract, 'dailyMint', {
     onError: handleError,
     onResponse: handleResponse,
     onConfirmation: handleConfirm,

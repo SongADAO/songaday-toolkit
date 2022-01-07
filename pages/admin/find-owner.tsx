@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay, SongADay__factory } from '@/types'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useReadContract } from '@/web3/hooks'
+import { useContract, useReadContract } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
