@@ -12,7 +12,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/inter": "^4.5.0",
-    "@raidguild/quiver": "^0.1.1",
+    "@raidguild/quiver": "^0.6.0",
     "@types/d3-color": "^3.0.2",
     "@types/form-data": "^2.5.0",
     "@types/luxon": "^2.0.7",

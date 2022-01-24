@@ -17,6 +17,7 @@ import '@fontsource/inter/900.css'
 import { NetworkConfig, WalletProvider } from '@raidguild/quiver'
 import { IProviderOptions } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
+import Head from 'next/head'
 
 const Noop: FC = ({ children }) => <>{children}</>
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -25,22 +26,22 @@ function MyApp({ Component, pageProps }: AppProps) {
   const Layout = Component.Layout || Noop
 
   const networks: NetworkConfig = {
-    1: {
-      chainId: 1,
+    '0x1': {
+      chainId: '0x1',
       name: 'Mainnet',
       symbol: 'ETH',
       explorer: 'https://etherscan.io/tx/',
       rpc: 'https://mainnet.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
     },
-    4: {
-      chainId: 4,
+    '0x4': {
+      chainId: '0x4',
       name: 'Rinkeby',
       symbol: 'ETH',
       explorer: 'https://rinkeby.etherscan.io/',
       rpc: 'https://rinkeby.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
     },
-    1337: {
-      chainId: 1337,
+    '0x539': {
+      chainId: '0x539',
       name: 'Hardhat',
       symbol: 'ETH',
       explorer: 'http://localhost:1234/',
@@ -53,9 +54,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       package: WalletConnectProvider,
       options: {
         rpc: {
-          1: networks[1].rpc,
-          4: networks[4].rpc,
-          1337: networks[1337].rpc,
+          1: networks['0x1'].rpc,
+          4: networks['0x4'].rpc,
+          1337: networks['0x539'].rpc,
         },
       },
     },
@@ -69,6 +70,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         revalidateOnFocus: false,
       }}
     >
+      <Head>
+        <link rel="manifest" href="/manifest.json" />
+      </Head>
       <WalletProvider
         web3modalOptions={{
           cacheProvider: true,
@@ -76,7 +80,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           theme: 'dark',
         }}
         networks={networks}
-        defaultNetwork={1}
+        defaultChainId={'0x1'}
       >
         <ChakraProvider theme={theme}>
           <Layout>
