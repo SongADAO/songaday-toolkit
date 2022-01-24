@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Textarea } from '@chakra-ui/textarea'
+import { DateTime } from 'luxon'
 
 type Attributes = {
   songNbr: string
@@ -46,13 +47,13 @@ type Attributes = {
 }
 
 export const CreateImage = () => {
-  const { register, handleSubmit } = useForm<Attributes>({
+  const { register, handleSubmit, setValue } = useForm<Attributes>({
     defaultValues: {
       layer: {
         location: '0',
         topic: '1',
-        mood: '2',
-        beard: '3',
+        mood: '3',
+        beard: '2',
         instrument: '4',
       },
     },
@@ -82,6 +83,37 @@ export const CreateImage = () => {
       setLoading(false)
     }
   }
+
+  const handleAutoFill = (value: string) => {
+    try {
+      const attributes = value.split('	')
+      setValue('songNbr', attributes[0])
+      setValue(
+        'date',
+        DateTime.fromFormat(attributes[1], 'M/d/yyyy').toFormat('yyyy-MM-dd')
+      )
+      setValue('title', attributes[2])
+      setValue('location', attributes[3])
+      setValue('topic', attributes[4])
+      setValue('instrument', attributes[6])
+      setValue('otherInstruments', attributes[7])
+      setValue('mood', attributes[8])
+      setValue('beard', attributes[9])
+      setValue('genre', attributes[10])
+      setValue('style', attributes[12])
+      setValue('otherStyles', attributes[13])
+      setValue('noun', attributes[14])
+      setValue('properNoun', attributes[15])
+      setValue('length', attributes[16])
+      setValue('inKey', attributes[17])
+      setValue('tempo', attributes[18])
+      setValue('videoUrl', attributes[19])
+      setValue('description', attributes[21])
+    } catch (error) {
+      console.log({ error })
+      toast.error('Number of columns incorrect')
+    }
+  }
   return (
     <Stack spacing="6">
       <Stack>
@@ -92,6 +124,13 @@ export const CreateImage = () => {
           validation is done on the form, make sure the attribute values are
           correct.
         </Text>
+        <FormControl isRequired>
+          <FormLabel>Auto Fill</FormLabel>
+          <Textarea
+            onChange={(e) => handleAutoFill(e.target.value)}
+            placeholder={`4749	1/1/2022	It's Not FUD, It's Your Feelings	Hartford, CT Studio 2	Ethereum	Synths	Synths	Drum Machine	Pleading	Beard	Electro	Wistful, Dark, Groovy	Wistful	Dark, Groovy			1:02	B	95	https://youtu.be/tBLKuj8PqQo	Background, Location, Topic, Beard, Mood, Instrument	Happy new year! What are we really saying when we say "NO FUD!"?Fear, uncertainty, doubt - these are a fundemental part of the human condition. Repress that shit at your peril. Let's feel our feelings this year!`}
+          />
+        </FormControl>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing="6">
             <Stack spacing="4">
@@ -99,6 +138,7 @@ export const CreateImage = () => {
                 <Box>
                   <FormControl isRequired>
                     <FormLabel>Song #</FormLabel>
+
                     <Input
                       placeholder="4384"
                       type="text"
