@@ -31,7 +31,7 @@ const CreateAuction = () => {
 
   const auctionHouseContract = new AuctionHouse(
     provider?.getSigner() as any,
-    (chainId as number) || 1
+    Number(chainId) || 1
   )
 
   const auctionHouseAccount = auctionHouseContract.auctionHouse.address
