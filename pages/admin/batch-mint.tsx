@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay__factory } from '@/types'
 import { BATCH_IDS, BATCH_OWNERS, SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useWriteContract } from '@raidguild/quiver'
+import { useTypedContract, useWriteContract } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { Table, Thead, Tr, Td, Th, Tbody } from '@chakra-ui/react'
@@ -10,7 +10,7 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 
 const BatchMint = () => {
-  const { contract: songContract } = useContract(
+  const { contract: songContract } = useTypedContract(
     SONG_CONTRACT,
     SongADay__factory
   )

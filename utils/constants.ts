@@ -38,6 +38,12 @@ export const AUCTION_ROUTES = [
     name: 'Create Auction',
     description: 'Create auction for a newly minted song',
   },
+  {
+    path: '/auctions/mint-and-auction',
+    name: 'Mint and Auction',
+    description:
+      'Gnosis Only - Mint, Create auction and start auction at the same time.',
+  },
 ]
 
 export const ADMIN_ROUTES = [
@@ -77,6 +83,7 @@ export const BULK_ROUTES = [
   },
 ]
 
+export const CHAIN_ID = '0x1'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 // export const SONG_CONTRACT = '0x0dB2f6BfDfF090e3c8Eef8eA5686bb1589611424'
 export const SONG_CONTRACT = '0x19b703f65aA7E1E775BD06c2aa0D0d08c80f1C45'

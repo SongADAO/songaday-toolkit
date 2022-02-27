@@ -1299,12 +1299,27 @@
     "@gnosis.pm/safe-apps-sdk" "6.1.1"
     events "^3.3.0"
 
+"@gnosis.pm/safe-apps-react-sdk@^4.2.1":
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-react-sdk/-/safe-apps-react-sdk-4.2.1.tgz#b4ffbd1b0eb6e6eb66a59f3c1fcd8e47c40efa99"
+  integrity sha512-jsCxfpbcBICTfAReH0A5UNTI2+2ypGKBCU1AY/BksMIaw3QAA46YMWFdmxyrDFWzz3d0WAVbWz0FNRniFGq5Vw==
+  dependencies:
+    "@gnosis.pm/safe-apps-sdk" "7.0.0"
+
 "@gnosis.pm/safe-apps-sdk@6.1.1":
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-6.1.1.tgz#6a4e19c475967a0d04a8c04559e05703484e2ca8"
   integrity sha512-MI2gIdQUlu1NrDt5rF47xey1LSiQoy5Nb+vqn16PM5qVc3FjR+nPNG8+1yGlL96di31z+kyS2J8DzHiea7+TMA==
   dependencies:
     "@gnosis.pm/safe-react-gateway-sdk" "^2.5.6"
+    ethers "^5.4.7"
+
+"@gnosis.pm/safe-apps-sdk@7.0.0", "@gnosis.pm/safe-apps-sdk@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-7.0.0.tgz#e2320aca32edbb67d5b9e1e98cbfc448f1cfb2e0"
+  integrity sha512-Is9H7bcdPGh7Wp5oLc17CWbpd5Hi1+KL7z33ClyVP9Sw/s23ApIR7HkXmD5b3XsAW2vSiYfcHNT/yddolvACNg==
+  dependencies:
+    "@gnosis.pm/safe-react-gateway-sdk" "^2.8.5"
     ethers "^5.4.7"
 
 "@gnosis.pm/safe-apps-sdk@^6.1.1":
@@ -1326,6 +1341,13 @@
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-2.8.3.tgz#413875ab6eaedf5cad6c2d6f27e503e9a7715d21"
   integrity sha512-M0Ay+A3ea+5eHD3uSQ+Hu3h7EzAE8F8pI0mZGuFioCUmZMa3Sv1K7OFDvXoL7Na/J2MVmOpyamBlyB5CPHpGyQ==
+  dependencies:
+    isomorphic-unfetch "^3.1.0"
+
+"@gnosis.pm/safe-react-gateway-sdk@^2.8.5":
+  version "2.8.6"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-2.8.6.tgz#842c1f40ed6bd9164965836d7c4abcfe0a009af2"
+  integrity sha512-XPDOGQtUc1AON/xM4y5mGWMQ/VVaajRXVEdVmKCWOboK0bk1spkuD5oyo9hF0SB3f+lClIagb9PojOurjjWogw==
   dependencies:
     isomorphic-unfetch "^3.1.0"
 
@@ -1591,10 +1613,10 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha1-p3c2C1s5oaLlEG+OhY8v0tBgxXA=
 
-"@raidguild/quiver@^0.6.0":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@raidguild/quiver/-/quiver-0.6.2.tgz#2a8c06c5099c469f81734f231e7ba319da8778b2"
-  integrity sha512-5Vf25uQONy/GHAqMUGzumup5o49/E1wzC2O9BvY1vZYZNQRE9zOCtXprjtmwrDqf4GiWtm7KvD1wN2vXhKBg3g==
+"@raidguild/quiver@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@raidguild/quiver/-/quiver-0.9.0.tgz#4bed26e49d74ac4750c86ed8437bddff87c9d385"
+  integrity sha512-mTJ30KVN0QrZontRL4ffZnwU24QiBdLaAgcnFsrNOdsd+1vu/Ghh6gsu0EoWZNOqGI2ky8xovEfiATGoDtQSmw==
   dependencies:
     "@ethersproject/abstract-signer" "^5.5.0"
     "@ethersproject/bignumber" "^5.5.0"

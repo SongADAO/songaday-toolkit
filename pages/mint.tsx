@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay__factory } from '@/types'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useWriteContract } from '@raidguild/quiver'
+import { useTypedContract, useWriteContract } from '@raidguild/quiver'
 import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
@@ -23,7 +23,7 @@ const Mint = () => {
   const [loading, setLoading] = useState(false)
 
   const { isConnected } = useWallet()
-  const { contract: songContract } = useContract(
+  const { contract: songContract } = useTypedContract(
     SONG_CONTRACT,
     SongADay__factory
   )

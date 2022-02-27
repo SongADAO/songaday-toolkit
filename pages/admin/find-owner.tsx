@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SongADay, SongADay__factory } from '@/types'
-import { SONG_CONTRACT } from '@/utils/constants'
-import { useContract, useReadContract } from '@raidguild/quiver'
+import { CHAIN_ID, SONG_CONTRACT } from '@/utils/constants'
+import { useTypedContract, useReadContract } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -12,13 +12,18 @@ import toast from 'react-hot-toast'
 const FindOwner = () => {
   const [songNbr, setSongNbr] = useState<string>()
   const [tokenOwner, setTokenOwner] = useState<string>()
-  const { contract: songContract } = useContract(
+  const { contract: songContract } = useTypedContract(
     SONG_CONTRACT,
     SongADay__factory,
-    { useStaticProvider: true }
+    {
+      staticProvider: {
+        enable: true,
+        chainId: CHAIN_ID,
+      },
+    }
   )
 
-  const { response: contractOwner } = useReadContract(songContract, 'owner')
+  const { response: contractOwner } = useReadContract(songContract, 'owner', [])
 
   const tokenOwnerHandler = async () => {
     setTokenOwner(undefined)

@@ -1,29 +1,29 @@
-import { AppLayout } from '@/components/AppLayout'
-import { SongADay, SongADay__factory } from '@/types'
+import { SongADay__factory } from '@/types'
 import { SONG_CONTRACT, ZERO_ADDRESS } from '@/utils/constants'
-import { useTypedContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { Checkbox } from '@chakra-ui/react'
+import { useTypedContract, useWallet } from '@raidguild/quiver'
 import { AuctionHouse } from '@zoralabs/zdk'
 import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 
-const CreateAuction = () => {
-  const [approved, setApproved] = useState(false)
+const MintAndAuction = () => {
   const [created, setCreated] = useState(false)
   const [songNbr, setSongNbr] = useState<string>()
+  const [ipfsHash, setIpfsHash] = useState<string>()
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
   )
   const [loading, setLoading] = useState(false)
   const { isConnected, chainId, provider } = useWallet()
+
   const { contract: songContract } = useTypedContract(
     SONG_CONTRACT,
     SongADay__factory
@@ -34,64 +34,71 @@ const CreateAuction = () => {
     Number(chainId) || 1
   )
 
-  const auctionHouseAccount = auctionHouseContract.auctionHouse.address
-
-  const approveAuctionHandler = async () => {
-    setLoading(true)
-    try {
-      const approvedAddress = await (songContract as SongADay)?.getApproved(
-        songNbr as string
-      )
-      if (approvedAddress !== auctionHouseAccount) {
-        toast.success('Approving the Auction house to use the Song Contract')
-        await (songContract as SongADay)?.approve(
-          auctionHouseAccount,
-          songNbr as string
-        )
-        toast.success(
-          'Wait for transaction confirmation before creating the auction'
-        )
-        setApproved(true)
-      } else {
-        setApproved(true)
-        toast.error('Already Approved')
-      }
-    } catch (error) {
-      toast.error((error as any).error?.message || (error as any)?.message)
-    } finally {
-      setLoading(false)
-    }
+  const opts = {
+    allowedDomains: [/gnosis-safe.io/],
   }
 
-  const createAuctionHandler = async () => {
-    setCreated(false)
-    setLoading(true)
-    try {
-      const approvedAddress = await (songContract as SongADay)?.getApproved(
-        songNbr as string
-      )
-      if (approvedAddress !== auctionHouseAccount) {
-        toast.error('You need to first approve')
-        return
-      }
-      toast.success('Creating the auction')
-      const duration = DateTime.fromISO(date).diff(DateTime.local())
-      await auctionHouseContract.createAuction(
-        songNbr as string,
-        checked ? 86400 : parseInt(duration.as('seconds').toString()),
-        ethers.utils.parseEther('0.000000001'),
-        ZERO_ADDRESS,
-        0,
-        ZERO_ADDRESS,
-        (songContract as any)?.address
-      )
+  const appsSdk = new SafeAppsSDK(opts)
 
-      toast.success(
-        'Wait for transaction confirmation before going to song a day auction page'
-      )
+  const handleMintAndAuction = async () => {
+    console.log('inside')
+    if (!songNbr || !ipfsHash) {
+      toast.error('Either song number of ipfs hash is not present')
+      return
+    }
+
+    setLoading(true)
+    setCreated(false)
+
+    const auctionHouseAccount = auctionHouseContract.auctionHouse.address
+    const duration = DateTime.fromISO(date).diff(DateTime.local())
+
+    const transactions = [
+      {
+        to: songContract?.address ?? '',
+        value: '0',
+        data: songContract?.interface.encodeFunctionData('dailyMint', [
+          songNbr,
+          ipfsHash,
+        ]) as string,
+      },
+      {
+        to: songContract?.address ?? '',
+        value: '0',
+        data: songContract?.interface.encodeFunctionData('approve', [
+          auctionHouseAccount,
+          songNbr,
+        ]) as string,
+      },
+      {
+        to: auctionHouseContract.auctionHouse.address,
+        value: '0',
+        data: auctionHouseContract.auctionHouse.interface.encodeFunctionData(
+          'createAuction',
+          [
+            songNbr,
+            (songContract as any)?.address ?? '',
+            checked ? 86400 : parseInt(duration.as('seconds').toString()),
+            ethers.utils.parseEther('0.000000001'),
+            ZERO_ADDRESS,
+            0,
+            ZERO_ADDRESS,
+          ]
+        ) as string,
+      },
+    ]
+
+    try {
+      await appsSdk?.txs.send({ txs: transactions })
       setCreated(true)
+      toast.success(
+        'The transaction will appear soon in your gnosis transactions'
+      )
     } catch (error) {
-      toast.error((error as any).error?.message || (error as any)?.message)
+      console.log(error)
+      toast.error(
+        'There was an error processing the transaction, please do it manually.'
+      )
     } finally {
       setLoading(false)
     }
@@ -101,8 +108,15 @@ const CreateAuction = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>Create Auction</Heading>
-          <Text>First you need to create an auction.</Text>
+          <Heading>Mint and Create Auction</Heading>
+          <Text>
+            Note - This page will only work if you open it inside gnosis safe as
+            a safe app. If you use it via walletconnect, it will not work
+          </Text>
+          <Text>
+            Find the IPFS metadata hash from the upload to ipfs step and paste
+            the hash below along with the song number.
+          </Text>
           <Stack spacing="6">
             <Stack spacing="4">
               <Wrap>
@@ -114,6 +128,17 @@ const CreateAuction = () => {
                       type="text"
                       value={songNbr}
                       onChange={(e) => setSongNbr(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>IPFS Hash</FormLabel>
+                    <Input
+                      type="text"
+                      placeholder="QvQSasdsaLKJHASDNasdalkasd"
+                      value={ipfsHash}
+                      onChange={(e) => setIpfsHash(e.target.value)}
                     />
                   </FormControl>
                 </Box>
@@ -148,20 +173,12 @@ const CreateAuction = () => {
             </Stack>
             <Wrap>
               <Button
-                loadingText="Approving"
-                isLoading={loading}
-                disabled={loading || approved}
-                onClick={() => approveAuctionHandler()}
-              >
-                Approve Auction
-              </Button>
-              <Button
                 loadingText="Creating"
                 isLoading={loading}
                 disabled={loading}
-                onClick={() => createAuctionHandler()}
+                onClick={() => handleMintAndAuction()}
               >
-                Create Auction
+                Mint and Start Auction
               </Button>
             </Wrap>
             <Stack>
@@ -188,5 +205,4 @@ const CreateAuction = () => {
   )
 }
 
-CreateAuction.Layout = AppLayout
-export default CreateAuction
+export default MintAndAuction

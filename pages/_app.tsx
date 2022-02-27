@@ -18,6 +18,7 @@ import { NetworkConfig, WalletProvider } from '@raidguild/quiver'
 import { IProviderOptions } from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Head from 'next/head'
+import { CHAIN_ID } from '@/utils/constants'
 
 const Noop: FC = ({ children }) => <>{children}</>
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -80,7 +81,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           theme: 'dark',
         }}
         networks={networks}
-        defaultChainId={'0x1'}
+        defaultChainId={CHAIN_ID}
       >
         <ChakraProvider theme={theme}>
           <Layout>
