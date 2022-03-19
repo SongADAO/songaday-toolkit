@@ -100,6 +100,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
     token_id: Number(tokenId),
     image: `ipfs://${fields.imageHash}`,
     animation_url: `ipfs://${fields.videoHash}`,
+    audio_url: `ipfs://${fields.audioHash}`,
     external_url: externalURL,
     youtube_url: attributes.videoUrl,
     attributes: attributesArray,
