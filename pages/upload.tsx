@@ -168,7 +168,7 @@ export const Upload = () => {
       formdata.append('songNbr', songNbr)
       formdata.append('imageHash', data.imageHash)
       formdata.append('videoHash', data.videoHash)
-      formdata.append('audioHash', data.videoHash)
+      formdata.append('audioHash', data.audioHash)
 
       const response = await fetchJson<{ hash: string }>(
         '/api/upload-metadata',
