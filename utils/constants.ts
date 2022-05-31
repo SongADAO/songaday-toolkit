@@ -30,6 +30,11 @@ export const ROUTES = [
     name: 'Admin',
     description: 'Other contract admin actions like changing the owner',
   },
+  {
+    path: '/index-songs',
+    name: 'Index Songs',
+    description: 'Index all songs in the Song A Day contract',
+  },
 ]
 
 export const AUCTION_ROUTES = [

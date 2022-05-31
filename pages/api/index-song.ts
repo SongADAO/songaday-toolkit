@@ -1,0 +1,26 @@
+import { getSongFromOpenSea } from '@/utils/metadata'
+import withSession from '@/utils/withSession'
+import algoliasearch from 'algoliasearch'
+import externalConfig from '../../config.json'
+
+export default withSession<any>(async (req, res) => {
+  if (req.method === 'GET') {
+    const { token_id } = req.query
+    // add to algolia index
+    const client = algoliasearch(
+      externalConfig.ALGOLIA_APPLICATION_ID,
+      externalConfig.ALGOLIA_ADMIN_KEY
+    )
+    const index = client.initIndex('songs')
+
+    const song = await getSongFromOpenSea(token_id.toString())
+    if (song) {
+      console.log('Song found: ', token_id)
+      await index.saveObject(song)
+    }
+
+    return res.status(200).json({ success: true })
+  } else {
+    return res.status(404).json({ success: false })
+  }
+})
