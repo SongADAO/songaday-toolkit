@@ -73,6 +73,11 @@ export const ADMIN_ROUTES = [
     name: 'Refresh Metadata',
     description: 'Refresh the metadata of all the songs on opensea',
   },
+  {
+    path: '/admin/repair-metadata',
+    name: 'Repair Metadata',
+    description: 'Repair the metadata of a song',
+  },
 ]
 
 export const BULK_ROUTES = [
