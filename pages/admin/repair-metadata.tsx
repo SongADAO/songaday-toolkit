@@ -17,25 +17,28 @@ const RepairMetadata = () => {
     SONG_CONTRACT,
     SongADay__factory
   )
-  const [ipfsHash, setIpfsHash] = useState('')
-  const [songNbr, setSongNbr] = useState<string>()
+  const [ipfsHashes, setIpfsHashes] = useState('')
+  const [songNbrs, setSongNbrs] = useState<string>()
 
   const repairMetadata = async () => {
     setLoading(true)
 
-    if (!songNbr || !ipfsHash) {
+    if (!songNbrs || !ipfsHashes) {
       toast.error('Please fill in all fields')
       return
     }
 
     try {
       const tx = await (songContract as SongADay)?.repairMetadata(
-        [songNbr],
-        [ipfsHash]
+        songNbrs
+          .split(',')
+          .map((nbrstr) => nbrstr.trim())
+          .map(Number),
+        ipfsHashes.split(',').map((hash) => hash.trim())
       )
 
       await tx.wait()
-      toast.success(`Successfully repaired metadata for song ${songNbr}`)
+      toast.success(`Successfully repaired metadata for song ${songNbrs}`)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)
     } finally {
@@ -55,23 +58,23 @@ const RepairMetadata = () => {
                 <Wrap>
                   <Box>
                     <FormControl isRequired>
-                      <FormLabel>Song #</FormLabel>
+                      <FormLabel>Song Numbers (Comma Separated)</FormLabel>
                       <Input
-                        placeholder="4353"
+                        placeholder="4353,4354,4355"
                         type="text"
-                        value={songNbr}
-                        onChange={(e) => setSongNbr(e.target.value)}
+                        value={songNbrs}
+                        onChange={(e) => setSongNbrs(e.target.value)}
                       />
                     </FormControl>
                   </Box>
                   <Box>
                     <FormControl isRequired>
-                      <FormLabel>New IPFS Hash</FormLabel>
+                      <FormLabel>New IPFS Hashes (Comma Separated)</FormLabel>
                       <Input
-                        placeholder="bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka"
+                        placeholder="bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka,bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka,bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka"
                         type="text"
-                        value={ipfsHash}
-                        onChange={(e) => setIpfsHash(e.target.value)}
+                        value={ipfsHashes}
+                        onChange={(e) => setIpfsHashes(e.target.value)}
                       />
                     </FormControl>
                   </Box>
