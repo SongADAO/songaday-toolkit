@@ -12,6 +12,7 @@ import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
+import fetchJson from '@/utils/fetchJson'
 
 const MintAndAuction = () => {
   const [created, setCreated] = useState(false)
@@ -23,6 +24,8 @@ const MintAndAuction = () => {
   )
   const [loading, setLoading] = useState(false)
   const { isConnected, chainId, provider } = useWallet()
+
+  const [indexingSong, setIndexingSong] = useState<boolean>(false)
 
   const { contract: songContract } = useTypedContract(
     SONG_CONTRACT,
@@ -39,6 +42,26 @@ const MintAndAuction = () => {
   }
 
   const appsSdk = new SafeAppsSDK(opts)
+
+  const indexSong = async () => {
+    if (!songNbr) {
+      toast.error('Please enter a song > 4748')
+      return
+    }
+    if (Number(songNbr) <= 4748) {
+      toast.error('Please enter a song > 4748')
+      return
+    }
+
+    try {
+      setIndexingSong(true)
+      await fetchJson(`/api/index-song/?token_id=${songNbr}`)
+    } catch (error) {
+      console.log({ error })
+    } finally {
+      setIndexingSong(false)
+    }
+  }
 
   const handleMintAndAuction = async () => {
     console.log('inside')
@@ -179,6 +202,14 @@ const MintAndAuction = () => {
                 onClick={() => handleMintAndAuction()}
               >
                 Mint and Start Auction
+              </Button>
+              <Button
+                loadingText="Indexing"
+                isLoading={indexingSong}
+                disabled={indexingSong}
+                onClick={() => indexSong()}
+              >
+                Index Song
               </Button>
             </Wrap>
             <Stack>

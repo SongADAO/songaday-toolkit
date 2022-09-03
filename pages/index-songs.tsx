@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 const IndexSongs = () => {
   const [indexingAll, setIndexingAll] = useState(false)
   const [indexingSong, setIndexingSong] = useState(false)
-  const [songNbr, setSongNbr] = useState('')
+  const [songNbrs, setSongNbrs] = useState('')
   const indexAllSongs = async () => {
     try {
       setIndexingAll(true)
@@ -22,18 +22,21 @@ const IndexSongs = () => {
   }
 
   const indexSong = async () => {
-    if (!songNbr) {
-      toast.error('Please enter a song > 4748')
-      return
-    }
-    if (Number(songNbr) <= 4748) {
-      toast.error('Please enter a song > 4748')
+    const songNbrsList = songNbrs
+      .split(',')
+      .map((nbrstr) => nbrstr.trim())
+      .map(Number)
+
+    if (songNbrsList.some((s) => !s) || songNbrsList.some((s) => s <= 4748)) {
+      toast.error('Please enter songs > 4748')
       return
     }
 
     try {
       setIndexingSong(true)
-      await fetchJson(`/api/index-song/?token_id=${songNbr}`)
+      await Promise.all(
+        songNbrsList.map((s) => fetchJson(`/api/index-song/?token_id=${s}`))
+      )
     } catch (error) {
       console.log({ error })
     } finally {
@@ -64,22 +67,22 @@ const IndexSongs = () => {
         </Stack>
       </Stack>
       <Stack>
-        <Heading>Index Specific Song</Heading>
+        <Heading>Index Specific Songs</Heading>
         <Text>
-          If you recently minted a new song, you should index it so that it
-          shows up on explore page.
+          If you recently minted a few songs, you should index them so that they
+          show up on explore page.
         </Text>
 
         <Stack spacing="6">
           <Wrap>
             <Box>
               <FormControl isRequired>
-                <FormLabel>Song #</FormLabel>
+                <FormLabel>Song # (Comma Separated)</FormLabel>
                 <Input
-                  placeholder="4384"
+                  placeholder="4784,4785,4786"
                   type="text"
-                  value={songNbr}
-                  onChange={(e) => setSongNbr(e.target.value)}
+                  value={songNbrs}
+                  onChange={(e) => setSongNbrs(e.target.value)}
                 />
               </FormControl>
             </Box>
