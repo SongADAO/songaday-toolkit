@@ -1,9 +1,9 @@
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { readFileSync, renameSync, writeFileSync } from 'fs'
+import { copyFileSync, readFileSync, renameSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import os from 'os'
-import { projectPath } from '@/utils/generator/helpers'
+import { ensureDir, projectPath } from '@/utils/generator/helpers'
 import { last } from 'lodash'
 import { nanoid } from 'nanoid'
 import { NFTStorage } from 'nft.storage'
@@ -26,6 +26,8 @@ export default withSession<{ hash: string }>(async (req, res) => {
     throw new Error('No files were uploaded')
   }
 
+  const fileExt = `${last(files.file.originalFilename.split('.'))}`
+
   const newFilePath = join(
     os.tmpdir(),
     `audio_${fields.songNbr}_${nanoid(6)}.${last(
@@ -45,6 +47,16 @@ export default withSession<{ hash: string }>(async (req, res) => {
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/audio_hash.txt`),
     ipfsHash
+  )
+
+  // copy the file to another folder for safe keeping
+  ensureDir(join(externalConfig.SAVE_ASSET_FOLDER_ROOT, '/audios'))
+  copyFileSync(
+    newFilePath,
+    join(
+      externalConfig.SAVE_ASSET_FOLDER_ROOT,
+      `/audios/${fields.songNbr}.${fileExt}`
+    )
   )
 
   res.status(200).json({ hash: ipfsHash })

@@ -1,7 +1,7 @@
-import { projectPath } from '@/utils/generator/helpers'
+import { ensureDir, projectPath } from '@/utils/generator/helpers'
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'fs'
 import { trim } from 'lodash'
 import { DateTime } from 'luxon'
 import { NFTStorage } from 'nft.storage'
@@ -120,6 +120,16 @@ export default withSession<{ hash: string }>(async (req, res) => {
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/metadata.json`),
     JSON.stringify(metadata)
+  )
+
+  // copy the file to another folder for safe keeping
+  ensureDir(join(externalConfig.SAVE_ASSET_FOLDER_ROOT, '/metadatas'))
+  copyFileSync(
+    join(projectPath, `/output/${fields.songNbr}/metadata.json`),
+    join(
+      externalConfig.SAVE_ASSET_FOLDER_ROOT,
+      `/metadatas/${fields.songNbr}.json`
+    )
   )
 
   res.status(200).json({ hash: ipfsHash })
