@@ -1,4 +1,5 @@
 import { SONG_CONTRACT } from '@/utils/constants'
+import { parseTokenURI } from '@raidguild/quiver'
 
 export interface SongMetadata {
   name: string
@@ -45,7 +46,12 @@ export const getSongWithObjectId = (song: SongMetadata) => {
 
 export const getSongFromOpenSea = async (tokenId: string) => {
   const response = await fetch(
-    `https://api.opensea.io/asset/${SONG_CONTRACT}/${tokenId}`
+    `https://api.opensea.io/api/v1/asset/${SONG_CONTRACT}/${tokenId}`,
+    {
+      headers: {
+        'X-API-KEY': '1acb1a9159b5431e9d58b4a08c5d4541',
+      },
+    }
   )
   const data = await response.json()
   if (data['success'] === 'false') {
@@ -53,6 +59,7 @@ export const getSongFromOpenSea = async (tokenId: string) => {
   }
 
   const metadataUrl = data['token_metadata']
-  const metadata = await getJson<SongMetadata>(metadataUrl)
+
+  const metadata = await getJson<SongMetadata>(parseTokenURI(metadataUrl))
   return getSongWithObjectId(metadata)
 }
