@@ -1,9 +1,14 @@
 import { AppLayout } from '@/components/AppLayout'
 import fetchJson from '@/utils/fetchJson'
 import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
+import {
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  FormErrorMessage,
+} from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
+import { Box, Heading, Stack, Flex, Text, Wrap } from '@chakra-ui/layout'
 import {
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -16,6 +21,9 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Textarea } from '@chakra-ui/textarea'
 import { DateTime } from 'luxon'
+import { FileUpload } from '@/components/FileUpload'
+import { Icon } from '@chakra-ui/react'
+import { FiFile } from 'react-icons/fi'
 
 type Attributes = {
   songNbr: string
@@ -44,10 +52,17 @@ type Attributes = {
     mood: string
     beard: string
   }
+  customImage: FileList
 }
 
 export const CreateImage = () => {
-  const { register, handleSubmit, setValue } = useForm<Attributes>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<Attributes>({
     defaultValues: {
       layer: {
         location: '0',
@@ -59,6 +74,7 @@ export const CreateImage = () => {
     },
   })
 
+  const selectedImageFile = watch('customImage')
   const [loading, setLoading] = useState(false)
 
   const [generatedImage, setGeneratedImage] = useState<string>()
@@ -66,11 +82,14 @@ export const CreateImage = () => {
     setGeneratedImage(undefined)
     setLoading(true)
     try {
+      const formdata = new FormData()
+      formdata.append('file', data.customImage[0])
+      formdata.append('data', JSON.stringify(data))
       const response = await fetchJson<{ image: string }>(
         '/api/generate-image',
         {
           method: 'POST',
-          body: JSON.stringify(data),
+          body: formdata,
         }
       )
 
@@ -418,10 +437,38 @@ export const CreateImage = () => {
               </Wrap>
             </Stack>
             <Stack>
+              <Wrap>
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Custom Image</FormLabel>
+                    <FileUpload
+                      accept={'image/*'}
+                      register={register('customImage')}
+                    >
+                      <Button leftIcon={<Icon as={FiFile} />}>Upload</Button>
+                    </FileUpload>
+                    {selectedImageFile?.length > 0 && (
+                      <FormHelperText>
+                        <Flex alignItems="center">
+                          {selectedImageFile?.[0]?.name}
+                        </Flex>
+                      </FormHelperText>
+                    )}
+
+                    <FormErrorMessage>
+                      {errors.customImage && errors?.customImage.message}
+                    </FormErrorMessage>
+                  </FormControl>
+                </Box>
+              </Wrap>
+            </Stack>
+
+            <Stack>
               <Text>
-                Note 1: Make sure you have a layers folder in the same directory
-                as this application with all the layer files, and an output
-                folder where the image will be saved.
+                Note 1: If you are not using custom image, make sure you have a
+                layers folder in the same directory as this application with all
+                the layer files, and an output folder where the image will be
+                saved.
               </Text>
             </Stack>
             <Wrap>
