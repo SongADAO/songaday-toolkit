@@ -131,7 +131,7 @@ const MintAndAuction = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>Mint and Create Auction</Heading>
+          <Heading>Mint and Create Auction - Zora</Heading>
           <Text>
             Note - This page will only work if you open it inside gnosis safe as
             a safe app. If you use it via walletconnect, it will not work

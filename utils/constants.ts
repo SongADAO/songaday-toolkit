@@ -40,12 +40,12 @@ export const ROUTES = [
 export const AUCTION_ROUTES = [
   {
     path: '/auctions/create',
-    name: 'Create Auction',
+    name: 'Create Auction - Zora',
     description: 'Create auction for a newly minted song',
   },
   {
     path: '/auctions/mint-and-auction',
-    name: 'Mint and Auction',
+    name: 'Mint and Auction - Zora',
     description:
       'Gnosis Only - Mint, Create auction and start auction at the same time.',
   },

@@ -101,7 +101,7 @@ const CreateAuction = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>Create Auction</Heading>
+          <Heading>Create Auction - Zora</Heading>
           <Text>First you need to create an auction.</Text>
           <Stack spacing="6">
             <Stack spacing="4">
