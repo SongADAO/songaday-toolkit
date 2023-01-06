@@ -49,6 +49,17 @@ export const AUCTION_ROUTES = [
     description:
       'Gnosis Only - Mint, Create auction and start auction at the same time.',
   },
+  {
+    path: '/auctions/create-gbm',
+    name: 'Create Auction - GBM',
+    description: 'Create auction for a newly minted song',
+  },
+  {
+    path: '/auctions/mint-and-auction-gbm',
+    name: 'Mint and Auction - GBM',
+    description:
+      'Gnosis Only - Mint, Create auction and start auction at the same time.',
+  },
 ]
 
 export const ADMIN_ROUTES = [
@@ -99,6 +110,9 @@ export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 export const SONG_CONTRACT = '0x19b703f65aA7E1E775BD06c2aa0D0d08c80f1C45'
 
 export const TREASURY_CONTRACT = '0x2a2C412c440Dfb0E7cae46EFF581e3E26aFd1Cd0'
+
+export const GBM_CONTRACT = ''
+export const GBM_INITIATOR_CONTRACT = ''
 
 export const BATCH_IDS = [
   1502, 1513, 1845, 1952, 1983, 2509, 3025, 3515, 3591, 4140, 4406, 4410, 4415,
