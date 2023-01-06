@@ -41,6 +41,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       explorer: 'https://rinkeby.etherscan.io/',
       rpc: 'https://rinkeby.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
     },
+    '0x5': {
+      chainId: '0x5',
+      name: 'Goerli',
+      symbol: 'ETH',
+      explorer: 'https://goerli.etherscan.io/',
+      rpc: 'https://goerli.infura.io/v3/0251872b43d94c17a58a4e5f2591a84a',
+    },
     '0x539': {
       chainId: '0x539',
       name: 'Hardhat',
@@ -57,6 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         rpc: {
           1: networks['0x1'].rpc,
           4: networks['0x4'].rpc,
+          5: networks['0x5'].rpc,
           1337: networks['0x539'].rpc,
         },
       },
