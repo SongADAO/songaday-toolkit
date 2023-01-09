@@ -59,6 +59,7 @@ export interface GBMInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "registerAnAuctionContract(address,address)": FunctionFragment;
     "registerAnAuctionToken(address,uint256,bytes4,uint256,address)": FunctionFragment;
+    "setBeneficiary(address)": FunctionFragment;
     "setBiddingAllowed(address,bool)": FunctionFragment;
   };
 
@@ -93,6 +94,7 @@ export interface GBMInterface extends utils.Interface {
       | "owner"
       | "registerAnAuctionContract"
       | "registerAnAuctionToken"
+      | "setBeneficiary"
       | "setBiddingAllowed"
   ): FunctionFragment;
 
@@ -257,6 +259,10 @@ export interface GBMInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "setBeneficiary",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setBiddingAllowed",
     values: [PromiseOrValue<string>, PromiseOrValue<boolean>]
   ): string;
@@ -363,6 +369,10 @@ export interface GBMInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "registerAnAuctionToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setBeneficiary",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -676,6 +686,11 @@ export interface GBM extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setBiddingAllowed(
       _contract: PromiseOrValue<string>,
       _value: PromiseOrValue<boolean>,
@@ -856,6 +871,11 @@ export interface GBM extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setBeneficiary(
+    _beneficiary: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setBiddingAllowed(
     _contract: PromiseOrValue<string>,
     _value: PromiseOrValue<boolean>,
@@ -1033,6 +1053,11 @@ export interface GBM extends BaseContract {
       _tokenKind: PromiseOrValue<BytesLike>,
       _tokenAmount: PromiseOrValue<BigNumberish>,
       _initiator: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1290,6 +1315,11 @@ export interface GBM extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setBiddingAllowed(
       _contract: PromiseOrValue<string>,
       _value: PromiseOrValue<boolean>,
@@ -1468,6 +1498,11 @@ export interface GBM extends BaseContract {
       _tokenKind: PromiseOrValue<BytesLike>,
       _tokenAmount: PromiseOrValue<BigNumberish>,
       _initiator: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setBeneficiary(
+      _beneficiary: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
