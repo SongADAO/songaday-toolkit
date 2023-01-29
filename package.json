@@ -8,6 +8,7 @@
     "lint": "tsc --noEmit && next lint"
   },
   "dependencies": {
+    "@0xsplits/splits-sdk": "^2.5.3",
     "@chakra-ui/react": "^1.7.0",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
