@@ -20,6 +20,11 @@ export const ROUTES = [
     description: 'Mint a new song by giving IPFS hash of the metadata',
   },
   {
+    path: '/mint-edition',
+    name: 'Mint Edition',
+    description: 'Mint a song edition by giving IPFS hash of the metadata',
+  },
+  {
     path: '/auctions',
     name: 'Auctions',
     description: 'Create, Start and End the Auction',
@@ -113,6 +118,8 @@ export const CHAIN_ID = '0x1'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 // export const SONG_CONTRACT = '0x0dB2f6BfDfF090e3c8Eef8eA5686bb1589611424'
 export const SONG_CONTRACT = '0x19b703f65aA7E1E775BD06c2aa0D0d08c80f1C45'
+
+export const SONG_EDITION_CONTRACT = '0xb43d07a87EB2591d5ae8729e07BD41085C82d497'
 
 export const TREASURY_CONTRACT = '0x2a2C412c440Dfb0E7cae46EFF581e3E26aFd1Cd0'
 
