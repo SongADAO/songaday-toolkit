@@ -144,7 +144,7 @@ export default withSession<{ image: string }>(async (req, res) => {
     res.status(200).json({ image: `data:image/png;base64, ${base64Image}` })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: (error as any).message } as any)
   }
 })
 
