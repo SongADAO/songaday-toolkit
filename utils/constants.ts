@@ -10,6 +10,11 @@ export const ROUTES = [
     description: 'Upload anything to IPFS (Video, Image, Metadata)',
   },
   {
+    path: '/upload-edition',
+    name: 'Upload Edition to IPFS',
+    description: 'Upload an ERC1155-Edition to IPFS (Video, Image, Metadata)',
+  },
+  {
     path: '/mint',
     name: 'Mint Song',
     description: 'Mint a new song by giving IPFS hash of the metadata',
