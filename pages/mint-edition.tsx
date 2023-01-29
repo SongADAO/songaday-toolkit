@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { AppLayout } from '@/components/AppLayout'
 import { SongADayEditions__factory } from '@/types-edition'
-import { SONG_EDITION_CONTRACT } from '@/utils/constants'
+import { TREASURY_CONTRACT, SONG_EDITION_CONTRACT } from '@/utils/constants'
 import { useTypedContract, useWriteContract } from '@raidguild/quiver'
 import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
@@ -12,6 +12,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { DateTime } from 'luxon'
+import { SplitsClient } from '@0xsplits/splits-sdk'
 
 type FormValues = {
   songNbr: string
@@ -29,7 +30,7 @@ const MintEdition = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const { isConnected } = useWallet()
+  const { isConnected, chainId, provider } = useWallet()
   const { contract: songEditionContract } = useTypedContract(
     SONG_EDITION_CONTRACT,
     SongADayEditions__factory
@@ -54,33 +55,92 @@ const MintEdition = () => {
     }
   )
 
+  const standardizeSignature = (signature: string) => {
+    if (signature.slice(-2) === '00') {
+      return signature.slice(0, -2) + '1b'
+    }
+
+    if (signature.slice(-2) === '01') {
+      return signature.slice(0, -2) + '1c'
+    }
+
+    return signature
+  }
+
   const onSubmit = async (data: FormValues) => {
-    const receiver = '0x322EFF886E9dc223963E0A9e68DcED069C8D3e45'
-    const feeNumerator = 1
-
-    const mintPriceWei = ethers.utils.parseUnits(
-      data.mintPrice.toString(),
-      'ether'
-    )
-
-    const startTimeDate = DateTime.fromISO(data.startTime)
-    const endTimeDate = DateTime.fromISO(data.endTime)
-    console.log(startTimeDate)
-    console.log(endTimeDate)
-
-    console.log(data.songNbr)
-    console.log(data.ipfsHash)
-    console.log(startTimeDate.toMillis())
-    console.log(endTimeDate.toMillis())
-    console.log(mintPriceWei)
-    console.log(data.sadnftOwner)
-    console.log(data.sadnftOwnerSignature)
-    console.log(receiver)
-    console.log(feeNumerator)
+    if (!isConnected || !provider || !chainId) {
+      return
+    }
 
     setMinted(false)
     setLoading(true)
     try {
+      const message =
+        'By singing this message I authorize the editioning of SADNFT ' +
+        data.songNbr
+
+      const messageHash = ethers.utils.solidityKeccak256(['string'], [message])
+
+      const signerAddress = ethers.utils.verifyMessage(
+        messageHash,
+        data.sadnftOwnerSignature
+      )
+
+      if (data.sadnftOwner !== signerAddress) {
+        throw new Error('Signature is not valid')
+      }
+
+      const chainIdNumber = Number(chainId.substring(2))
+
+      const splitsClient = new SplitsClient({
+        chainId: chainIdNumber,
+        provider: provider as any,
+        signer: provider?.getSigner() as any,
+      })
+
+      const args = {
+        recipients: [
+          {
+            address: data.sadnftOwner,
+            percentAllocation: 50.0,
+          },
+          {
+            address: TREASURY_CONTRACT,
+            percentAllocation: 50.0,
+          },
+        ],
+        distributorFeePercent: 1.0,
+        // TODO: Set distributorFeePercent
+        controller: TREASURY_CONTRACT,
+      }
+
+      const response = await splitsClient.createSplit(args)
+      console.log(response)
+
+      const receiver = response.splitId
+      const feeNumerator = 250 // 2.5%
+      // TODO: Set feeNumerator
+
+      const mintPriceWei = ethers.utils.parseUnits(
+        data.mintPrice.toString(),
+        'ether'
+      )
+
+      const startTimeDate = DateTime.fromISO(data.startTime)
+      const endTimeDate = DateTime.fromISO(data.endTime)
+      console.log(startTimeDate)
+      console.log(endTimeDate)
+
+      console.log(data.songNbr)
+      console.log(data.ipfsHash)
+      console.log(startTimeDate.toMillis())
+      console.log(endTimeDate.toMillis())
+      console.log(mintPriceWei)
+      console.log(data.sadnftOwner)
+      console.log(data.sadnftOwnerSignature)
+      console.log(receiver)
+      console.log(feeNumerator)
+
       await registerMint(
         data.songNbr,
         data.ipfsHash,
