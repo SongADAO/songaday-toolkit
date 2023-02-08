@@ -81,8 +81,10 @@ const MintEdition = () => {
 
       const messageHash = ethers.utils.solidityKeccak256(['string'], [message])
 
+      const bytesDataHash = ethers.utils.arrayify(messageHash)
+
       const signerAddress = ethers.utils.verifyMessage(
-        messageHash,
+        bytesDataHash,
         data.sadnftOwnerSignature
       )
 
