@@ -48,6 +48,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       explorer: 'https://goerli.etherscan.io/',
       rpc: 'https://goerli.infura.io/v3/0251872b43d94c17a58a4e5f2591a84a',
     },
+    '0x42161': {
+      chainId: '0x42161',
+      name: 'Arbitrum One',
+      symbol: 'ETH',
+      explorer: 'https://arbiscan.io/',
+      rpc: 'https://arb-mainnet.g.alchemy.com/v2/9yAODDcRzS7_8L3_xYTQxnWWJe6K9NKB',
+    },
     '0x539': {
       chainId: '0x539',
       name: 'Hardhat',
@@ -65,6 +72,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           1: networks['0x1'].rpc,
           4: networks['0x4'].rpc,
           5: networks['0x5'].rpc,
+          42161: networks['0x42161'].rpc,
           1337: networks['0x539'].rpc,
         },
       },
