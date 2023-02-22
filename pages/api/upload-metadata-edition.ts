@@ -25,7 +25,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
   const attributesStr = readFileSync(files.file.filepath, 'utf8')
   const attributes = JSON.parse(attributesStr)
   const tokenId = fields.songNbr
-  const externalURL = 'https://songaday.world/song-edition/' + tokenId
+  const externalURL = 'https://songaday.world/edition/' + tokenId
   const attributesArray = [
     { trait_type: 'Date', value: attributes.date },
     {
