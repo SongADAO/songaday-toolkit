@@ -1,7 +1,11 @@
 import { ethers } from 'ethers'
 import { AppLayout } from '@/components/AppLayout'
 import { SongADayEditions__factory } from '@/types-edition'
-import { TREASURY_CONTRACT, SONG_EDITION_CONTRACT } from '@/utils/constants'
+import {
+  TREASURY_CONTRACT,
+  SONG_EDITION_CONTRACT,
+  SONG_EDITION_CHAIN_ID,
+} from '@/utils/constants'
 import { useTypedContract, useWriteContract } from '@raidguild/quiver'
 import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
@@ -75,6 +79,10 @@ const MintEdition = () => {
     setMinted(false)
     setLoading(true)
     try {
+      if (chainId !== SONG_EDITION_CHAIN_ID) {
+        throw new Error('Please switch to Arbitrum One')
+      }
+
       const message =
         'By singing this message I authorize the editioning of SADNFT ' +
         data.songNbr
@@ -93,10 +101,6 @@ const MintEdition = () => {
       }
 
       const chainIdNumber = Number(chainId.substring(2))
-
-      if (chainIdNumber !== 42161) {
-        throw new Error('Please switch to Arbitrum One')
-      }
 
       const splitsClient = new SplitsClient({
         chainId: chainIdNumber,
@@ -167,10 +171,10 @@ const MintEdition = () => {
   }
   return (
     <Stack spacing="6">
-      {isConnected && chainId !== '0xa4b1' && (
+      {isConnected && chainId !== SONG_EDITION_CHAIN_ID && (
         <Text>Please switch to Arbitrum One</Text>
       )}
-      {isConnected && chainId === '0xa4b1' && (
+      {isConnected && chainId === SONG_EDITION_CHAIN_ID && (
         <Stack>
           <Heading>Mint a song edition</Heading>
           <Text>
