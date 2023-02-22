@@ -94,6 +94,10 @@ const MintEdition = () => {
 
       const chainIdNumber = Number(chainId.substring(2))
 
+      if (chainIdNumber !== 42161) {
+        throw new Error('Please switch to Arbitrum One')
+      }
+
       const splitsClient = new SplitsClient({
         chainId: chainIdNumber,
         provider: provider as any,
