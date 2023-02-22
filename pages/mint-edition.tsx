@@ -167,7 +167,10 @@ const MintEdition = () => {
   }
   return (
     <Stack spacing="6">
-      {isConnected && (
+      {isConnected && chainId !== '0xa4b1' && (
+        <Text>Please switch to Arbitrum One</Text>
+      )}
+      {isConnected && chainId === '0xa4b1' && (
         <Stack>
           <Heading>Mint a song edition</Heading>
           <Text>
