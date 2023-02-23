@@ -100,7 +100,7 @@ const MintEdition = () => {
         throw new Error('Signature is not valid')
       }
 
-      const chainIdNumber = Number(chainId.substring(2))
+      const chainIdNumber = 10
 
       const splitsClient = new SplitsClient({
         chainId: chainIdNumber,
