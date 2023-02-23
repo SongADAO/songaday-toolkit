@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { AppLayout } from '@/components/AppLayout'
 import { SongADayEditions__factory } from '@/types-edition'
 import {
-  TREASURY_CONTRACT,
+  TREASURY_CONTRACT_OPTIMISM,
   SONG_EDITION_CONTRACT,
   SONG_EDITION_CHAIN_ID,
 } from '@/utils/constants'
@@ -115,13 +115,13 @@ const MintEdition = () => {
             percentAllocation: 50.0,
           },
           {
-            address: TREASURY_CONTRACT,
+            address: TREASURY_CONTRACT_OPTIMISM,
             percentAllocation: 50.0,
           },
         ],
         distributorFeePercent: 1.0,
         // TODO: Set distributorFeePercent
-        controller: TREASURY_CONTRACT,
+        controller: TREASURY_CONTRACT_OPTIMISM,
       }
 
       const response = await splitsClient.createSplit(args)
