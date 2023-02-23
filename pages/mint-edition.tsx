@@ -181,6 +181,8 @@ const MintEdition = () => {
         data.mintPrice.toString(),
         'ether'
       )
+      console.log(data.mintPrice.toString())
+      console.log(mintPriceWei)
 
       const ipfsUrl = 'ipfs://' + data.ipfsHash
 
