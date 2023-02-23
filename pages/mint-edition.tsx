@@ -182,6 +182,8 @@ const MintEdition = () => {
         'ether'
       )
 
+      const ipfsUrl = 'ipfs://' + data.ipfsHash
+
       const startTimeDate = DateTime.fromISO(data.startTime)
       const endTimeDate = DateTime.fromISO(data.endTime)
       console.log(startTimeDate)
@@ -189,6 +191,7 @@ const MintEdition = () => {
 
       console.log(data.songNbr)
       console.log(data.ipfsHash)
+      console.log(ipfsUrl)
       console.log(startTimeDate.toMillis())
       console.log(endTimeDate.toMillis())
       console.log(mintPriceWei)
@@ -199,7 +202,7 @@ const MintEdition = () => {
 
       await registerMint(
         data.songNbr,
-        data.ipfsHash,
+        ipfsUrl,
         startTimeDate.toMillis(),
         endTimeDate.toMillis(),
         mintPriceWei,
