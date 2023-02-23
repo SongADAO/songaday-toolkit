@@ -102,32 +102,36 @@ const MintEdition = () => {
 
       const chainIdNumber = 10
 
-      const splitsClient = new SplitsClient({
-        chainId: chainIdNumber,
-        provider: provider as any,
-        signer: provider?.getSigner() as any,
-      })
+    //   const splitsClient = new SplitsClient({
+    //     chainId: chainIdNumber,
+    //     provider: provider as any,
+    //     signer: provider?.getSigner() as any,
+    //   })
 
-      const args = {
-        recipients: [
-          {
-            address: data.sadnftOwner,
-            percentAllocation: 50.0,
-          },
-          {
-            address: TREASURY_CONTRACT_OPTIMISM,
-            percentAllocation: 50.0,
-          },
-        ],
-        distributorFeePercent: 1.0,
-        // TODO: Set distributorFeePercent
-        controller: TREASURY_CONTRACT_OPTIMISM,
-      }
+    //   const args = {
+    //     recipients: [
+    //       {
+    //         address: data.sadnftOwner,
+    //         percentAllocation: 50.0,
+    //       },
+    //       {
+    //         address: TREASURY_CONTRACT_OPTIMISM,
+    //         percentAllocation: 50.0,
+    //       },
+    //     ],
+    //     distributorFeePercent: 1.0,
+    //     // TODO: Set distributorFeePercent
+    //     controller: TREASURY_CONTRACT_OPTIMISM,
+    //   }
 
-      const response = await splitsClient.createSplit(args)
-      console.log(response)
+    //   const response = await splitsClient.createSplit(args)
+    //   console.log(response)
 
-      const receiver = response.splitId
+    //   const receiver = response.splitId
+
+      const receiver = '0x22954fCD25843ee079547B2D737c0fbD88270bB4'
+
+
       const feeNumerator = 250 // 2.5%
       // TODO: Set feeNumerator
 
