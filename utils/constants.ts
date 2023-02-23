@@ -99,6 +99,11 @@ export const ADMIN_ROUTES = [
     name: 'Repair Metadata',
     description: 'Repair the metadata of a song',
   },
+  {
+    path: '/admin/repair-edition-metadata',
+    name: 'Repair Editions Metadata',
+    description: 'Repair the metadata of a song edition',
+  },
 ]
 
 export const BULK_ROUTES = [
@@ -121,6 +126,8 @@ export const SONG_CONTRACT = '0x19b703f65aA7E1E775BD06c2aa0D0d08c80f1C45'
 
 export const SONG_EDITION_CONTRACT = '0xe84C1dDB51ad3E35123150F60c9d743E7ca0BD0D'
 export const SONG_EDITION_CHAIN_ID = '0xa4b1'
+// export const SONG_EDITION_CONTRACT = '0xb43d07a87EB2591d5ae8729e07BD41085C82d497'
+// export const SONG_EDITION_CHAIN_ID = '0x5'
 
 export const TREASURY_CONTRACT = '0x2a2C412c440Dfb0E7cae46EFF581e3E26aFd1Cd0'
 
