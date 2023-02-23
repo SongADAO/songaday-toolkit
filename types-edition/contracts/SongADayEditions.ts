@@ -54,6 +54,7 @@ export interface SongADayEditionsInterface extends utils.Interface {
     "paused()": FunctionFragment;
     "registerMint(uint256,string,uint256,uint256,uint256,address,bytes,address,uint96)": FunctionFragment;
     "renounceRole(bytes32,address)": FunctionFragment;
+    "repairMetadata(uint256[],string[])": FunctionFragment;
     "revokeRole(bytes32,address)": FunctionFragment;
     "royaltyInfo(uint256,uint256)": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
@@ -95,6 +96,7 @@ export interface SongADayEditionsInterface extends utils.Interface {
       | "paused"
       | "registerMint"
       | "renounceRole"
+      | "repairMetadata"
       | "revokeRole"
       | "royaltyInfo"
       | "safeBatchTransferFrom"
@@ -222,6 +224,10 @@ export interface SongADayEditionsInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceRole",
     values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "repairMetadata",
+    values: [PromiseOrValue<BigNumberish>[], PromiseOrValue<string>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "revokeRole",
@@ -356,6 +362,10 @@ export interface SongADayEditionsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "repairMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
@@ -696,6 +706,12 @@ export interface SongADayEditions extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    repairMetadata(
+      _tokenIds: PromiseOrValue<BigNumberish>[],
+      _tokenURIs: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -898,6 +914,12 @@ export interface SongADayEditions extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  repairMetadata(
+    _tokenIds: PromiseOrValue<BigNumberish>[],
+    _tokenURIs: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   revokeRole(
     role: PromiseOrValue<BytesLike>,
     account: PromiseOrValue<string>,
@@ -1095,6 +1117,12 @@ export interface SongADayEditions extends BaseContract {
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    repairMetadata(
+      _tokenIds: PromiseOrValue<BigNumberish>[],
+      _tokenURIs: PromiseOrValue<string>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1408,6 +1436,12 @@ export interface SongADayEditions extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    repairMetadata(
+      _tokenIds: PromiseOrValue<BigNumberish>[],
+      _tokenURIs: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     revokeRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
@@ -1612,6 +1646,12 @@ export interface SongADayEditions extends BaseContract {
     renounceRole(
       role: PromiseOrValue<BytesLike>,
       account: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    repairMetadata(
+      _tokenIds: PromiseOrValue<BigNumberish>[],
+      _tokenURIs: PromiseOrValue<string>[],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
