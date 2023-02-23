@@ -19,6 +19,7 @@ import { DateTime } from 'luxon'
 import { SplitsClient } from '@0xsplits/splits-sdk'
 
 type FormValues = {
+  split: string
   songNbr: string
   ipfsHash: string
   startTime: string
@@ -28,11 +29,27 @@ type FormValues = {
   sadnftOwnerSignature: string
 }
 
+type SplitFormValues = {
+  splitRecipient: string
+}
+
 const MintEdition = () => {
   const { register, handleSubmit } = useForm<FormValues>()
+
+  const {
+    register: registerSplit,
+    handleSubmit: handleSubmitSplit,
+    formState: { errors: errorsSplit },
+    watch: watchSplit,
+  } = useForm<SplitFormValues>({})
+
   const [minted, setMinted] = useState(false)
 
   const [loading, setLoading] = useState(false)
+
+  const [splitLoading, setSplitLoading] = useState(false)
+
+  const [splitAddress, setSplitAddress] = useState('')
 
   const { isConnected, chainId, provider } = useWallet()
   const { contract: songEditionContract } = useTypedContract(
@@ -71,6 +88,63 @@ const MintEdition = () => {
     return signature
   }
 
+  const onCreateSplit = async (data: SplitFormValues) => {
+    if (!isConnected || !provider || !chainId) {
+      return
+    }
+
+    setSplitLoading(true)
+    try {
+      if (chainId !== SONG_EDITION_CHAIN_ID) {
+        throw new Error('Please switch to Optimism')
+      }
+
+      const chainIdNumber = parseInt(SONG_EDITION_CHAIN_ID, 16)
+      console.log(chainIdNumber)
+
+      const splitsClient = new SplitsClient({
+        chainId: chainIdNumber,
+        provider: provider as any,
+        signer: provider?.getSigner() as any,
+      })
+
+      const distributorFeePercent =
+        data.splitRecipient.toLowerCase() ===
+          '0x5059270bafde9457e5c87312ff1fa9025c060499' ||
+        data.splitRecipient.toLowerCase() ===
+          '0x9d42a4d69e02d81f6f6d140fee4d92ca3f22c0d0'
+          ? 0
+          : 1.0
+
+      const args = {
+        recipients: [
+          {
+            address: data.splitRecipient,
+            percentAllocation: 50.0,
+          },
+          {
+            address: TREASURY_CONTRACT_OPTIMISM,
+            percentAllocation: 50.0,
+          },
+        ],
+        distributorFeePercent: distributorFeePercent,
+        controller: TREASURY_CONTRACT_OPTIMISM,
+      }
+      console.log(args)
+
+      const response = await splitsClient.createSplit(args)
+      console.log(response)
+
+      const receiver = response.splitId
+
+      setSplitAddress(receiver)
+    } catch (error) {
+      toast.error((error as any).message)
+    } finally {
+      setSplitLoading(false)
+    }
+  }
+
   const onSubmit = async (data: FormValues) => {
     if (!isConnected || !provider || !chainId) {
       return
@@ -100,38 +174,6 @@ const MintEdition = () => {
         throw new Error('Signature is not valid')
       }
 
-      const chainIdNumber = 10
-
-    //   const splitsClient = new SplitsClient({
-    //     chainId: chainIdNumber,
-    //     provider: provider as any,
-    //     signer: provider?.getSigner() as any,
-    //   })
-
-    //   const args = {
-    //     recipients: [
-    //       {
-    //         address: data.sadnftOwner,
-    //         percentAllocation: 50.0,
-    //       },
-    //       {
-    //         address: TREASURY_CONTRACT_OPTIMISM,
-    //         percentAllocation: 50.0,
-    //       },
-    //     ],
-    //     distributorFeePercent: 1.0,
-    //     // TODO: Set distributorFeePercent
-    //     controller: TREASURY_CONTRACT_OPTIMISM,
-    //   }
-
-    //   const response = await splitsClient.createSplit(args)
-    //   console.log(response)
-
-    //   const receiver = response.splitId
-
-      const receiver = '0x22954fCD25843ee079547B2D737c0fbD88270bB4'
-
-
       const feeNumerator = 250 // 2.5%
       // TODO: Set feeNumerator
 
@@ -152,7 +194,7 @@ const MintEdition = () => {
       console.log(mintPriceWei)
       console.log(data.sadnftOwner)
       console.log(data.sadnftOwnerSignature)
-      console.log(receiver)
+      console.log(data.split)
       console.log(feeNumerator)
 
       await registerMint(
@@ -163,7 +205,7 @@ const MintEdition = () => {
         mintPriceWei,
         data.sadnftOwner,
         data.sadnftOwnerSignature,
-        receiver,
+        data.split,
         feeNumerator
       )
       setMinted(true)
@@ -186,6 +228,54 @@ const MintEdition = () => {
             the hash below along with the song number. This will setup a song
             edition so that it can be sold via a public open edition sale.
           </Text>
+          <form onSubmit={handleSubmitSplit(onCreateSplit)}>
+            <Stack spacing="6">
+              <Stack spacing="4">
+                <Wrap>
+                  <Box>
+                    <FormControl isRequired>
+                      <FormLabel>Split Recipient</FormLabel>
+                      <Input
+                        placeholder="wallet address"
+                        type="text"
+                        {...registerSplit('splitRecipient', {
+                          required: true,
+                        })}
+                      />
+                    </FormControl>
+                  </Box>
+                </Wrap>
+              </Stack>
+              <Stack>
+                <Text>
+                  Note 1: Make sure you are connected with the correct wallet
+                  address (It should be the DAO's multisig address)
+                </Text>
+              </Stack>
+              <Wrap>
+                <Button
+                  loadingText="Minting"
+                  isLoading={splitLoading}
+                  disabled={splitLoading}
+                  onClick={handleSubmitSplit(onCreateSplit)}
+                >
+                  Setup 0xSplit
+                </Button>
+              </Wrap>
+              <Stack>
+                {splitAddress && (
+                  <>
+                    <Text>
+                      <strong>Split Address:</strong> {splitAddress}
+                    </Text>
+                    <br />
+                    <br />
+                  </>
+                )}
+              </Stack>
+            </Stack>
+          </form>
+
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack spacing="6">
               <Stack spacing="4">
@@ -247,6 +337,17 @@ const MintEdition = () => {
 
                   <Box>
                     <FormControl isRequired>
+                      <FormLabel>0xSplit</FormLabel>
+                      <Input
+                        placeholder=""
+                        type="text"
+                        {...register('split', { required: true })}
+                      />
+                    </FormControl>
+                  </Box>
+
+                  <Box>
+                    <FormControl isRequired>
                       <FormLabel>SAD NFT Owner</FormLabel>
                       <Input
                         placeholder=""
@@ -290,10 +391,7 @@ const MintEdition = () => {
                 {minted && (
                   <>
                     <Text>Next Steps:</Text>
-                    <Text>
-                      Now you can create the auction by going to the auctions
-                      page.
-                    </Text>
+                    <Text>The edition is now ready.</Text>
                   </>
                 )}
               </Stack>
