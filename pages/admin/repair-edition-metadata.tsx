@@ -33,21 +33,23 @@ const RepairEditionMetadata = () => {
         throw new Error('Please switch to Optimism')
       }
 
-      //   const tx = await(songEditionContract as SongADayEditions)?.repairMetadata(
-      //     songNbrs
-      //       .split(',')
-      //       .map((nbrstr) => nbrstr.trim())
-      //       .map(Number),
-      //     ipfsHashes.split(',').map((hash) => hash.trim())
-      //   )
-
-      const tx = await (songEditionContract as SongADayEditions)?.setURI(
+      const tx = await (
+        songEditionContract as SongADayEditions
+      )?.repairMetadata(
         songNbrs
           .split(',')
           .map((nbrstr) => nbrstr.trim())
-          .map(Number)[0],
-        ipfsHashes.split(',').map((hash) => hash.trim())[0]
+          .map(Number),
+        ipfsHashes.split(',').map((hash) => hash.trim())
       )
+
+      //   const tx = await (songEditionContract as SongADayEditions)?.setURI(
+      //     songNbrs
+      //       .split(',')
+      //       .map((nbrstr) => nbrstr.trim())
+      //       .map(Number)[0],
+      //     ipfsHashes.split(',').map((hash) => hash.trim())[0]
+      //   )
 
       await tx.wait()
       toast.success(`Successfully repaired metadata for song ${songNbrs}`)
@@ -70,9 +72,9 @@ const RepairEditionMetadata = () => {
                 <Wrap>
                   <Box>
                     <FormControl isRequired>
-                      <FormLabel>Song Number</FormLabel>
+                      <FormLabel>Song Numbers (Comma Separated)</FormLabel>
                       <Input
-                        placeholder="4353"
+                        placeholder="4353,4354,4355"
                         type="text"
                         value={songNbrs}
                         onChange={(e) => setSongNbrs(e.target.value)}
@@ -81,9 +83,9 @@ const RepairEditionMetadata = () => {
                   </Box>
                   <Box>
                     <FormControl isRequired>
-                      <FormLabel>New IPFS Hashe</FormLabel>
+                      <FormLabel>New IPFS Hashes (Comma Separated)</FormLabel>
                       <Input
-                        placeholder="bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka"
+                        placeholder="bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka,bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka,bafybeibudrscqa46aysruhkbva7kui7xnk77zsrfqcfcey23ufeiy7qcka"
                         type="text"
                         value={ipfsHashes}
                         onChange={(e) => setIpfsHashes(e.target.value)}
