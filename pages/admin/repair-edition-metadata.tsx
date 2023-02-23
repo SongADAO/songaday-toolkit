@@ -30,7 +30,7 @@ const RepairEditionMetadata = () => {
 
     try {
       if (chainId !== SONG_EDITION_CHAIN_ID) {
-        throw new Error('Please switch to Arbitrum One')
+        throw new Error('Please switch to Optimism')
       }
 
       //   const tx = await(songEditionContract as SongADayEditions)?.repairMetadata(

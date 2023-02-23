@@ -80,7 +80,7 @@ const MintEdition = () => {
     setLoading(true)
     try {
       if (chainId !== SONG_EDITION_CHAIN_ID) {
-        throw new Error('Please switch to Arbitrum One')
+        throw new Error('Please switch to Optimism')
       }
 
       const message =
@@ -172,7 +172,7 @@ const MintEdition = () => {
   return (
     <Stack spacing="6">
       {isConnected && chainId !== SONG_EDITION_CHAIN_ID && (
-        <Text>Please switch to Arbitrum One</Text>
+        <Text>Please switch to Optimism</Text>
       )}
       {isConnected && chainId === SONG_EDITION_CHAIN_ID && (
         <Stack>

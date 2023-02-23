@@ -55,6 +55,13 @@ function MyApp({ Component, pageProps }: AppProps) {
       explorer: 'https://arbiscan.io/',
       rpc: 'https://arb-mainnet.g.alchemy.com/v2/9yAODDcRzS7_8L3_xYTQxnWWJe6K9NKB',
     },
+    '0xa': {
+      chainId: '0xa',
+      name: 'Optimism',
+      symbol: 'ETH',
+      explorer: 'https://optimistic.etherscan.io/',
+      rpc: 'https://opt-mainnet.g.alchemy.com/v2/sFWPG81GUD_FNWqkPWm-hFnU6PZ3-waY',
+    },
     '0x539': {
       chainId: '0x539',
       name: 'Hardhat',
@@ -72,6 +79,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           1: networks['0x1'].rpc,
           4: networks['0x4'].rpc,
           5: networks['0x5'].rpc,
+          10: networks['0xa'].rpc,
           42161: networks['0xa4b1'].rpc,
           1337: networks['0x539'].rpc,
         },
