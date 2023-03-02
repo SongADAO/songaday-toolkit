@@ -40,7 +40,7 @@ const RepairEditionMetadata = () => {
           .split(',')
           .map((nbrstr) => nbrstr.trim())
           .map(Number),
-        ipfsHashes.split(',').map((hash) => hash.trim())
+        ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim())
       )
 
       //   const tx = await (songEditionContract as SongADayEditions)?.setURI(
@@ -48,7 +48,7 @@ const RepairEditionMetadata = () => {
       //       .split(',')
       //       .map((nbrstr) => nbrstr.trim())
       //       .map(Number)[0],
-      //     ipfsHashes.split(',').map((hash) => hash.trim())[0]
+      //     ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim())[0]
       //   )
 
       await tx.wait()
