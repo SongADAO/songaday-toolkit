@@ -191,11 +191,14 @@ const MintEdition = () => {
       console.log(startTimeDate)
       console.log(endTimeDate)
 
+      const startTimeDateSeconds = startTimeDate.toMillis() / 1000
+      const endTimeDateSeconds = endTimeDate.toMillis() / 1000
+
       console.log(data.songNbr)
       console.log(data.ipfsHash)
       console.log(ipfsUrl)
-      console.log(startTimeDate.toMillis())
-      console.log(endTimeDate.toMillis())
+      console.log(startTimeDateSeconds)
+      console.log(endTimeDateSeconds)
       console.log(mintPriceWei)
       console.log(data.sadnftOwner)
       console.log(data.sadnftOwnerSignature)
@@ -205,8 +208,8 @@ const MintEdition = () => {
       await registerMint(
         data.songNbr,
         ipfsUrl,
-        startTimeDate.toMillis(),
-        endTimeDate.toMillis(),
+        startTimeDateSeconds,
+        endTimeDateSeconds,
         mintPriceWei,
         data.sadnftOwner,
         data.sadnftOwnerSignature,
