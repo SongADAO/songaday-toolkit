@@ -110,6 +110,8 @@ const MintEdition = () => {
 
       const distributorFeePercent =
         data.splitRecipient.toLowerCase() ===
+          '0x728A74CF54C6B60D33B71A09098b89e900043BD4' ||
+        data.splitRecipient.toLowerCase() ===
           '0x5059270bafde9457e5c87312ff1fa9025c060499' ||
         data.splitRecipient.toLowerCase() ===
           '0x9d42a4d69e02d81f6f6d140fee4d92ca3f22c0d0'
