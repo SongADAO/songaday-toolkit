@@ -339,7 +339,7 @@ export const gbmabi = [
       },
       {
         internalType: 'bytes4',
-        name: '_tokenKind',
+        name: '',
         type: 'bytes4',
       },
       {
@@ -349,11 +349,35 @@ export const gbmabi = [
       },
       {
         internalType: 'uint256',
-        name: '_index',
+        name: '',
         type: 'uint256',
       },
     ],
     name: 'getAuctionID',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_contract',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: '_tokenID',
+        type: 'uint256',
+      },
+    ],
+    name: 'getAuctionIDSongADao',
     outputs: [
       {
         internalType: 'uint256',
@@ -482,7 +506,7 @@ export const gbmabi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_auctionID',
+        name: '',
         type: 'uint256',
       },
     ],
@@ -494,7 +518,7 @@ export const gbmabi = [
         type: 'uint256',
       },
     ],
-    stateMutability: 'view',
+    stateMutability: 'pure',
     type: 'function',
   },
   {
@@ -538,90 +562,6 @@ export const gbmabi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_initiator',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_ERC1155Contract',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenID',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_indexStart',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_indexEnd',
-        type: 'uint256',
-      },
-    ],
-    name: 'massRegistrerERC1155Each',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_initiator',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_ERC721Contract',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenIDStart',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenIDEnd',
-        type: 'uint256',
-      },
-    ],
-    name: 'massRegistrerERC721Each',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '_auctionID',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: '_tokenAmount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'address',
-        name: '_initiator',
-        type: 'address',
-      },
-    ],
-    name: 'modifyAnAuctionToken',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
         internalType: 'uint256',
         name: '_auctionID',
         type: 'uint256',
@@ -631,8 +571,18 @@ export const gbmabi = [
         name: '_initiator',
         type: 'address',
       },
+      {
+        internalType: 'uint256',
+        name: '_startTime',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: '_endTime',
+        type: 'uint256',
+      },
     ],
-    name: 'modifyAnAuctionToken',
+    name: 'modifyAnAuctionTokenSongAdao',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -793,22 +743,30 @@ export const gbmabi = [
         type: 'uint256',
       },
       {
-        internalType: 'bytes4',
-        name: '_tokenKind',
-        type: 'bytes4',
-      },
-      {
         internalType: 'uint256',
-        name: '_tokenAmount',
+        name: '_startTime',
         type: 'uint256',
       },
       {
+        internalType: 'uint256',
+        name: '_endTime',
+        type: 'uint256',
+      },
+    ],
+    name: 'registerAnAuctionTokenSongAdao',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
-        name: '_initiator',
+        name: '_beneficiary',
         type: 'address',
       },
     ],
-    name: 'registerAnAuctionToken',
+    name: 'setBeneficiary',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -827,6 +785,13 @@ export const gbmabi = [
       },
     ],
     name: 'setBiddingAllowed',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'withdraw',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

@@ -116,26 +116,16 @@ const MintAndAuctionGBM = () => {
         }),
       },
       {
-        to: GBM_INITIATOR_CONTRACT ?? '',
-        value: '0',
-        data: encodeFunctionData({
-          abi: gbminitabi,
-          functionName: 'setEndTime',
-          args: [BigInt(endTimestamp)],
-        }),
-      },
-      {
         to: GBM_CONTRACT ?? '',
         value: '0',
         data: encodeFunctionData({
           abi: gbmabi,
-          functionName: 'registerAnAuctionToken',
+          functionName: 'registerAnAuctionTokenSongAdao',
           args: [
             SONG_CONTRACT,
             BigInt(songNbr),
-            '0x73ad2146',
-            BigInt(1),
-            GBM_INITIATOR_CONTRACT,
+            BigInt(nowTimestamp),
+            BigInt(endTimestamp),
           ],
         }),
       },
