@@ -1,26 +1,20 @@
+import { formatAddress } from '@/utils/helpers'
 import { Button } from '@chakra-ui/button'
 import { Box, Flex, HStack, Text } from '@chakra-ui/layout'
+import { useWeb3Modal } from '@web3modal/react'
 import { FC } from 'react'
 import { HiX } from 'react-icons/hi'
+import { useAccount, useDisconnect } from 'wagmi'
 
-import { useWallet } from '@raidguild/quiver'
-import { formatAddress } from '@raidguild/quiver'
-
-export const ConnectWallet: FC = () => {
-  const { connectWallet, isConnecting, isConnected, disconnect, address } =
-    useWallet()
+export const ConnectWallet = () => {
+  const { open: connectWallet } = useWeb3Modal()
+  const { disconnect } = useDisconnect()
+  const { isConnected, address } = useAccount()
   return (
     <>
       {!isConnected && (
-        <Button
-          disabled={isConnecting}
-          onClick={() => !isConnected && connectWallet()}
-        >
-          {isConnecting
-            ? 'Connecting...'
-            : isConnected
-            ? 'Connected'
-            : 'Connect Wallet'}
+        <Button onClick={() => !isConnected && connectWallet()}>
+          {isConnected ? 'Connected' : 'Connect Wallet'}
         </Button>
       )}
       {isConnected && (

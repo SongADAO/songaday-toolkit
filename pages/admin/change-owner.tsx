@@ -1,32 +1,33 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADay, SongADay__factory } from '@/types'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useTypedContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-
+import { useAccount } from 'wagmi'
+import { writeContract, waitForTransaction } from '@wagmi/core'
+import { songabi } from '@/utils/abi/songabi'
 const ChangeOwner = () => {
   const [newOwner, setNewOwner] = useState<string>()
   const [loading, setLoading] = useState(false)
-  const { isConnected } = useWallet()
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory
-  )
+  const { isConnected } = useAccount()
 
   const changeOwnerHandler = async () => {
     setLoading(true)
     try {
-      const tx = await (songContract as SongADay)?.transferOwnership(
-        newOwner?.trim() ?? ''
-      )
+      const { hash } = await writeContract({
+        address: SONG_CONTRACT,
+        abi: songabi,
+        functionName: 'transferOwnership',
+        args: [newOwner?.trim() ?? ''],
+      })
 
-      await tx.wait()
+      await waitForTransaction({
+        hash,
+      })
+
       toast.success(`${newOwner} is the new owner now.`)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)

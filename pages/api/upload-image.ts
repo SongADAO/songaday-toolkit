@@ -14,6 +14,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
   const nftStorageClient = new NFTStorage({
     token: String(externalConfig.NFTSTORAGE_API_KEY),
   })
+  // @ts-ignore
   const { files, fields } = await new Promise(function (resolve, reject) {
     const form = new formidable.IncomingForm({ keepExtensions: true })
     form.parse(req, function (err, fields, files) {

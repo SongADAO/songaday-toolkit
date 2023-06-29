@@ -1,5 +1,3 @@
-import { SongADay__factory } from '@/types'
-import { GBM__factory, GBMInitiator__factory } from '@/types-gbm'
 import {
   GBM_CONTRACT,
   GBM_INITIATOR_CONTRACT,
@@ -12,13 +10,17 @@ import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { Checkbox } from '@chakra-ui/react'
-import { useTypedContract, useWallet } from '@raidguild/quiver'
 import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 import fetchJson from '@/utils/fetchJson'
+import { useAccount } from 'wagmi'
+import { encodeFunctionData } from 'viem'
+import { songabi } from '@/utils/abi/songabi'
+import { gbminitabi } from '@/utils/abi/gbminitabi'
+import { gbmabi } from '@/utils/abi/gbmabi'
 
 const MintAndAuctionGBM = () => {
   const [created, setCreated] = useState(false)
@@ -29,21 +31,24 @@ const MintAndAuctionGBM = () => {
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
   )
   const [loading, setLoading] = useState(false)
-  const { isConnected, chainId, provider } = useWallet()
+
+  const { isConnected } = useAccount()
+
+  // const { isConnected, chainId, provider } = useWallet()
 
   const [indexingSong, setIndexingSong] = useState<boolean>(false)
 
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory
-  )
+  // const { contract: songContract } = useTypedContract(
+  //   SONG_CONTRACT,
+  //   SongADay__factory
+  // )
 
-  const { contract: gbmContract } = useTypedContract(GBM_CONTRACT, GBM__factory)
+  // const { contract: gbmContract } = useTypedContract(GBM_CONTRACT, GBM__factory)
 
-  const { contract: gbmInitiatorContract } = useTypedContract(
-    GBM_INITIATOR_CONTRACT,
-    GBMInitiator__factory
-  )
+  // const { contract: gbmInitiatorContract } = useTypedContract(
+  //   GBM_INITIATOR_CONTRACT,
+  //   GBMInitiator__factory
+  // )
 
   const opts = {
     allowedDomains: [/gnosis-safe.io/],
@@ -93,35 +98,46 @@ const MintAndAuctionGBM = () => {
 
     const transactions = [
       {
-        to: songContract?.address ?? '',
+        to: SONG_CONTRACT ?? '',
         value: '0',
-        data: songContract?.interface.encodeFunctionData('dailyMint', [
-          songNbr,
-          ipfsHash,
-        ]) as string,
+        data: encodeFunctionData({
+          abi: songabi,
+          functionName: 'dailyMint',
+          args: [BigInt(songNbr), ipfsHash],
+        }),
       },
       {
-        to: songContract?.address ?? '',
+        to: SONG_CONTRACT ?? '',
         value: '0',
-        data: songContract?.interface.encodeFunctionData(
-          'safeTransferFrom(address,address,uint256)' as any,
-          [TREASURY_CONTRACT, GBM_CONTRACT, songNbr]
-        ) as string,
+        data: encodeFunctionData({
+          abi: songabi,
+          functionName: 'safeTransferFrom',
+          args: [TREASURY_CONTRACT, GBM_CONTRACT, BigInt(songNbr)],
+        }),
       },
       {
-        to: gbmInitiatorContract?.address ?? '',
+        to: GBM_INITIATOR_CONTRACT ?? '',
         value: '0',
-        data: gbmInitiatorContract?.interface.encodeFunctionData('setEndTime', [
-          endTimestamp,
-        ]) as string,
+        data: encodeFunctionData({
+          abi: gbminitabi,
+          functionName: 'setEndTime',
+          args: [BigInt(endTimestamp)],
+        }),
       },
       {
-        to: gbmContract?.address ?? '',
+        to: GBM_CONTRACT ?? '',
         value: '0',
-        data: gbmContract?.interface.encodeFunctionData(
-          'registerAnAuctionToken',
-          [SONG_CONTRACT, songNbr, '0x73ad2146', 1, GBM_INITIATOR_CONTRACT]
-        ) as string,
+        data: encodeFunctionData({
+          abi: gbmabi,
+          functionName: 'registerAnAuctionToken',
+          args: [
+            SONG_CONTRACT,
+            BigInt(songNbr),
+            '0x73ad2146',
+            BigInt(1),
+            GBM_INITIATOR_CONTRACT,
+          ],
+        }),
       },
     ]
 

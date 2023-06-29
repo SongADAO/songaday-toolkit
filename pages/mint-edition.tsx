@@ -1,13 +1,10 @@
 import { ethers } from 'ethers'
 import { AppLayout } from '@/components/AppLayout'
-import { SongADayEditions__factory } from '@/types-edition'
 import {
   TREASURY_CONTRACT_OPTIMISM,
   SONG_EDITION_CONTRACT,
   SONG_EDITION_CHAIN_ID,
 } from '@/utils/constants'
-import { useTypedContract, useWriteContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -17,6 +14,10 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { DateTime } from 'luxon'
 import { SplitsClient } from '@0xsplits/splits-sdk'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
+import { writeContract, waitForTransaction } from '@wagmi/core'
+import { editionabi } from '@/utils/abi/editionabi'
+import { useEthersProvider, useEthersSigner } from '@/utils/hooks/ethers'
 
 type FormValues = {
   split: string
@@ -51,11 +52,11 @@ const MintEdition = () => {
 
   const [splitAddress, setSplitAddress] = useState('')
 
-  const { isConnected, chainId, provider } = useWallet()
-  const { contract: songEditionContract } = useTypedContract(
-    SONG_EDITION_CONTRACT,
-    SongADayEditions__factory
-  )
+  const { chain } = useNetwork()
+  const { isConnected } = useAccount()
+  const chainId = chain.id
+  const signer = useEthersSigner()
+  const provider = useEthersProvider()
 
   const handleConfirm = () => {
     toast.success('Song Minted')
@@ -65,16 +66,6 @@ const MintEdition = () => {
     toast.error(error.error?.message || error.message)
   }
   const handleResponse = () => toast.success('Waiting for tx to confirm')
-
-  const { mutate: registerMint } = useWriteContract(
-    songEditionContract,
-    'registerMint',
-    {
-      onError: handleError,
-      onResponse: handleResponse,
-      onConfirmation: handleConfirm,
-    }
-  )
 
   const standardizeSignature = (signature: string) => {
     if (signature.slice(-2) === '00') {
@@ -99,13 +90,13 @@ const MintEdition = () => {
         throw new Error('Please switch to Optimism')
       }
 
-      const chainIdNumber = parseInt(SONG_EDITION_CHAIN_ID, 16)
-      console.log(chainIdNumber)
+      const chainIdNumber = SONG_EDITION_CHAIN_ID
 
       const splitsClient = new SplitsClient({
         chainId: chainIdNumber,
         provider: provider as any,
-        signer: provider?.getSigner() as any,
+        // @ts-ignore
+        signer: signer,
       })
 
       const distributorFeePercent =
@@ -207,20 +198,30 @@ const MintEdition = () => {
       console.log(data.split)
       console.log(feeNumerator)
 
-      await registerMint(
-        data.songNbr,
-        ipfsUrl,
-        startTimeDateSeconds,
-        endTimeDateSeconds,
-        mintPriceWei,
-        data.sadnftOwner,
-        data.sadnftOwnerSignature,
-        data.split,
-        feeNumerator
-      )
+      const { hash } = await writeContract({
+        address: SONG_EDITION_CONTRACT,
+        abi: editionabi,
+        functionName: 'registerMint',
+        args: [
+          data.songNbr,
+          ipfsUrl,
+          startTimeDateSeconds,
+          endTimeDateSeconds,
+          mintPriceWei,
+          data.sadnftOwner,
+          data.sadnftOwnerSignature,
+          data.split,
+          feeNumerator,
+        ],
+      })
+      handleResponse()
+      await waitForTransaction({ hash })
+      handleConfirm()
+
       setMinted(true)
     } catch (error) {
       toast.error((error as any).message)
+      handleError(error)
     } finally {
       setLoading(false)
     }

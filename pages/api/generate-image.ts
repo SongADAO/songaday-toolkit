@@ -28,6 +28,7 @@ import formidable from 'formidable'
 
 export default withSession<{ image: string }>(async (req, res) => {
   try {
+    // @ts-ignore
     const { files, fields } = await new Promise(function (resolve, reject) {
       const form = new formidable.IncomingForm({ keepExtensions: true })
       form.parse(req, function (err, fields, files) {

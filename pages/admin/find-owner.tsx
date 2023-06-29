@@ -1,36 +1,33 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADay, SongADay__factory } from '@/types'
+import { songabi } from '@/utils/abi/songabi'
 import { CHAIN_ID, SONG_CONTRACT } from '@/utils/constants'
-import { useTypedContract, useReadContract } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-
+import { useContractRead } from 'wagmi'
+import { readContract } from '@wagmi/core'
 const FindOwner = () => {
   const [songNbr, setSongNbr] = useState<string>()
   const [tokenOwner, setTokenOwner] = useState<string>()
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory,
-    {
-      staticProvider: {
-        enable: true,
-        chainId: CHAIN_ID,
-      },
-    }
-  )
 
-  const { response: contractOwner } = useReadContract(songContract, 'owner', [])
+  const { data: contractOwner } = useContractRead({
+    abi: songabi,
+    address: SONG_CONTRACT,
+    functionName: 'owner',
+  })
 
   const tokenOwnerHandler = async () => {
     setTokenOwner(undefined)
     try {
-      const tokenOwner = await (songContract as SongADay)?.ownerOf(
-        songNbr?.trim() ?? ''
-      )
+      const tokenOwner = await readContract({
+        address: SONG_CONTRACT,
+        abi: songabi,
+        functionName: 'ownerOf',
+        args: [BigInt(songNbr?.trim() ?? '')],
+      })
       setTokenOwner(tokenOwner)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)

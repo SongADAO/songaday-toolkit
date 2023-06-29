@@ -2,7 +2,7 @@ import { Box } from '@chakra-ui/layout'
 import { FC } from 'react'
 
 // Card built with Chakra Ui
-export const Card: FC = ({ children }) => {
+export const Card = ({ children }) => {
   return (
     <Box
       borderWidth="1px"

@@ -1,22 +1,18 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADay, SongADay__factory } from '@/types'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useTypedContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { writeContract, waitForTransaction } from '@wagmi/core'
+import { useAccount } from 'wagmi'
+import { songabi } from '@/utils/abi/songabi'
 
 const RepairMetadata = () => {
   const [loading, setLoading] = useState(false)
-  const { isConnected } = useWallet()
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory
-  )
+  const { isConnected } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
   const [songNbrs, setSongNbrs] = useState<string>()
 
@@ -29,15 +25,21 @@ const RepairMetadata = () => {
     }
 
     try {
-      const tx = await (songContract as SongADay)?.repairMetadata(
-        songNbrs
-          .split(',')
-          .map((nbrstr) => nbrstr.trim())
-          .map(Number),
-        ipfsHashes.split(',').map((hash) => hash.trim())
-      )
+      const { hash } = await writeContract({
+        abi: songabi,
+        functionName: 'repairMetadata',
+        address: SONG_CONTRACT,
+        args: [
+          songNbrs
+            .split(',')
+            .map((nbrstr) => nbrstr.trim())
+            .map(Number),
+          ipfsHashes.split(',').map((hash) => hash.trim()),
+        ],
+      })
 
-      await tx.wait()
+      await waitForTransaction({ hash })
+
       toast.success(`Successfully repaired metadata for song ${songNbrs}`)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)

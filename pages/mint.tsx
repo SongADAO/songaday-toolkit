@@ -1,8 +1,6 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADay__factory } from '@/types'
+import { songabi } from '@/utils/abi/songabi'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { useTypedContract, useWriteContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -10,6 +8,8 @@ import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import { writeContract, waitForTransaction } from '@wagmi/core'
+import { useAccount } from 'wagmi'
 
 type FormValues = {
   songNbr: string
@@ -22,11 +22,7 @@ const Mint = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const { isConnected } = useWallet()
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory
-  )
+  const { isConnected } = useAccount()
 
   const handleConfirm = () => {
     toast.success('Song Minted')
@@ -37,20 +33,25 @@ const Mint = () => {
   }
   const handleResponse = () => toast.success('Waiting for tx to confirm')
 
-  const { mutate: mint } = useWriteContract(songContract, 'dailyMint', {
-    onError: handleError,
-    onResponse: handleResponse,
-    onConfirmation: handleConfirm,
-  })
-
   const onSubmit = async (data: FormValues) => {
     setMinted(false)
     setLoading(true)
     try {
-      await mint(data.songNbr, data.ipfsHash)
+      const { hash } = await writeContract({
+        address: SONG_CONTRACT,
+        abi: songabi,
+        functionName: 'dailyMint',
+        args: [data.songNbr, data.ipfsHash],
+      })
+
+      handleResponse()
+      await waitForTransaction({ hash })
+      handleConfirm()
+
       setMinted(true)
     } catch (error) {
       toast.error((error as any).message)
+      handleError(error)
     } finally {
       setLoading(false)
     }

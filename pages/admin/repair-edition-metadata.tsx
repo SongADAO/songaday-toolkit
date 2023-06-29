@@ -1,22 +1,20 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADayEditions, SongADayEditions__factory } from '@/types-edition'
 import { SONG_EDITION_CONTRACT, SONG_EDITION_CHAIN_ID } from '@/utils/constants'
-import { useTypedContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { useAccount, useNetwork } from 'wagmi'
+import { writeContract, waitForTransaction } from '@wagmi/core'
+import { editionabi } from '@/utils/abi/editionabi'
+import { UnsupportedChainIdError } from '@0xsplits/splits-sdk'
 
 const RepairEditionMetadata = () => {
   const [loading, setLoading] = useState(false)
-  const { isConnected, chainId } = useWallet()
-  const { contract: songEditionContract } = useTypedContract(
-    SONG_EDITION_CONTRACT,
-    SongADayEditions__factory
-  )
+  const { chain } = useNetwork()
+  const { isConnected } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
   const [songNbrs, setSongNbrs] = useState<string>()
 
@@ -29,29 +27,24 @@ const RepairEditionMetadata = () => {
     }
 
     try {
-      if (chainId !== SONG_EDITION_CHAIN_ID) {
+      if (chain.id !== SONG_EDITION_CHAIN_ID) {
         throw new Error('Please switch to Optimism')
       }
 
-      const tx = await (
-        songEditionContract as SongADayEditions
-      )?.repairMetadata(
-        songNbrs
-          .split(',')
-          .map((nbrstr) => nbrstr.trim())
-          .map(Number),
-        ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim())
-      )
+      const { hash } = await writeContract({
+        address: SONG_EDITION_CONTRACT,
+        abi: editionabi,
+        functionName: 'repairMetadata',
+        args: [
+          songNbrs
+            .split(',')
+            .map((nbrstr) => nbrstr.trim())
+            .map(Number),
+          ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim()),
+        ],
+      })
 
-      //   const tx = await (songEditionContract as SongADayEditions)?.setURI(
-      //     songNbrs
-      //       .split(',')
-      //       .map((nbrstr) => nbrstr.trim())
-      //       .map(Number)[0],
-      //     ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim())[0]
-      //   )
-
-      await tx.wait()
+      await waitForTransaction({ hash })
       toast.success(`Successfully repaired metadata for song ${songNbrs}`)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)

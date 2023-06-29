@@ -1,5 +1,5 @@
 import { SONG_CONTRACT } from '@/utils/constants'
-import { parseTokenURI } from '@raidguild/quiver'
+import { parseTokenURI } from '@/utils/helpers'
 
 export interface SongMetadata {
   name: string

@@ -10,6 +10,7 @@ import { Blob } from '@web-std/file'
 import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
+  // @ts-ignore
   const { files, fields } = await new Promise(function (resolve, reject) {
     const form = new formidable.IncomingForm({ keepExtensions: true })
     form.parse(req, function (err, fields, files) {

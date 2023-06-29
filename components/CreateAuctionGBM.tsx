@@ -1,6 +1,4 @@
 import { AppLayout } from '@/components/AppLayout'
-import { SongADay, SongADay__factory } from '@/types'
-import { GBM__factory, GBMInitiator__factory } from '@/types-gbm'
 import {
   GBM_CONTRACT,
   GBM_INITIATOR_CONTRACT,
@@ -8,8 +6,6 @@ import {
   SONG_CONTRACT,
   ZERO_ADDRESS,
 } from '@/utils/constants'
-import { useTypedContract } from '@raidguild/quiver'
-import { useWallet } from '@raidguild/quiver'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -20,6 +16,11 @@ import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
+import { useAccount, useContractRead, useNetwork } from 'wagmi'
+import { encodeFunctionData } from 'viem'
+import { songabi } from '@/utils/abi/songabi'
+import { gbminitabi } from '@/utils/abi/gbminitabi'
+import { gbmabi } from '@/utils/abi/gbmabi'
 
 const CreateAuctionGBM = () => {
   const [approved, setApproved] = useState(false)
@@ -30,19 +31,7 @@ const CreateAuctionGBM = () => {
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
   )
   const [loading, setLoading] = useState(false)
-  const { isConnected, chainId, provider } = useWallet()
-  const { contract: songContract } = useTypedContract(
-    SONG_CONTRACT,
-    SongADay__factory
-  )
-
-  const { contract: gbmContract } = useTypedContract(GBM_CONTRACT, GBM__factory)
-
-  const { contract: gbmInitiatorContract } = useTypedContract(
-    GBM_INITIATOR_CONTRACT,
-    GBMInitiator__factory
-  )
-
+  const { isConnected } = useAccount()
   const opts = {
     allowedDomains: [/gnosis-safe.io/],
   }
@@ -73,34 +62,37 @@ const CreateAuctionGBM = () => {
 
       const transactions = [
         {
-          to: songContract?.address ?? '',
+          to: SONG_CONTRACT ?? '',
           value: '0',
-          data: songContract?.interface.encodeFunctionData(
-            'safeTransferFrom(address,address,uint256)' as any,
-            [TREASURY_CONTRACT, GBM_CONTRACT, songNbr as string]
-          ) as string,
+          data: encodeFunctionData({
+            abi: songabi,
+            functionName: 'safeTransferFrom',
+            args: [TREASURY_CONTRACT, GBM_CONTRACT, BigInt(songNbr)],
+          }),
         },
         {
-          to: gbmInitiatorContract?.address ?? '',
+          to: GBM_INITIATOR_CONTRACT ?? '',
           value: '0',
-          data: gbmInitiatorContract?.interface.encodeFunctionData(
-            'setEndTime',
-            [endTimestamp]
-          ) as string,
+          data: encodeFunctionData({
+            abi: gbminitabi,
+            functionName: 'setEndTime',
+            args: [BigInt(endTimestamp)],
+          }),
         },
         {
-          to: gbmContract?.address ?? '',
+          to: GBM_CONTRACT ?? '',
           value: '0',
-          data: gbmContract?.interface.encodeFunctionData(
-            'registerAnAuctionToken',
-            [
+          data: encodeFunctionData({
+            abi: gbmabi,
+            functionName: 'registerAnAuctionToken',
+            args: [
               SONG_CONTRACT,
-              songNbr as string,
+              BigInt(songNbr),
               '0x73ad2146',
-              1,
+              BigInt(1),
               GBM_INITIATOR_CONTRACT,
-            ]
-          ) as string,
+            ],
+          }),
         },
       ]
 

@@ -1,5 +1,5 @@
 import App from 'next/app'
-import { FC } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { SWRConfig } from 'swr'
 import { Toaster } from 'react-hot-toast'
 import type { AppContext, AppProps } from 'next/app'
@@ -14,107 +14,62 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
-import { NetworkConfig, WalletProvider } from '@raidguild/quiver'
-import { IProviderOptions } from 'web3modal'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import Head from 'next/head'
 import { CHAIN_ID } from '@/utils/constants'
+import { optimism, mainnet } from '@wagmi/chains'
+import { WagmiConfig, configureChains, createConfig } from 'wagmi'
+import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { Web3Modal } from '@web3modal/react'
 
-const Noop: FC = ({ children }) => <>{children}</>
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+const ClientOnly = ({ children }) => {
+  const [isMounted, setIsMounted] = useState(false)
+  useEffect(() => setIsMounted(true), [])
+  if (!isMounted) {
+    return null
+  }
+  return <>{children}</>
+}
+
+const Noop = ({ children }: { children: ReactNode }) => <>{children}</>
 function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
 
-  const networks: NetworkConfig = {
-    '0x1': {
-      chainId: '0x1',
-      name: 'Mainnet',
-      symbol: 'ETH',
-      explorer: 'https://etherscan.io/tx/',
-      rpc: 'https://mainnet.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
-    },
-    '0x4': {
-      chainId: '0x4',
-      name: 'Rinkeby',
-      symbol: 'ETH',
-      explorer: 'https://rinkeby.etherscan.io/',
-      rpc: 'https://rinkeby.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
-    },
-    '0x5': {
-      chainId: '0x5',
-      name: 'Goerli',
-      symbol: 'ETH',
-      explorer: 'https://goerli.etherscan.io/',
-      rpc: 'https://goerli.infura.io/v3/0251872b43d94c17a58a4e5f2591a84a',
-    },
-    '0xa4b1': {
-      chainId: '0xa4b1',
-      name: 'Arbitrum One',
-      symbol: 'ETH',
-      explorer: 'https://arbiscan.io/',
-      rpc: 'https://arb-mainnet.g.alchemy.com/v2/9yAODDcRzS7_8L3_xYTQxnWWJe6K9NKB',
-    },
-    '0xa': {
-      chainId: '0xa',
-      name: 'Optimism',
-      symbol: 'ETH',
-      explorer: 'https://optimistic.etherscan.io/',
-      rpc: 'https://opt-mainnet.g.alchemy.com/v2/sFWPG81GUD_FNWqkPWm-hFnU6PZ3-waY',
-    },
-    '0x539': {
-      chainId: '0x539',
-      name: 'Hardhat',
-      symbol: 'ETH',
-      explorer: 'http://localhost:1234/',
-      rpc: 'http://localhost:8545',
-    },
-  }
+  const chains = [mainnet, optimism]
+  const projectId = '55df63e3faebd774218c3990b418f5cd'
 
-  const providerOptions: IProviderOptions = {
-    walletconnect: {
-      package: WalletConnectProvider,
-      options: {
-        rpc: {
-          1: networks['0x1'].rpc,
-          4: networks['0x4'].rpc,
-          5: networks['0x5'].rpc,
-          10: networks['0xa'].rpc,
-          42161: networks['0xa4b1'].rpc,
-          1337: networks['0x539'].rpc,
-        },
-      },
-    },
-  }
+  const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+  const wagmiConfig = createConfig({
+    autoConnect: true,
+    connectors: w3mConnectors({ projectId, chains }),
+    publicClient,
+  })
+  const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
   return (
-    <SWRConfig
-      value={{
-        fetcher: fetch,
-        shouldRetryOnError: false,
-        revalidateOnFocus: false,
-      }}
-    >
-      <Head>
-        <link rel="manifest" href="/manifest.json" />
-      </Head>
-      <WalletProvider
-        web3modalOptions={{
-          cacheProvider: true,
-          providerOptions: providerOptions,
-          theme: 'dark',
+    <ClientOnly>
+      {/** @ts-ignore */}
+      <SWRConfig
+        value={{
+          fetcher: fetch,
+          shouldRetryOnError: false,
+          revalidateOnFocus: false,
         }}
-        networks={networks}
-        defaultChainId={CHAIN_ID}
       >
-        <ChakraProvider theme={theme}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </ChakraProvider>
-        <Toaster position="bottom-center" />
-      </WalletProvider>
-    </SWRConfig>
+        <Head>
+          <link rel="manifest" href="/manifest.json" />
+        </Head>
+        <WagmiConfig config={wagmiConfig}>
+          <ChakraProvider theme={theme}>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </ChakraProvider>
+          <Toaster position="bottom-center" />
+        </WagmiConfig>
+        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+      </SWRConfig>
+    </ClientOnly>
   )
 }
 
