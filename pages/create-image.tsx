@@ -45,6 +45,7 @@ type Attributes = {
   tempo: string
   inKey: string
   videoUrl: string
+  soundxyzContract?: string
   layer: {
     location: string
     topic: string
@@ -106,6 +107,9 @@ export const CreateImage = () => {
   const handleAutoFill = (value: string) => {
     try {
       const attributes = value.split('	')
+
+      const songNbr = Number(attributes[0])
+
       setValue('songNbr', attributes[0])
       setValue(
         'date',
@@ -127,7 +131,16 @@ export const CreateImage = () => {
       setValue('inKey', attributes[17])
       setValue('tempo', attributes[18])
       setValue('videoUrl', attributes[19])
-      setValue('description', attributes[21])
+
+      if (songNbr >= 5479) {
+        // Year >= 16
+        setValue('soundxyzContract', attributes[20])
+        setValue('description', attributes[22])
+      } else {
+        // Year <= 15
+        setValue('soundxyzContract', '')
+        setValue('description', attributes[21])
+      }
     } catch (error) {
       console.log({ error })
       toast.error('Number of columns incorrect')
@@ -185,6 +198,15 @@ export const CreateImage = () => {
                   </FormControl>
                 </Box>
               </Wrap>
+              <Box>
+                <FormControl>
+                  <FormLabel>sound.xyz Contract</FormLabel>
+                  <Textarea
+                    placeholder="sound.xyz Contract"
+                    {...register('soundxyzContract')}
+                  />
+                </FormControl>
+              </Box>
               <Box>
                 <FormControl>
                   <FormLabel>Description</FormLabel>

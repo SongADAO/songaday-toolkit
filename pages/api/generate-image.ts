@@ -134,6 +134,7 @@ export default withSession<{ image: string }>(async (req, res) => {
       length: formatRecord(record['length']),
       inKey: formatRecord(record.inKey),
       tempo: formatRecord(record.tempo),
+      soundxyzContract: formatRecord(record.soundxyzContract),
       year,
       background,
     }

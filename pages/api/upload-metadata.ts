@@ -79,6 +79,13 @@ export default withSession<{ hash: string }>(async (req, res) => {
     },
   ]
 
+  if (attributes?.soundxyzContract) {
+    attributesArray.push({
+      trait_type: 'Sound.xyz Edition Contract',
+      value: attributes?.soundxyzContract,
+    })
+  }
+
   const attributePusher = (name: string, value: string | number) => {
     if (value) {
       attributesArray.push({ trait_type: name, value })
