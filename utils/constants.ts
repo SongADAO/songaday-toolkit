@@ -107,6 +107,9 @@ export const BULK_ROUTES = [
   },
 ]
 
+export const INFURA_ID = '60a7b2c16321439a917c9e74a994f7df'
+// export const INFURA_ID = '0251872b43d94c17a58a4e5f2591a84a'
+
 export const CHAIN_ID = '0x1'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 // export const SONG_CONTRACT = '0x0dB2f6BfDfF090e3c8Eef8eA5686bb1589611424'

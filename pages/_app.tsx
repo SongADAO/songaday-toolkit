@@ -15,10 +15,11 @@ import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import Head from 'next/head'
-import { CHAIN_ID } from '@/utils/constants'
-import { optimism, mainnet } from '@wagmi/chains'
+import { CHAIN_ID, INFURA_ID } from '@/utils/constants'
+import { arbitrum, optimism, mainnet } from '@wagmi/chains'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { infuraProvider } from 'wagmi/providers/infura'
 import { Web3Modal } from '@web3modal/react'
 
 const ClientOnly = ({ children }) => {
@@ -35,10 +36,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
 
-  const chains = [mainnet, optimism]
+  const chains = [mainnet, optimism, arbitrum]
   const projectId = '55df63e3faebd774218c3990b418f5cd'
 
-  const { publicClient } = configureChains(chains, [w3mProvider({ projectId })])
+  const { publicClient } = configureChains(chains, [
+    infuraProvider({ apiKey: INFURA_ID }),
+    // w3mProvider({ projectId }),
+  ])
   const wagmiConfig = createConfig({
     autoConnect: true,
     connectors: w3mConnectors({ projectId, chains }),
