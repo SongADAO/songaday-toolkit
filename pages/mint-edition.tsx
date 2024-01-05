@@ -54,7 +54,7 @@ const MintEdition = () => {
 
   const { chain } = useNetwork()
   const { isConnected } = useAccount()
-  const chainId = chain.id
+  const chainId = chain?.id
   const signer = useEthersSigner()
   const provider = useEthersProvider()
 

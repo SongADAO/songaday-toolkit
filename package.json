@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@0xsplits/splits-sdk": "^2.5.3",
+    "@apollo/client": "^3.8.8",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
@@ -23,6 +24,8 @@
     "@types/sharp": "^0.29.4",
     "@types/tempy": "^0.3.0",
     "@web-std/file": "^3.0.0",
+    "@web3modal/ethereum": "^2.4.7",
+    "@web3modal/react": "^2.4.7",
     "@zoralabs/zdk": "^1.2.6",
     "algoliasearch": "^4.13.1",
     "d3-color": "^3.0.1",
@@ -47,9 +50,7 @@
     "swr": "^1.0.1",
     "tempy": "^2.0.0",
     "viem": "^1.1.6",
-    "wagmi": "^1.2.1",
-    "@web3modal/ethereum": "^2.4.7",
-    "@web3modal/react": "^2.4.7"
+    "wagmi": "^1.2.1"
   },
   "devDependencies": {
     "@types/formidable": "^2.0.0",

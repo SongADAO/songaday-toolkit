@@ -45,6 +45,11 @@ export const ROUTES = [
     name: 'Index Songs',
     description: 'Index all songs in the Song A Day contract',
   },
+  {
+    path: '/soundxyz-winners',
+    name: 'Sound.xyz Winners',
+    description: 'Sound.xyz Winners',
+  },
 ]
 
 export const AUCTION_ROUTES = [
@@ -101,6 +106,9 @@ export const BULK_ROUTES = [
     description: 'Generate metadata from CSV file',
   },
 ]
+
+export const INFURA_ID = '60a7b2c16321439a917c9e74a994f7df'
+// export const INFURA_ID = '0251872b43d94c17a58a4e5f2591a84a'
 
 export const CHAIN_ID = '0x1'
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
