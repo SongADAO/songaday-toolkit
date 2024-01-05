@@ -1,19 +1,29 @@
 import { AppLayout } from '@/components/AppLayout'
 import { songabi } from '@/utils/abi/songabi'
-import { SONG_CONTRACT } from '@/utils/constants'
+import { SONG_CONTRACT, TREASURY_CONTRACT } from '@/utils/constants'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Checkbox,
+  Tag,
+} from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import { useAccount } from 'wagmi'
+import { useAccount, type PublicClient, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
+import { readContract } from '@wagmi/core'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
 query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
@@ -56,6 +66,12 @@ query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
 
 const SoundxyzWinners = () => {
   const now = new Date().getTime()
+
+  const mainnetPublicClient = usePublicClient({ chainId: 1 })
+
+  const optimismPublicClient = usePublicClient({ chainId: 10 })
+
+  const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
   const { isConnected } = useAccount()
 
@@ -100,16 +116,20 @@ const SoundxyzWinners = () => {
 
           return {
             tokenId: latestEditionSongNbr,
+            id: edge.node.id,
+            title: edge.node.title,
             goldenEggNft: edge.node.goldenEggNft,
             numSold: Number(edge.node.numSold),
             totalRaised: BigInt(Number(edge.node.totalRaised)),
             endsAt: Number(edge.node.finalSaleScheduleEndTimestamp),
             endsAtDate: new Date(
               Number(edge.node.finalSaleScheduleEndTimestamp)
-            ).toLocaleString(DateTime.DATE_MED),
-            metadata: {
-              name: '...',
-            },
+            ).toLocaleString(),
+            completed: now > Number(edge.node.finalSaleScheduleEndTimestamp),
+            tokenOwner: null,
+            distributed: null,
+            isDistributing: false,
+            willDistribute: false,
           }
         })
 
@@ -123,17 +143,145 @@ const SoundxyzWinners = () => {
     return soundxyzBids
   }
 
+  async function lookupTokenHolders(winners) {
+    const sadContract = {
+      abi: songabi,
+      address: SONG_CONTRACT,
+    } as const
+
+    const contracts = winners.map((winner) => {
+      return {
+        ...sadContract,
+        functionName: 'ownerOf',
+        args: [BigInt(winner.tokenId)],
+      }
+    })
+
+    const ownerOfResults = await mainnetPublicClient.multicall({
+      contracts: contracts,
+    })
+
+    for (const i in winners) {
+      if (ownerOfResults[i].status !== 'success') {
+        throw new Error('could not determine token holder')
+      }
+
+      winners[i].tokenOwner = ownerOfResults[i].result
+
+      if (
+        winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
+      ) {
+        winners[i].distributed = true
+      }
+    }
+
+    return winners
+  }
+
   async function initWinners() {
     try {
-      const winners = await fetchSongFromSubgraph()
-      setWinners(winners)
-    } catch (e) {
-      console.log('song chart subgraph fetch error', e)
+      setWinners(await lookupTokenHolders(await fetchSongFromSubgraph()))
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
     }
   }
 
+  function toggleChecked(tokenId) {
+    setWinners(
+      winners.map((winner) => {
+        if (winner.tokenId === tokenId) {
+          winner.willDistribute = !winner.willDistribute
+        }
+
+        return winner
+      })
+    )
+  }
+
+  async function distribute(tokenId) {
+    setWinners(
+      winners.map((winner) => {
+        if (winner.tokenId === tokenId) {
+          winner.isDistributing = true
+        }
+
+        return winner
+      })
+    )
+
+    try {
+      const toDistribute = winners.find((winner) => {
+        return winner.tokenId === tokenId
+      })
+      console.log(toDistribute)
+
+      const isAddressAContractMainnet = await isContract(
+        toDistribute.goldenEggNft.owner.publicAddress,
+        mainnetPublicClient
+      )
+
+      if (isAddressAContractMainnet) {
+        throw new Error(
+          'Address is a contract on mainnet. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractOptimism = await isContract(
+        toDistribute.goldenEggNft.owner.publicAddress,
+        optimismPublicClient
+      )
+
+      if (isAddressAContractOptimism) {
+        throw new Error(
+          'Address is a contract on optimism. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractArbitrum = await isContract(
+        toDistribute.goldenEggNft.owner.publicAddress,
+        arbitrumPublicClient
+      )
+
+      if (isAddressAContractArbitrum) {
+        throw new Error(
+          'Address is a contract on arbitrum. Unverified transfer is unsafe'
+        )
+      }
+
+      //   await timeout(3000)
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    } finally {
+      setWinners(
+        winners.map((winner) => {
+          if (winner.tokenId === tokenId) {
+            winner.isDistributing = false
+          }
+
+          return winner
+        })
+      )
+    }
+  }
+
+  async function isContract(address, publicClient) {
+    const bytecode = await publicClient.getBytecode({
+      //   address,
+      address: SONG_CONTRACT,
+    })
+
+    console.log(bytecode)
+
+    return bytecode ? true : false
+  }
+
+  function timeout(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
   useEffect(() => {
-    console.log('init winners')
     initWinners()
   }, [])
 
@@ -141,32 +289,131 @@ const SoundxyzWinners = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>Sound.xyz Winners</Heading>
-          <Table w="100%" size="sm">
+          <Heading>Sound.xyz 1/1 Winners</Heading>
+          <Table w="100%" size="sm" border="1px solid rgb(74, 85, 104)">
             <Thead>
               <Tr>
                 <Th>Song</Th>
-                <Th>Ends At</Th>
-                <Th>Complete</Th>
-                <Th>Sold</Th>
-                <Th>Raised</Th>
-                <Th>Winner Address</Th>
-                <Th>Winner ENS</Th>
+                <Th>Winner</Th>
+                {/* <Th>Holder</Th> */}
+                <Th>Distribute</Th>
               </Tr>
             </Thead>
-            <Tbody>
-              {winners.map((winner, i) => (
-                <Tr key={winner.id}>
-                  <Td>{winner.tokenId}</Td>
-                  <Td>{winner.endsAtDate}</Td>
-                  <Td>{now > winner.endsAt ? 'Yes' : 'No'}</Td>
-                  <Td>{winner.numSold}</Td>
-                  <Td>{ethers.utils.formatEther(winner.totalRaised)}</Td>
-                  <Td>{winner?.goldenEggNft?.owner?.publicAddress}</Td>
-                  <Td>{winner?.goldenEggNft?.owner?.ens}</Td>
+
+            {winners.map((winner, i) => (
+              <Tbody key={`${winner.id}`}>
+                <Tr key={`${winner.id}-title`}>
+                  <Td colSpan={3} border="0" paddingBottom="0">
+                    <Text mb="2" fontSize="12px" fontWeight="700">
+                      {winner.title}
+                    </Text>
+                  </Td>
                 </Tr>
-              ))}
-            </Tbody>
+                <Tr key={`${winner.id}-data`}>
+                  <Td paddingTop="0" verticalAlign="bottom">
+                    <Text fontSize="12px">Song: {winner.tokenId}</Text>
+
+                    <Text fontSize="12px">Sold: {winner.numSold}</Text>
+                    <Text fontSize="12px">
+                      Raised: {ethers.utils.formatEther(winner.totalRaised)} Ξ
+                    </Text>
+
+                    <Text fontSize="12px">Ends: {winner.endsAtDate}</Text>
+
+                    <Text
+                      display="flex"
+                      alignItems="center"
+                      fontSize="12px"
+                      mt={2}
+                    >
+                      Sale Complete:{' '}
+                      {(winner.completed && (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="green"
+                          ml={2}
+                        >
+                          Yes
+                        </Tag>
+                      )) || (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="red"
+                          ml={2}
+                        >
+                          No
+                        </Tag>
+                      )}
+                    </Text>
+
+                    <Text
+                      display="flex"
+                      alignItems="center"
+                      fontSize="12px"
+                      mt={2}
+                    >
+                      1/1 Distributed:{' '}
+                      {(winner.distributed && (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="green"
+                          ml={1}
+                        >
+                          Yes
+                        </Tag>
+                      )) || (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="red"
+                          ml={1}
+                        >
+                          No
+                        </Tag>
+                      )}
+                    </Text>
+                  </Td>
+
+                  <Td paddingTop="0" verticalAlign="bottom">
+                    <Text fontSize="12px">
+                      {winner?.goldenEggNft?.owner?.ens ?? ''}&nbsp;
+                    </Text>
+                    <Text fontSize="12px">
+                      {winner?.goldenEggNft?.owner?.publicAddress}
+                    </Text>
+                  </Td>
+
+                  <Td paddingTop="0" verticalAlign="bottom">
+                    {winner.completed &&
+                      winner.tokenOwner &&
+                      !winner.distributed && (
+                        <Button
+                          type="button"
+                          isLoading={winner.isDistributing}
+                          onClick={() => distribute(winner.tokenId)}
+                        >
+                          Distribute
+                        </Button>
+                      )}
+
+                    {/* {winner.completed &&
+                      winner.tokenOwner &&
+                      !winner.distributed && (
+                        <Checkbox
+                          colorScheme="green"
+                          isChecked={winner.willDistribute === true}
+                          onChange={(e) => toggleChecked(winner.tokenId)}
+                        >
+                          Distribute
+                        </Checkbox>
+                      )} */}
+                  </Td>
+                </Tr>
+              </Tbody>
+            ))}
           </Table>
         </Stack>
       )}
