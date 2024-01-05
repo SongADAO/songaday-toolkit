@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@0xsplits/splits-sdk": "^2.5.3",
+    "@apollo/client": "^3.8.8",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
