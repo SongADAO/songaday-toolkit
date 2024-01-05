@@ -45,6 +45,11 @@ export const ROUTES = [
     name: 'Index Songs',
     description: 'Index all songs in the Song A Day contract',
   },
+  {
+    path: '/soundxyz-winners',
+    name: 'Sound.xyz Winners',
+    description: 'Sound.xyz Winners',
+  },
 ]
 
 export const AUCTION_ROUTES = [
