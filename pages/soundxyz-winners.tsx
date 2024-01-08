@@ -145,7 +145,7 @@ const SoundxyzWinners = () => {
       soundxyzBids = soundxyzBids.concat(soundxyzBidsSet)
     } while (hasNextPage)
 
-    console.log(soundxyzBids)
+    // console.log(soundxyzBids)
 
     return soundxyzBids
   }
@@ -222,10 +222,12 @@ const SoundxyzWinners = () => {
       const toDistribute = winners.find((winner) => {
         return winner.tokenId === tokenId
       })
-      console.log(toDistribute)
+      // console.log(toDistribute)
+
+      const winnerAddress = toDistribute.goldenEggNft.owner.publicAddress
 
       const isAddressAContractMainnet = await isContract(
-        toDistribute.goldenEggNft.owner.publicAddress,
+        winnerAddress,
         mainnetPublicClient
       )
 
@@ -236,7 +238,7 @@ const SoundxyzWinners = () => {
       }
 
       const isAddressAContractOptimism = await isContract(
-        toDistribute.goldenEggNft.owner.publicAddress,
+        winnerAddress,
         optimismPublicClient
       )
 
@@ -247,7 +249,7 @@ const SoundxyzWinners = () => {
       }
 
       const isAddressAContractArbitrum = await isContract(
-        toDistribute.goldenEggNft.owner.publicAddress,
+        winnerAddress,
         arbitrumPublicClient
       )
 
@@ -257,12 +259,14 @@ const SoundxyzWinners = () => {
         )
       }
 
+      // console.log(winnerAddress)
+
       const { hash } = await writeContract({
         chainId: 1,
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'safeTransferFrom',
-        args: [TREASURY_CONTRACT, SONG_CONTRACT, BigInt(toDistribute.tokenId)],
+        args: [TREASURY_CONTRACT, winnerAddress, BigInt(toDistribute.tokenId)],
       })
 
       toast.success('Waiting for tx to confirm')
@@ -401,7 +405,6 @@ const SoundxyzWinners = () => {
                     </Text>
                   </Td>
 
-                  <Td>{chain.id} </Td>
                   <Td paddingTop="0" verticalAlign="bottom">
                     {winner.completed &&
                       winner.tokenOwner &&
