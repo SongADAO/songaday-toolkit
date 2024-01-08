@@ -19,7 +19,12 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import { useAccount, type PublicClient, usePublicClient } from 'wagmi'
+import {
+  useAccount,
+  useNetwork,
+  type PublicClient,
+  usePublicClient,
+} from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
@@ -74,6 +79,8 @@ const SoundxyzWinners = () => {
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
   const { isConnected } = useAccount()
+
+  const { chain } = useNetwork()
 
   const [winners, setWinners] = useState<any>([])
 
@@ -145,6 +152,7 @@ const SoundxyzWinners = () => {
 
   async function lookupTokenHolders(winners) {
     const sadContract = {
+      chainId: 1,
       abi: songabi,
       address: SONG_CONTRACT,
     } as const
@@ -249,7 +257,19 @@ const SoundxyzWinners = () => {
         )
       }
 
-      //   await timeout(3000)
+      const { hash } = await writeContract({
+        chainId: 1,
+        address: SONG_CONTRACT,
+        abi: songabi,
+        functionName: 'safeTransferFrom',
+        args: [TREASURY_CONTRACT, SONG_CONTRACT, BigInt(toDistribute.tokenId)],
+      })
+
+      toast.success('Waiting for tx to confirm')
+      await waitForTransaction({ hash })
+      toast.success('Song Transferred')
+
+      initWinners()
     } catch (error) {
       console.log({ error })
       toast.error((error as any).message)
@@ -267,18 +287,13 @@ const SoundxyzWinners = () => {
   }
 
   async function isContract(address, publicClient) {
+    // address = SONG_CONTRACT // DEBUG
+
     const bytecode = await publicClient.getBytecode({
       address,
-      //   address: SONG_CONTRACT,
     })
 
-    console.log(bytecode)
-
     return bytecode ? true : false
-  }
-
-  function timeout(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
   useEffect(() => {
@@ -386,10 +401,12 @@ const SoundxyzWinners = () => {
                     </Text>
                   </Td>
 
+                  <Td>{chain.id} </Td>
                   <Td paddingTop="0" verticalAlign="bottom">
                     {winner.completed &&
                       winner.tokenOwner &&
-                      !winner.distributed && (
+                      !winner.distributed &&
+                      chain?.id === 1 && (
                         <Button
                           type="button"
                           isLoading={winner.isDistributing}
