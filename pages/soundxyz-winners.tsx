@@ -268,8 +268,8 @@ const SoundxyzWinners = () => {
 
   async function isContract(address, publicClient) {
     const bytecode = await publicClient.getBytecode({
-      //   address,
-      address: SONG_CONTRACT,
+      address,
+      //   address: SONG_CONTRACT,
     })
 
     console.log(bytecode)
