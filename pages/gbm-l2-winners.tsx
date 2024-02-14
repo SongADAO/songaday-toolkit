@@ -104,7 +104,7 @@ const GBML2Winners = () => {
 
     const auctions = eventsReversed.map((event) => {
       return {
-        auctionId: event.args._auctionID.toString(),
+        _auctionID: event.args._auctionID,
         contractAddress: event.args._contractAddress,
         tokenId: event.args._tokenID.toString(),
       }
@@ -123,16 +123,16 @@ const GBML2Winners = () => {
       }
     })
 
-    const ownerOfResults = await mainnetPublicClient.multicall({
+    const results = await mainnetPublicClient.multicall({
       contracts: contracts,
     })
 
     for (const i in winners) {
-      if (ownerOfResults[i].status !== 'success') {
+      if (results[i].status !== 'success') {
         throw new Error('could not determine token holder')
       }
 
-      winners[i].tokenOwner = ownerOfResults[i].result
+      winners[i].tokenOwner = results[i].result
 
       if (
         winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
@@ -152,18 +152,71 @@ const GBML2Winners = () => {
       return {
         ...gbmContract,
         functionName: 'getAuctionHighestBidder',
-        args: [BigInt(winner.auctionId)],
+        args: [winner._auctionID],
       }
     })
 
-    const highestBidderResults = await auctionPublicClient.multicall({
+    const results = await auctionPublicClient.multicall({
       contracts: contracts,
     })
 
     for (const i in winners) {
-      console.log(highestBidderResults[i])
-      if (highestBidderResults[i].status === 'success') {
-        winners[i].highestBidder = highestBidderResults[i].result
+      console.log(results[i])
+      if (
+        results[i].status === 'success' &&
+        results[i].result !== '0x0000000000000000000000000000000000000000'
+      ) {
+        winners[i].highestBidder = results[i].result
+      }
+    }
+    console.log(winners)
+
+    return winners
+  }
+
+  async function lookupEndTime(winners) {
+    const contracts = winners.map((winner) => {
+      return {
+        ...gbmContract,
+        functionName: 'getAuctionEndTime',
+        args: [winner._auctionID],
+      }
+    })
+
+    const results = await auctionPublicClient.multicall({
+      contracts: contracts,
+    })
+
+    for (const i in winners) {
+      console.log(results[i])
+      if (results[i].status === 'success') {
+        winners[i].endsAt = Number(results[i].result) * 1000
+        winners[i].endsAtDate = new Date(winners[i].endsAt).toLocaleString()
+        winners[i].completed = now > winners[i].endsAt
+      }
+    }
+    console.log(winners)
+
+    return winners
+  }
+
+  async function wasClaimed(winners) {
+    const contracts = winners.map((winner) => {
+      return {
+        ...gbmContract,
+        functionName: 'wasClaimed',
+        args: [winner._auctionID],
+      }
+    })
+
+    const results = await auctionPublicClient.multicall({
+      contracts: contracts,
+    })
+
+    for (const i in winners) {
+      console.log(results[i])
+      if (results[i].status === 'success') {
+        winners[i].claimed = results[i].result
       }
     }
     console.log(winners)
@@ -174,8 +227,12 @@ const GBML2Winners = () => {
   async function initWinners() {
     try {
       setWinners(
-        await lookupHighestBidder(
-          await lookupTokenHolders(await fetchSongFromSubgraph())
+        await wasClaimed(
+          await lookupEndTime(
+            await lookupHighestBidder(
+              await lookupTokenHolders(await fetchSongFromSubgraph())
+            )
+          )
         )
       )
     } catch (error) {
@@ -213,7 +270,7 @@ const GBML2Winners = () => {
       })
       // console.log(toDistribute)
 
-      const winnerAddress = toDistribute.goldenEggNft.owner.publicAddress
+      const winnerAddress = toDistribute.highestBidder
 
       const isAddressAContractMainnet = await isContract(
         winnerAddress,
@@ -323,13 +380,17 @@ const GBML2Winners = () => {
                   <Td paddingTop="0" verticalAlign="bottom">
                     <Text fontSize="12px">Song: {winner.tokenId}</Text>
 
+                    <Text fontSize="12px" mt={2}>
+                      Ends At: {winner?.endsAtDate}
+                    </Text>
+
                     <Text
                       display="flex"
                       alignItems="center"
                       fontSize="12px"
                       mt={2}
                     >
-                      Sale Complete:{' '}
+                      Auction Complete:{' '}
                       {(winner.completed && (
                         <Tag
                           fontWeight="700"
@@ -345,6 +406,34 @@ const GBML2Winners = () => {
                           variant="solid"
                           colorScheme="red"
                           ml={2}
+                        >
+                          No
+                        </Tag>
+                      )}
+                    </Text>
+
+                    <Text
+                      display="flex"
+                      alignItems="center"
+                      fontSize="12px"
+                      mt={2}
+                    >
+                      Funds Claimed:{' '}
+                      {(winner.claimed && (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="green"
+                          ml={1}
+                        >
+                          Yes
+                        </Tag>
+                      )) || (
+                        <Tag
+                          fontWeight="700"
+                          variant="solid"
+                          colorScheme="red"
+                          ml={1}
                         >
                           No
                         </Tag>
