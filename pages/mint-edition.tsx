@@ -54,7 +54,6 @@ const MintEdition = () => {
 
   const { chain } = useNetwork()
   const { isConnected } = useAccount()
-  const chainId = chain?.id
   const signer = useEthersSigner()
   const provider = useEthersProvider()
 
@@ -80,13 +79,13 @@ const MintEdition = () => {
   }
 
   const onCreateSplit = async (data: SplitFormValues) => {
-    if (!isConnected || !provider || !chainId) {
+    if (!isConnected || !provider || !chain?.id) {
       return
     }
 
     setSplitLoading(true)
     try {
-      if (chainId !== SONG_EDITION_CHAIN_ID) {
+      if (chain?.id !== SONG_EDITION_CHAIN_ID) {
         throw new Error('Please switch to Optimism')
       }
 
@@ -139,14 +138,14 @@ const MintEdition = () => {
   }
 
   const onSubmit = async (data: FormValues) => {
-    if (!isConnected || !provider || !chainId) {
+    if (!isConnected || !provider || !chain?.id) {
       return
     }
 
     setMinted(false)
     setLoading(true)
     try {
-      if (chainId !== SONG_EDITION_CHAIN_ID) {
+      if (chain?.id !== SONG_EDITION_CHAIN_ID) {
         throw new Error('Please switch to Optimism')
       }
 
@@ -228,10 +227,10 @@ const MintEdition = () => {
   }
   return (
     <Stack spacing="6">
-      {isConnected && chainId !== SONG_EDITION_CHAIN_ID && (
+      {isConnected && chain?.id !== SONG_EDITION_CHAIN_ID && (
         <Text>Please switch to Optimism</Text>
       )}
-      {isConnected && chainId === SONG_EDITION_CHAIN_ID && (
+      {isConnected && chain?.id === SONG_EDITION_CHAIN_ID && (
         <Stack>
           <Heading>Mint a song edition</Heading>
           <Text>
