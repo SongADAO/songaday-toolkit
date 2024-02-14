@@ -60,6 +60,10 @@ const GBML2Winners = () => {
 
   const [winners, setWinners] = useState<any>([])
 
+  const [claims, setClaims] = useState<BigInt[]>([])
+
+  const [isClaiming, setIsClaiming] = useState<boolean>(false)
+
   const auctionNetwork = GBM_L2_CHAIN
 
   const auctionAddress = GBM_L2_CONTRACT_ADDRESS
@@ -79,6 +83,16 @@ const GBML2Winners = () => {
     abi: gbmabil2,
     address: auctionAddress,
   } as const
+
+  async function isContract(address, publicClient) {
+    // address = SONG_CONTRACT // DEBUG
+
+    const bytecode = await publicClient.getBytecode({
+      address,
+    })
+
+    return bytecode ? true : false
+  }
 
   async function fetchSongFromSubgraph() {
     const auctionProvider = new JsonRpcProvider(auctionRpc)
@@ -241,6 +255,19 @@ const GBML2Winners = () => {
     }
   }
 
+  function initClaims() {
+    try {
+      setClaims(
+        winners
+          .filter((winner) => winner.completed && !winner.claimed)
+          .map((claim) => claim._auctionID)
+      )
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    }
+  }
+
   function toggleChecked(tokenId) {
     setWinners(
       winners.map((winner) => {
@@ -339,15 +366,36 @@ const GBML2Winners = () => {
     }
   }
 
-  async function isContract(address, publicClient) {
-    // address = SONG_CONTRACT // DEBUG
+  async function claim(claims) {
+    setIsClaiming(true)
 
-    const bytecode = await publicClient.getBytecode({
-      address,
-    })
+    console.log(claims)
 
-    return bytecode ? true : false
+    try {
+      const { hash } = await writeContract({
+        chainId: auctionNetwork,
+        address: auctionAddress,
+        abi: gbmabil2,
+        functionName: 'claimMultiple',
+        args: [claims],
+      })
+
+      toast.success('Waiting for tx to confirm')
+      await waitForTransaction({ hash })
+      toast.success('Song Transferred')
+
+      initClaims()
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    } finally {
+      setIsClaiming(false)
+    }
   }
+
+  useEffect(() => {
+    initClaims()
+  }, [winners])
 
   useEffect(() => {
     initWinners()
@@ -357,12 +405,23 @@ const GBML2Winners = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>GBM L2 1/1 Winners</Heading>
+          <Heading>GBM L2 Winners</Heading>
+
+          <Box>
+            <Button
+              type="button"
+              isLoading={isClaiming}
+              onClick={() => claim(claims)}
+            >
+              Claim Funds
+            </Button>
+          </Box>
+
           <Table w="100%" size="sm" border="1px solid rgb(74, 85, 104)">
             <Thead>
               <Tr>
                 <Th>Song</Th>
-                <Th>Winner</Th>
+                <Th>High Bidder</Th>
                 <Th>Distribute</Th>
               </Tr>
             </Thead>
@@ -446,7 +505,7 @@ const GBML2Winners = () => {
                       fontSize="12px"
                       mt={2}
                     >
-                      1/1 Distributed:{' '}
+                      Distributed:{' '}
                       {(winner.distributed && (
                         <Tag
                           fontWeight="700"

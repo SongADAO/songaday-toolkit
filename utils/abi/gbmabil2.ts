@@ -280,6 +280,19 @@ export const gbmabil2 = [
   {
     inputs: [
       {
+        internalType: 'uint256[]',
+        name: '_auctionIDs',
+        type: 'uint256[]',
+      },
+    ],
+    name: 'claimMultiple',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'uint256',
         name: '_auctionID',
         type: 'uint256',
@@ -539,6 +552,19 @@ export const gbmabil2 = [
         internalType: 'uint256',
         name: '',
         type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'getBeneficiary',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
       },
     ],
     stateMutability: 'view',
@@ -818,6 +844,25 @@ export const gbmabil2 = [
   {
     inputs: [
       {
+        internalType: 'uint256',
+        name: '_auctionID',
+        type: 'uint256',
+      },
+    ],
+    name: 'wasClaimed',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
         internalType: 'address',
         name: '_withdrawer',
         type: 'address',
@@ -828,4 +873,4 @@ export const gbmabil2 = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
-] as const;
+] as const
