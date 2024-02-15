@@ -97,11 +97,7 @@ const CreateAuctionGBML2 = () => {
 
       toast.success('Waiting for tx to confirm')
       await waitForTransaction({ hash })
-      toast.success('Song Transferred')
-
-      toast.success(
-        'Wait for transaction confirmation before going to song a day auction page'
-      )
+      toast.success('Auction created')
       setCreated(true)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)
