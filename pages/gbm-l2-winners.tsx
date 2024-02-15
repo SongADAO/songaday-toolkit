@@ -8,6 +8,7 @@ import {
   GBM_L2_CHAIN,
   GBM_L2_IOU_CONTRACT_ADDRESS,
   INFURA_ID,
+  ZERO_ADDRESS,
 } from '@/utils/constants'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
@@ -143,7 +144,10 @@ const GBML2Winners = () => {
 
     for (const i in winners) {
       if (results[i].status !== 'success') {
-        throw new Error('could not determine token holder')
+        // throw new Error('could not determine token holder')
+        winners[i].tokenOwner = ZERO_ADDRESS
+        winners[i].distributed = false
+        continue
       }
 
       winners[i].tokenOwner = results[i].result
