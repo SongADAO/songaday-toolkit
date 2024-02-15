@@ -1,6 +1,6 @@
 import { AppLayout } from '@/components/AppLayout'
 import { songabi } from '@/utils/abi/songabi'
-import { gbmabil2 } from '@/utils/abi/gbmabil2'
+import { gbml2abi } from '@/utils/abi/gbml2abi'
 import {
   SONG_CONTRACT,
   TREASURY_CONTRACT,
@@ -80,7 +80,7 @@ const GBML2Winners = () => {
 
   const gbmContract = {
     chainId: auctionNetwork,
-    abi: gbmabil2,
+    abi: gbml2abi,
     address: auctionAddress,
   } as const
 
@@ -97,11 +97,11 @@ const GBML2Winners = () => {
   async function fetchSongFromSubgraph() {
     const auctionProvider = new JsonRpcProvider(auctionRpc)
 
-    const iface = new ethers.utils.Interface(gbmabil2)
+    const iface = new ethers.utils.Interface(gbml2abi)
 
     const auctionContract = new Contract(
       auctionAddress,
-      gbmabil2,
+      gbml2abi,
       auctionProvider
     )
 
@@ -375,7 +375,7 @@ const GBML2Winners = () => {
       const { hash } = await writeContract({
         chainId: auctionNetwork,
         address: auctionAddress,
-        abi: gbmabil2,
+        abi: gbml2abi,
         functionName: 'claimMultiple',
         args: [claims],
       })

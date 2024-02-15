@@ -59,16 +59,21 @@ export const ROUTES = [
 
 export const AUCTION_ROUTES = [
   {
-    path: '/auctions/create-gbm',
-    name: 'Create Auction - GBM',
+    path: '/auctions/create-gbm-l2',
+    name: 'Create Auction - GBM L2',
     description: 'Create auction for a newly minted song',
   },
-  {
-    path: '/auctions/mint-and-auction-gbm',
-    name: 'Mint and Auction - GBM',
-    description:
-      'Gnosis Only - Mint, Create auction and start auction at the same time.',
-  },
+  // {
+  //   path: '/auctions/create-gbm',
+  //   name: 'Create Auction - GBM',
+  //   description: 'Create auction for a newly minted song',
+  // },
+  // {
+  //   path: '/auctions/mint-and-auction-gbm',
+  //   name: 'Mint and Auction - GBM',
+  //   description:
+  //     'Gnosis Only - Mint, Create auction and start auction at the same time.',
+  // },
 ]
 
 export const ADMIN_ROUTES = [

@@ -1,4 +1,4 @@
-export const gbmabil2 = [
+export const gbml2abi = [
   {
     inputs: [
       {
