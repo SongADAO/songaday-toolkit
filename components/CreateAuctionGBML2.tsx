@@ -2,31 +2,24 @@ import { AppLayout } from '@/components/AppLayout'
 import {
   GBM_L2_CONTRACT_ADDRESS,
   GBM_L2_CHAIN,
-  GBM_L2_IOU_CONTRACT_ADDRESS,
-  TREASURY_CONTRACT,
   SONG_CONTRACT,
-  ZERO_ADDRESS,
 } from '@/utils/constants'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
 import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import { Checkbox } from '@chakra-ui/react'
-import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
-import { useAccount, useContractRead, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import { encodeFunctionData } from 'viem'
-import { songabi } from '@/utils/abi/songabi'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 
 const CreateAuctionGBML2 = () => {
-  const [approved, setApproved] = useState(false)
   const [created, setCreated] = useState(false)
   const [songNbr, setSongNbr] = useState<string>()
+  const [ipfsHash, setIpfsHash] = useState<string>()
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
@@ -34,11 +27,8 @@ const CreateAuctionGBML2 = () => {
   const [loading, setLoading] = useState(false)
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
-  const opts = {
-    allowedDomains: [/gnosis-safe.io/],
-  }
 
-  const appsSdk = new SafeAppsSDK(opts)
+  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 
   const createAuctionHandler = async () => {
     setCreated(false)
@@ -48,9 +38,15 @@ const CreateAuctionGBML2 = () => {
         toast.error('Song number is not present')
         return
       }
+
+      if (!ipfsHash) {
+        toast.error('Song edition ipfs hash is not present')
+        return
+      }
+
       console.log(chain.id)
       console.log(GBM_L2_CHAIN)
-      if (chain.id !== GBM_L2_CHAIN) {
+      if (chain?.id !== GBM_L2_CHAIN) {
         toast.error('Switch to auction L2')
         return
       }
@@ -68,31 +64,18 @@ const CreateAuctionGBML2 = () => {
 
       console.log(endTimestamp)
 
-      // const transactions = [
-      //   {
-      //     to: GBM_L2_CONTRACT_ADDRESS ?? '',
-      //     value: '0',
-      //     data: encodeFunctionData({
-      //       abi: gbml2abi,
-      //       functionName: 'registerAnAuctionTokenSongAdao',
-      //       args: [
-      //         SONG_CONTRACT,
-      //         BigInt(songNbr),
-      //         BigInt(1),
-      //         BigInt(endTimestamp),
-      //       ],
-      //     }),
-      //   },
-      // ]
-
-      // await appsSdk?.txs.send({ txs: transactions })
-
       const { hash } = await writeContract({
         chainId: GBM_L2_CHAIN,
         address: GBM_L2_CONTRACT_ADDRESS,
         abi: gbml2abi,
         functionName: 'registerAnAuctionTokenSongAdao',
-        args: [SONG_CONTRACT, BigInt(songNbr), BigInt(1), BigInt(endTimestamp)],
+        args: [
+          SONG_CONTRACT,
+          BigInt(songNbr),
+          ipfsHash,
+          BigInt(1),
+          BigInt(endTimestamp),
+        ],
       })
 
       toast.success('Waiting for tx to confirm')
@@ -126,6 +109,18 @@ const CreateAuctionGBML2 = () => {
                     />
                   </FormControl>
                 </Box>
+
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Edition IPFS Hash</FormLabel>
+                    <Input
+                      type="text"
+                      placeholder="QvQSasdsaLKJHASDNasdalkasd"
+                      value={ipfsHash}
+                      onChange={(e) => setIpfsHash(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
               </Wrap>
               <Checkbox
                 colorScheme="green"
@@ -156,14 +151,23 @@ const CreateAuctionGBML2 = () => {
               </Text>
             </Stack>
             <Wrap>
-              <Button
-                loadingText="Creating"
-                isLoading={loading}
-                disabled={loading}
-                onClick={() => createAuctionHandler()}
-              >
-                Create Auction
-              </Button>
+              {(chain?.id === GBM_L2_CHAIN && (
+                <Button
+                  loadingText="Creating"
+                  isLoading={loading}
+                  disabled={loading}
+                  onClick={() => createAuctionHandler()}
+                >
+                  Create Auction
+                </Button>
+              )) || (
+                <Button
+                  onClick={() => switchNetwork(GBM_L2_CHAIN)}
+                  isLoading={isSwitching}
+                >
+                  Switch Chain
+                </Button>
+              )}
             </Wrap>
             <Stack>
               {created && (
@@ -181,8 +185,8 @@ const CreateAuctionGBML2 = () => {
       )}
       {!isConnected && (
         <Text>
-          You need to be connected to the DAO's Wallet to mint a song. Use the
-          Connect Wallet Button to connect
+          You need to be connected to the Zora auction wallet to create an
+          auction. Use the Connect Wallet Button to connect
         </Text>
       )}
     </Stack>
