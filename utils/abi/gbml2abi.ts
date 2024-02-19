@@ -13,6 +13,11 @@ export const gbml2abi = [
       },
       {
         internalType: 'address',
+        name: '_editionContract',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
         name: 'initialContract',
         type: 'address',
       },
@@ -291,6 +296,19 @@ export const gbml2abi = [
     type: 'function',
   },
   {
+    inputs: [],
+    name: 'editionContract',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [
       {
         internalType: 'uint256',
@@ -558,8 +576,14 @@ export const gbml2abi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'getBeneficiary',
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_auctionID',
+        type: 'uint256',
+      },
+    ],
+    name: 'getContractAddress',
     outputs: [
       {
         internalType: 'address',
@@ -578,12 +602,12 @@ export const gbml2abi = [
         type: 'uint256',
       },
     ],
-    name: 'getContractAddress',
+    name: 'getEditionTokenId',
     outputs: [
       {
-        internalType: 'address',
+        internalType: 'uint256',
         name: '',
-        type: 'address',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -756,6 +780,11 @@ export const gbml2abi = [
         type: 'uint256',
       },
       {
+        internalType: 'string',
+        name: '_editionURI',
+        type: 'string',
+      },
+      {
         internalType: 'uint256',
         name: '_startTime',
         type: 'uint256',
@@ -805,6 +834,19 @@ export const gbml2abi = [
       },
     ],
     name: 'setBiddingAllowed',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_contract',
+        type: 'address',
+      },
+    ],
+    name: 'setEditionContract',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
