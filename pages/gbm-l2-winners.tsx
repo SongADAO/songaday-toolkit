@@ -40,7 +40,7 @@ import { Contract, ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { readContract } from '@wagmi/core'
 
-import { sepolia } from 'viem/chains'
+import { sepolia, zora } from 'viem/chains'
 
 const GBML2Winners = () => {
   const now = new Date().getTime()
@@ -51,9 +51,11 @@ const GBML2Winners = () => {
 
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
-  // const zoraPublicClient = usePublicClient({ chainId: 42161 })
+  const basePublicClient = usePublicClient({ chainId: 8453 })
 
-  const sepoliaPublicClient = usePublicClient({ chainId: 11155111 })
+  const zoraPublicClient = usePublicClient({ chainId: 7777777 })
+
+  // const sepoliaPublicClient = usePublicClient({ chainId: 11155111 })
 
   const { isConnected } = useAccount()
 
@@ -69,9 +71,7 @@ const GBML2Winners = () => {
 
   const auctionAddress = GBM_L2_CONTRACT_ADDRESS
 
-  const auctionPublicClient = sepoliaPublicClient
-
-  const auctionRpc = `https://sepolia.infura.io/v3/${INFURA_ID}`
+  const auctionPublicClient = zoraPublicClient
 
   const sadContract = {
     chainId: 1,
@@ -96,7 +96,9 @@ const GBML2Winners = () => {
   }
 
   async function fetchSongFromSubgraph() {
-    const auctionProvider = new JsonRpcProvider(auctionRpc)
+    const rpc = zora.rpcUrls.default.http[0]
+
+    const auctionProvider = new JsonRpcProvider(rpc)
 
     const iface = new ethers.utils.Interface(gbml2abi)
 
@@ -333,6 +335,28 @@ const GBML2Winners = () => {
       if (isAddressAContractArbitrum) {
         throw new Error(
           'Address is a contract on arbitrum. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractBase = await isContract(
+        winnerAddress,
+        basePublicClient
+      )
+
+      if (isAddressAContractBase) {
+        throw new Error(
+          'Address is a contract on Base. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractZora = await isContract(
+        winnerAddress,
+        zoraPublicClient
+      )
+
+      if (isAddressAContractZora) {
+        throw new Error(
+          'Address is a contract on Zora. Unverified transfer is unsafe'
         )
       }
 
