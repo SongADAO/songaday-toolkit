@@ -16,9 +16,11 @@ import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import Head from 'next/head'
 import { CHAIN_ID, INFURA_ID } from '@/utils/constants'
-import { arbitrum, optimism, mainnet, sepolia } from '@wagmi/chains'
+// import { arbitrum, optimism, mainnet, sepolia, base, zora } from '@wagmi/chains'
+import { arbitrum, optimism, mainnet, sepolia, zora } from '@wagmi/chains'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { publicProvider } from 'wagmi/providers/public'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { Web3Modal } from '@web3modal/react'
 
@@ -36,11 +38,25 @@ function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
 
-  const chains = [mainnet, optimism, arbitrum, sepolia]
+  const chains = [
+    mainnet,
+    optimism,
+    arbitrum,
+    // base,
+    zora,
+    // Testnets
+    sepolia,
+    // baseSepolia,
+    // zoraSepolia,
+    // Local
+    // hardhat,
+  ]
+
   const projectId = '55df63e3faebd774218c3990b418f5cd'
 
   const { publicClient } = configureChains(chains, [
     infuraProvider({ apiKey: INFURA_ID }),
+    publicProvider(),
     // w3mProvider({ projectId }),
   ])
   const wagmiConfig = createConfig({
