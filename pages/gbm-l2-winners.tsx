@@ -350,7 +350,11 @@ const GBML2Winners = () => {
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({ hash })
+      await waitForTransaction({
+        hash,
+        chainId: 1,
+        confirmations: 1,
+      })
       toast.success('Song Transferred')
 
       initWinners()
@@ -385,7 +389,11 @@ const GBML2Winners = () => {
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({ hash })
+      await waitForTransaction({
+        hash,
+        chainId: auctionNetwork,
+        confirmations: 1,
+      })
       toast.success('Song Transferred')
 
       initClaims()

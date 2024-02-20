@@ -2,8 +2,10 @@ import { AppLayout } from '@/components/AppLayout'
 import {
   GBM_L2_CONTRACT_ADDRESS,
   GBM_L2_CHAIN,
-  SONG_CONTRACT,
+  GBM_L2_IOU_CONTRACT_ADDRESS,
+  GBM_L2_EDITION_MINTER,
 } from '@/utils/constants'
+import { ethers } from 'ethers'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -64,22 +66,36 @@ const CreateAuctionGBML2 = () => {
 
       console.log(endTimestamp)
 
+      const editionURI = 'ipfs://' + ipfsHash
+
+      console.log(editionURI)
+
       const { hash } = await writeContract({
         chainId: GBM_L2_CHAIN,
         address: GBM_L2_CONTRACT_ADDRESS,
         abi: gbml2abi,
         functionName: 'registerAnAuctionTokenSongAdao',
         args: [
-          SONG_CONTRACT,
+          GBM_L2_IOU_CONTRACT_ADDRESS,
           BigInt(songNbr),
-          ipfsHash,
           BigInt(1),
           BigInt(endTimestamp),
+          editionURI,
+          GBM_L2_EDITION_MINTER,
+          BigInt('18446744073709551615'),
+          BigInt('0'),
+          BigInt('5000000000000000'),
         ],
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({ hash })
+
+      await waitForTransaction({
+        hash,
+        chainId: GBM_L2_CHAIN,
+        confirmations: 1,
+      })
+
       toast.success('Auction created')
       setCreated(true)
     } catch (error) {

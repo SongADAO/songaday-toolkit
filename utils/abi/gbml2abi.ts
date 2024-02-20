@@ -13,6 +13,11 @@ export const gbml2abi = [
       },
       {
         internalType: 'address',
+        name: 'initialEditionBeneficiary',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
         name: '_editionContract',
         type: 'address',
       },
@@ -50,6 +55,11 @@ export const gbml2abi = [
       },
     ],
     name: 'OwnableUnauthorizedAccount',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ReentrancyGuardReentrantCall',
     type: 'error',
   },
   {
@@ -297,12 +307,69 @@ export const gbml2abi = [
   },
   {
     inputs: [],
+    name: 'editionBeneficiary',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
     name: 'editionContract',
     outputs: [
       {
         internalType: 'address',
         name: '',
         type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'newTokenId',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint64',
+        name: 'saleStart',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint64',
+        name: 'saleEnd',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint64',
+        name: 'maxTokensPerAddress',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint96',
+        name: 'pricePerToken',
+        type: 'uint96',
+      },
+      {
+        internalType: 'address',
+        name: 'fundsRecipient',
+        type: 'address',
+      },
+    ],
+    name: 'encodeSalesData',
+    outputs: [
+      {
+        internalType: 'bytes',
+        name: '',
+        type: 'bytes',
       },
     ],
     stateMutability: 'view',
@@ -780,11 +847,6 @@ export const gbml2abi = [
         type: 'uint256',
       },
       {
-        internalType: 'string',
-        name: '_editionURI',
-        type: 'string',
-      },
-      {
         internalType: 'uint256',
         name: '_startTime',
         type: 'uint256',
@@ -793,6 +855,31 @@ export const gbml2abi = [
         internalType: 'uint256',
         name: '_endTime',
         type: 'uint256',
+      },
+      {
+        internalType: 'string',
+        name: '_editionURI',
+        type: 'string',
+      },
+      {
+        internalType: 'contract IMinter1155',
+        name: '_editionMinter',
+        type: 'address',
+      },
+      {
+        internalType: 'uint64',
+        name: '_editionSaleEnd',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint64',
+        name: '_editionMaxTokensPerAddress',
+        type: 'uint64',
+      },
+      {
+        internalType: 'uint96',
+        name: '_editionPricePerToken',
+        type: 'uint96',
       },
     ],
     name: 'registerAnAuctionTokenSongAdao',
@@ -834,6 +921,19 @@ export const gbml2abi = [
       },
     ],
     name: 'setBiddingAllowed',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_editionBeneficiary',
+        type: 'address',
+      },
+    ],
+    name: 'setEditionBeneficiary',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
