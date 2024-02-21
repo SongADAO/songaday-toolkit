@@ -112,8 +112,13 @@ const GBML2Winners = () => {
     )
 
     const filter: any = auctionContract.filters.Auction_Initialized()
-    filter.fromBlock = 0
+
+    filter.fromBlock = 10916320
     filter.toBlock = 'latest'
+
+    // filter.fromBlock = 0 // DEBUG
+    // filter.toBlock = 'latest' // DEBUG
+
     const logs = await auctionProvider.getLogs(filter)
     const events = logs.map((log) => iface.parseLog(log))
     // console.log(filter)
