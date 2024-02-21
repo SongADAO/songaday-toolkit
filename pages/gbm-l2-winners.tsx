@@ -34,13 +34,14 @@ import {
   useNetwork,
   type PublicClient,
   usePublicClient,
+  useSwitchNetwork,
 } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 import { Contract, ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { readContract } from '@wagmi/core'
 
-import { sepolia, zora } from 'viem/chains'
+import { mainnet, sepolia, zora } from 'viem/chains'
 
 const GBML2Winners = () => {
   const now = new Date().getTime()
@@ -51,7 +52,7 @@ const GBML2Winners = () => {
 
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
-  const basePublicClient = usePublicClient({ chainId: 8453 })
+  // const basePublicClient = usePublicClient({ chainId: 8453 })
 
   const zoraPublicClient = usePublicClient({ chainId: 7777777 })
 
@@ -60,6 +61,8 @@ const GBML2Winners = () => {
   const { isConnected } = useAccount()
 
   const { chain } = useNetwork()
+
+  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 
   const [winners, setWinners] = useState<any>([])
 
@@ -158,11 +161,12 @@ const GBML2Winners = () => {
         winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
       ) {
         winners[i].distributed = true
+        winners[i].distributed = false
       } else {
         winners[i].distributed = false
       }
     }
-    // console.log(winners)
+    console.log(winners)
 
     return winners
   }
@@ -338,27 +342,27 @@ const GBML2Winners = () => {
         )
       }
 
-      const isAddressAContractBase = await isContract(
-        winnerAddress,
-        basePublicClient
-      )
+      // const isAddressAContractBase = await isContract(
+      //   winnerAddress,
+      //   basePublicClient
+      // )
 
-      if (isAddressAContractBase) {
-        throw new Error(
-          'Address is a contract on Base. Unverified transfer is unsafe'
-        )
-      }
+      // if (isAddressAContractBase) {
+      //   throw new Error(
+      //     'Address is a contract on Base. Unverified transfer is unsafe'
+      //   )
+      // }
 
-      const isAddressAContractZora = await isContract(
-        winnerAddress,
-        zoraPublicClient
-      )
+      // const isAddressAContractZora = await isContract(
+      //   winnerAddress,
+      //   zoraPublicClient
+      // )
 
-      if (isAddressAContractZora) {
-        throw new Error(
-          'Address is a contract on Zora. Unverified transfer is unsafe'
-        )
-      }
+      // if (isAddressAContractZora) {
+      //   throw new Error(
+      //     'Address is a contract on Zora. Unverified transfer is unsafe'
+      //   )
+      // }
 
       console.log(toDistribute)
       console.log(TREASURY_CONTRACT)
@@ -444,13 +448,22 @@ const GBML2Winners = () => {
           <Heading>GBM L2 Winners</Heading>
 
           <Box>
-            <Button
-              type="button"
-              isLoading={isClaiming}
-              onClick={() => claim(claims)}
-            >
-              Claim Funds
-            </Button>
+            {(chain?.id === zora.id && (
+              <Button
+                type="button"
+                isLoading={isClaiming}
+                onClick={() => claim(claims)}
+              >
+                Claim Funds
+              </Button>
+            )) || (
+              <Button
+                onClick={() => switchNetwork(zora.id)}
+                isLoading={isSwitching}
+              >
+                Switch Chain
+              </Button>
+            )}
           </Box>
 
           <Table w="100%" size="sm" border="1px solid rgb(74, 85, 104)">
@@ -571,15 +584,25 @@ const GBML2Winners = () => {
                   <Td paddingTop="0" verticalAlign="bottom">
                     {winner.completed &&
                       winner.tokenOwner &&
-                      !winner.distributed &&
-                      chain?.id === 1 && (
-                        <Button
-                          type="button"
-                          isLoading={winner.isDistributing}
-                          onClick={() => distribute(winner.tokenId)}
-                        >
-                          Distribute
-                        </Button>
+                      !winner.distributed && (
+                        <>
+                          {(chain?.id === mainnet.id && (
+                            <Button
+                              type="button"
+                              isLoading={winner.isDistributing}
+                              onClick={() => distribute(winner.tokenId)}
+                            >
+                              Distribute
+                            </Button>
+                          )) || (
+                            <Button
+                              onClick={() => switchNetwork(mainnet.id)}
+                              isLoading={isSwitching}
+                            >
+                              Switch Chain
+                            </Button>
+                          )}
+                        </>
                       )}
                   </Td>
                 </Tr>
