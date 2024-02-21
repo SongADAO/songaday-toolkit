@@ -64,10 +64,17 @@ const CreateAuctionGBML2 = () => {
 
       const endTimestamp = nowTimestamp + length
 
-      console.log(endTimestamp)
+      const editionEndTimestamp = endTimestamp
+      // const editionEndTimestamp = '18446744073709551615' // Never end
+
+      const editionPrice = '0'
+      // const editionPrice = '5000000000000000'
 
       const editionURI = 'ipfs://' + ipfsHash
 
+      console.log(endTimestamp)
+      console.log(editionEndTimestamp)
+      console.log(editionPrice)
       console.log(editionURI)
 
       const { hash } = await writeContract({
@@ -82,9 +89,9 @@ const CreateAuctionGBML2 = () => {
           BigInt(endTimestamp),
           editionURI,
           GBM_L2_EDITION_MINTER,
-          BigInt('18446744073709551615'),
+          BigInt(editionEndTimestamp),
           BigInt('0'),
-          BigInt('5000000000000000'),
+          BigInt(editionPrice),
         ],
       })
 
