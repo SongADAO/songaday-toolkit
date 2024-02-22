@@ -16,7 +16,8 @@ import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import Head from 'next/head'
 import { CHAIN_ID, INFURA_ID } from '@/utils/constants'
-import { arbitrum, optimism, mainnet, sepolia, base, zora } from 'viem/chains'
+// import { arbitrum, optimism, mainnet, sepolia, base, zora } from 'viem/chains'
+import { arbitrum, optimism, mainnet, sepolia, zora } from 'viem/chains'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
 import { publicProvider } from 'wagmi/providers/public'
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     mainnet,
     optimism,
     arbitrum,
-    base,
+    // base,
     zora,
     // Testnets
     sepolia,
