@@ -166,7 +166,6 @@ const GBML2Winners = () => {
         winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
       ) {
         winners[i].distributed = true
-        winners[i].distributed = false
       } else {
         winners[i].distributed = false
       }
