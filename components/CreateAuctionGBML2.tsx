@@ -4,6 +4,7 @@ import {
   GBM_L2_CHAIN,
   GBM_L2_IOU_CONTRACT_ADDRESS,
   GBM_L2_EDITION_MINTER,
+  GBM_L2_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
 import { ethers } from 'ethers'
 import { Button } from '@chakra-ui/button'
@@ -14,12 +15,64 @@ import { Checkbox } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import {
+  useAccount,
+  useNetwork,
+  useSwitchNetwork,
+  usePublicClient,
+} from 'wagmi'
+import { writeContract, waitForTransaction, readContract } from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
+import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
+import {
+  createPublicClient,
+  getContract,
+  http,
+  parseAbi,
+  encodeFunctionData,
+} from 'viem'
+import { zora } from 'viem/chains'
+
+type TokenDetail = {
+  owner: `0x${string}`
+  tokenId: bigint
+  refundableAmount: bigint
+  rewardPoints: bigint
+  expiresAt: Date
+}
+
+async function getTokenHolders(contract): Promise<`0x${string}`[]> {
+  const [count, cap] = await contract.read.supplyDetail()
+  const promises = []
+  for (let i = 1; i <= count; i++) {
+    promises.push(contract.read.ownerOf([BigInt(i)]))
+  }
+  return Promise.all(promises)
+}
+
+async function getBulkSubscriptions(
+  contract,
+  tokenHolders: `0x${string}`[]
+): Promise<TokenDetail[]> {
+  const promises = tokenHolders.map((addr) => {
+    return contract.read
+      .subscriptionOf([addr])
+      .then(([tokenId, refundableAmount, rewardPoints, expiresAt]) => {
+        return {
+          owner: addr,
+          tokenId,
+          refundableAmount,
+          rewardPoints,
+          expiresAt: new Date(Number(expiresAt) * 1000),
+        }
+      })
+  })
+  return Promise.all(promises)
+}
 
 const CreateAuctionGBML2 = () => {
   const [created, setCreated] = useState(false)
+  const [hypersubSent, setHypersubSent] = useState(false)
   const [songNbr, setSongNbr] = useState<string>()
   const [ipfsHash, setIpfsHash] = useState<string>()
   const [checked, setChecked] = useState(true)
@@ -27,10 +80,17 @@ const CreateAuctionGBML2 = () => {
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
   )
   const [loading, setLoading] = useState(false)
+  const [hypersubLoading, setHypersubLoading] = useState(false)
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
 
   const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
+
+  const zoraPublicClient = usePublicClient({ chainId: 7777777 })
+
+  const auctionNetwork = GBM_L2_CHAIN
+
+  const auctionAddress = GBM_L2_CONTRACT_ADDRESS
 
   const createAuctionHandler = async () => {
     setCreated(false)
@@ -112,6 +172,144 @@ const CreateAuctionGBML2 = () => {
     }
   }
 
+  const sendHypersubHandler = async () => {
+    setHypersubSent(false)
+    setHypersubLoading(true)
+    try {
+      if (!songNbr) {
+        toast.error('Song number is not present')
+        return
+      }
+
+      console.log(chain.id)
+      console.log(GBM_L2_CHAIN)
+      if (chain?.id !== GBM_L2_CHAIN) {
+        toast.error('Switch to auction L2')
+        return
+      }
+
+      toast.success('Sending Hypersub editions')
+
+      const contract = getContract({
+        address: '0xee93739977708d8cdc7c16f25d7342e8bbc5e101',
+        abi: parseAbi([
+          'function ownerOf(uint256) view returns (address)',
+          'function supplyDetail() view returns (uint256 count, uint256 cap)',
+          'function subscriptionOf(address account) external view returns (uint256 tokenId, uint256 refundableAmount, uint256 rewardPoints, uint256 expiresAt)',
+        ]),
+        publicClient: zoraPublicClient,
+      })
+
+      const tokenHolders = await getTokenHolders(contract)
+      const subscriptions = await getBulkSubscriptions(contract, tokenHolders)
+      const activeSubs = subscriptions.filter(
+        (sub) => sub.expiresAt > new Date()
+      )
+      // const activeSubs: TokenDetail[] = [
+      //   {
+      //     owner: '0xf1f6Ccaa7e8f2f78E26D25b44d80517951c20284',
+      //     tokenId: BigInt(1),
+      //     refundableAmount: BigInt(1),
+      //     rewardPoints: BigInt(1),
+      //     expiresAt: new Date(),
+      //   },
+      //   {
+      //     owner: '0xBCD17bC16d53D690Ba29d567E79d41d4a7049451',
+      //     tokenId: BigInt(1),
+      //     refundableAmount: BigInt(1),
+      //     rewardPoints: BigInt(1),
+      //     expiresAt: new Date(),
+      //   },
+      // ]
+      console.log('Active Subs')
+      console.log(activeSubs)
+
+      if (activeSubs.length === 0) {
+        throw new Error('No subscribers')
+      }
+
+      const auctionId = await readContract({
+        chainId: auctionNetwork,
+        address: auctionAddress,
+        abi: gbml2abi,
+        functionName: 'getAuctionID',
+        args: [
+          GBM_L2_IOU_CONTRACT_ADDRESS,
+          '0x73ad2146',
+          BigInt(Number(songNbr)),
+          BigInt(0),
+        ],
+      })
+      console.log('Auction ID')
+      console.log(auctionId)
+
+      if (!auctionId) {
+        throw new Error('Start the auction first')
+      }
+
+      const editionTokenId = await readContract({
+        chainId: auctionNetwork,
+        address: auctionAddress,
+        abi: gbml2abi,
+        functionName: 'getEditionTokenId',
+        args: [auctionId],
+      })
+      // const editionTokenId = BigInt(4)
+      console.log('Edition Token ID')
+      console.log(editionTokenId)
+
+      if (!auctionId) {
+        throw new Error('No edition ID found')
+      }
+
+      const mintCalldata = activeSubs.map((activeSub) => {
+        return encodeFunctionData({
+          abi: zoraeditionabi,
+          functionName: 'adminMint',
+          args: [activeSub.owner, editionTokenId, BigInt(1), '0x0'],
+        })
+      })
+      console.log('Multicall calldata')
+      console.log(mintCalldata)
+
+      // const { hash } = await writeContract({
+      //   chainId: GBM_L2_CHAIN,
+      //   address: GBM_L2_EDITION_CONTRACT_ADDRESS,
+      //   abi: zoraeditionabi,
+      //   functionName: 'adminMint',
+      //   args: [
+      //     '0xf1f6Ccaa7e8f2f78E26D25b44d80517951c20284',
+      //     editionTokenId,
+      //     BigInt(1),
+      //     '0x0',
+      //   ],
+      // })
+
+      const { hash } = await writeContract({
+        chainId: GBM_L2_CHAIN,
+        address: GBM_L2_EDITION_CONTRACT_ADDRESS,
+        abi: zoraeditionabi,
+        functionName: 'multicall',
+        args: [mintCalldata],
+      })
+
+      toast.success('Waiting for tx to confirm')
+
+      await waitForTransaction({
+        hash,
+        chainId: GBM_L2_CHAIN,
+        confirmations: 1,
+      })
+
+      toast.success('Hypersub editions sent')
+      setHypersubSent(true)
+    } catch (error) {
+      toast.error((error as any).error?.message || (error as any)?.message)
+    } finally {
+      setHypersubLoading(false)
+    }
+  }
+
   return (
     <Stack spacing="6">
       {isConnected && (
@@ -178,7 +376,7 @@ const CreateAuctionGBML2 = () => {
                 <Button
                   loadingText="Creating"
                   isLoading={loading}
-                  disabled={loading}
+                  disabled={loading || hypersubLoading}
                   onClick={() => createAuctionHandler()}
                 >
                   Create Auction
@@ -192,6 +390,27 @@ const CreateAuctionGBML2 = () => {
                 </Button>
               )}
             </Wrap>
+
+            <Wrap>
+              {(chain?.id === GBM_L2_CHAIN && (
+                <Button
+                  loadingText="Sending Editions"
+                  isLoading={hypersubLoading}
+                  disabled={loading || hypersubLoading}
+                  onClick={() => sendHypersubHandler()}
+                >
+                  Send Hypersub Editions
+                </Button>
+              )) || (
+                <Button
+                  onClick={() => switchNetwork(GBM_L2_CHAIN)}
+                  isLoading={isSwitching}
+                >
+                  Switch Chain
+                </Button>
+              )}
+            </Wrap>
+
             <Stack>
               {created && (
                 <>
@@ -199,6 +418,16 @@ const CreateAuctionGBML2 = () => {
                   <Text>
                     Your auction has started. It should show up on the songadao
                     auction page.
+                  </Text>
+                </>
+              )}
+
+              {hypersubSent && (
+                <>
+                  <Text>Next Steps:</Text>
+                  <Text>
+                    The daily zora editions for Hypersub subscribers have been
+                    sent.
                   </Text>
                 </>
               )}
