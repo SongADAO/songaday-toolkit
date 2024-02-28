@@ -367,8 +367,10 @@ const CreateAuctionGBML2 = () => {
             </Stack>
             <Stack>
               <Text>
+                {/* Note 1: Make sure you are connected with the correct wallet
+                address (It should be the DAO's multisig address) */}
                 Note 1: Make sure you are connected with the correct wallet
-                address (It should be the DAO's multisig address)
+                address (It should be jmann.eth on Zora L2)
               </Text>
             </Stack>
             <Wrap>
