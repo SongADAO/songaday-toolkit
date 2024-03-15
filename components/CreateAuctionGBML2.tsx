@@ -124,6 +124,8 @@ const CreateAuctionGBML2 = () => {
 
       const nowTimestamp = Math.floor(new Date().getTime() / 1000)
 
+      const oneHourFromNow = nowTimestamp + 86400
+
       const endTimestamp = nowTimestamp + length
 
       const editionEndTimestamp = endTimestamp
@@ -134,10 +136,16 @@ const CreateAuctionGBML2 = () => {
 
       const editionURI = 'ipfs://' + ipfsHash
 
+      console.log(duration)
+      console.log(oneHourFromNow)
       console.log(endTimestamp)
       console.log(editionEndTimestamp)
       console.log(editionPrice)
       console.log(editionURI)
+
+      if (endTimestamp < oneHourFromNow) {
+        throw new Error('End time must be at least 24 hours')
+      }
 
       const { hash } = await writeContract({
         chainId: GBM_L2_CHAIN,
