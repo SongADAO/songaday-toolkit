@@ -77,7 +77,9 @@ const CreateAuctionGBML2 = () => {
   const [ipfsHash, setIpfsHash] = useState<string>()
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
-    `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`
+    `${DateTime.local()
+      .plus({ day: 1, minute: 5 })
+      .toFormat('yyyy-LL-dd HH:mm:00')}`
   )
   const [loading, setLoading] = useState(false)
   const [hypersubLoading, setHypersubLoading] = useState(false)
