@@ -46,20 +46,43 @@ export const getSongWithObjectId = (song: SongMetadata) => {
 
 export const getSongFromOpenSea = async (tokenId: string) => {
   const response = await fetch(
-    `https://api.opensea.io/api/v1/asset/${SONG_CONTRACT}/${tokenId}`,
+    `https://api.opensea.io/api/v2/chain/ethereum/contract/${SONG_CONTRACT}/nfts/${tokenId}`,
     {
       headers: {
-        'X-API-KEY': '1acb1a9159b5431e9d58b4a08c5d4541',
+        'X-API-KEY': 'a3eb4c06baa14b9cb4ab5a161f166d72',
       },
     }
   )
+
   const data = await response.json()
-  if (data['success'] === 'false') {
+
+  if (typeof data['nft'] === 'undefined') {
+    console.log(data)
+
     return null
   }
 
-  const metadataUrl = data['token_metadata']
+  const metadata = data['nft']
+  metadata.identifier = Number(metadata.identifier)
+  metadata.attributes = metadata.traits
+  metadata.token_id = metadata.identifier
+  metadata.image = metadata.image_url
 
-  const metadata = await getJson<SongMetadata>(parseTokenURI(metadataUrl))
+  // const metadataUrl = data['nft']['metadata_url']
+  // console.log(metadataUrl)
+
+  // // const usableTokenURI =
+  // //   parseTokenURI(metadataUrl).replace('https://ipfs.io/ipfs/', 'https://') +
+  // //   '.ipfs.nftstorage.link/'
+
+  // const usableTokenURI = parseTokenURI(metadataUrl).replace(
+  //   'https://ipfs.io/ipfs/',
+  //   'https://gateway.pinata.cloud/ipfs/'
+  // )
+
+  // console.log(usableTokenURI)
+
+  // const metadata = await getJson<SongMetadata>(usableTokenURI)
+
   return getSongWithObjectId(metadata)
 }

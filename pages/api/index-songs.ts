@@ -36,12 +36,17 @@ export default withSession<any>(async (req, res) => {
     let stop = false
     let token_id = DAILY_MINT_START
     while (!stop) {
+      // prevent OS API rate limit
+      await new Promise((resolve) => setTimeout(resolve, 400))
+
       const song = await getSongFromOpenSea(token_id.toString())
+
       if (song) {
         console.log('Song found: ', token_id)
         await index.saveObject(song)
         token_id += 1
       } else {
+        console.log('Song not found (stopping): ', token_id)
         stop = true
       }
     }
