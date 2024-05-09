@@ -1,5 +1,6 @@
 import { SONG_CONTRACT } from '@/utils/constants'
 import { parseTokenURI } from '@/utils/helpers'
+import { promises as fs } from 'fs'
 
 export interface SongMetadata {
   name: string
@@ -83,6 +84,16 @@ export const getSongFromOpenSea = async (tokenId: string) => {
   // console.log(usableTokenURI)
 
   // const metadata = await getJson<SongMetadata>(usableTokenURI)
+
+  return getSongWithObjectId(metadata)
+}
+
+export const getSongFromAllMetadata = async (tokenId: string) => {
+  const metadataPath = `/all-metadata/${tokenId}.json`
+
+  const metadataStr = await fs.readFile(process.cwd() + metadataPath, 'utf8')
+
+  const metadata = JSON.parse(metadataStr)
 
   return getSongWithObjectId(metadata)
 }

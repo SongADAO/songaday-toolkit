@@ -5,6 +5,7 @@ import externalConfig from '../../config.json'
 import {
   getJson,
   getSongFromOpenSea,
+  getSongFromAllMetadata,
   getSongWithObjectId,
   SongMetadata,
 } from '@/utils/metadata'
@@ -36,10 +37,20 @@ export default withSession<any>(async (req, res) => {
     let stop = false
     let token_id = DAILY_MINT_START
     while (!stop) {
-      // prevent OS API rate limit
-      await new Promise((resolve) => setTimeout(resolve, 400))
+      let song
+      try {
+        song = await getSongFromAllMetadata(token_id.toString())
+        console.log(song)
+      } catch (e) {
+        console.log(
+          `token ${token_id}, no metadata in all-metadata, trying OS API`
+        )
 
-      const song = await getSongFromOpenSea(token_id.toString())
+        // prevent OS API rate limit
+        await new Promise((resolve) => setTimeout(resolve, 400))
+
+        song = await getSongFromOpenSea(token_id.toString())
+      }
 
       if (song) {
         console.log('Song found: ', token_id)
