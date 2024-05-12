@@ -74,6 +74,7 @@ export const Upload = () => {
     handleSubmit: handleSubmitMetadata,
     formState: { errors: errorsAttributes },
     watch: watchMetadata,
+    setValue: setValueMetadata,
   } = useForm<MetadataValues>({})
 
   const selectedAttributesFile = watchMetadata('file_')
@@ -256,6 +257,7 @@ export const Upload = () => {
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(imageHash)
+                        setValueMetadata('imageHash', imageHash)
                       }}
                       size="sm"
                     >
@@ -331,6 +333,7 @@ export const Upload = () => {
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(videoHash)
+                        setValueMetadata('videoHash', videoHash)
                       }}
                       size="sm"
                     >
@@ -406,6 +409,7 @@ export const Upload = () => {
                     <Button
                       onClick={() => {
                         navigator.clipboard.writeText(audioHash)
+                        setValueMetadata('audioHash', audioHash)
                       }}
                       size="sm"
                     >
