@@ -198,7 +198,7 @@ export const CreateImage = () => {
                   </FormControl>
                 </Box>
               </Wrap>
-              <Box>
+              {/* <Box>
                 <FormControl>
                   <FormLabel>sound.xyz Contract</FormLabel>
                   <Textarea
@@ -206,7 +206,7 @@ export const CreateImage = () => {
                     {...register('soundxyzContract')}
                   />
                 </FormControl>
-              </Box>
+              </Box> */}
               <Box>
                 <FormControl>
                   <FormLabel>Description</FormLabel>
