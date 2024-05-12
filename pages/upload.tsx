@@ -251,7 +251,17 @@ export const Upload = () => {
             <Stack>
               {imageHash && (
                 <>
-                  <Text>Image Hash: {imageHash}</Text>
+                  <Text>
+                    Image Hash: {imageHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(imageHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -316,7 +326,17 @@ export const Upload = () => {
             <Stack>
               {videoHash && (
                 <>
-                  <Text>Video Hash: {videoHash}</Text>
+                  <Text>
+                    Video Hash: {videoHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(videoHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -381,7 +401,17 @@ export const Upload = () => {
             <Stack>
               {audioHash && (
                 <>
-                  <Text>Audio Hash: {audioHash}</Text>
+                  <Text>
+                    Audio Hash: {audioHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(audioHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -477,7 +507,17 @@ export const Upload = () => {
             <Stack>
               {metadataHash && (
                 <>
-                  <Text>Metadata Hash: {metadataHash}</Text>
+                  <Text>
+                    Metadata Hash: {metadataHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(metadataHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
