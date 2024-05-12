@@ -132,7 +132,7 @@ export const CreateImage = () => {
       setValue('tempo', attributes[18])
       setValue('videoUrl', attributes[19])
 
-      if (songNbr >= 5479) {
+      if (songNbr >= 5479 && songNbr <= 5529) {
         // Year >= 16
         setValue('soundxyzContract', attributes[20])
         setValue('description', attributes[22])
