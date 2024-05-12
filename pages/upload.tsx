@@ -97,7 +97,9 @@ export const Upload = () => {
         method: 'POST',
         body: formdata,
       })
+
       setImageHash(response.hash)
+      setValueMetadata('imageHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
@@ -122,7 +124,9 @@ export const Upload = () => {
         method: 'POST',
         body: formdata,
       })
+
       setVideoHash(response.hash)
+      setValueMetadata('videoHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
@@ -147,7 +151,9 @@ export const Upload = () => {
         method: 'POST',
         body: formdata,
       })
+
       setAudioHash(response.hash)
+      setValueMetadata('audioHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
