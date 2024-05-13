@@ -97,3 +97,13 @@ export const getSongFromAllMetadata = async (tokenId: string) => {
 
   return getSongWithObjectId(metadata)
 }
+
+export const getSongFromOutputMetadata = async (tokenId: string) => {
+  const metadataPath = `/output/${tokenId}/metadata.json`
+
+  const metadataStr = await fs.readFile(process.cwd() + metadataPath, 'utf8')
+
+  const metadata = JSON.parse(metadataStr)
+
+  return getSongWithObjectId(metadata)
+}

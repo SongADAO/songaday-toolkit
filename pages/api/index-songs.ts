@@ -6,6 +6,7 @@ import {
   getJson,
   getSongFromOpenSea,
   getSongFromAllMetadata,
+  getSongFromOutputMetadata,
   getSongWithObjectId,
   SongMetadata,
 } from '@/utils/metadata'
@@ -39,17 +40,22 @@ export default withSession<any>(async (req, res) => {
     while (!stop) {
       let song
       try {
-        song = await getSongFromAllMetadata(token_id.toString())
+        song = await getSongFromOutputMetadata(token_id.toString())
         console.log(song)
       } catch (e) {
-        console.log(
-          `token ${token_id}, no metadata in all-metadata, trying OS API`
-        )
+        try {
+          song = await getSongFromAllMetadata(token_id.toString())
+          console.log(song)
+        } catch (e) {
+          console.log(
+            `token ${token_id}, no metadata in output, trying all-metadata`
+          )
 
-        // prevent OS API rate limit
-        await new Promise((resolve) => setTimeout(resolve, 400))
+          // prevent OS API rate limit
+          await new Promise((resolve) => setTimeout(resolve, 400))
 
-        song = await getSongFromOpenSea(token_id.toString())
+          song = await getSongFromOpenSea(token_id.toString())
+        }
       }
 
       if (song) {
