@@ -7,6 +7,7 @@ import {
   GBM_L2_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
 import { ethers } from 'ethers'
+import fetchJson from '@/utils/fetchJson'
 import { Button } from '@chakra-ui/button'
 import { FormControl, FormLabel } from '@chakra-ui/form-control'
 import { Input } from '@chakra-ui/input'
@@ -172,6 +173,8 @@ const CreateAuctionGBML2 = () => {
         chainId: GBM_L2_CHAIN,
         confirmations: 1,
       })
+
+      await fetchJson(`/api/index-song/?token_id=${songNbr}`)
 
       toast.success('Auction created')
       setCreated(true)
