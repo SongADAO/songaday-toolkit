@@ -127,9 +127,17 @@ export const Upload = () => {
 
       setVideoHash(response.hash)
       setValueMetadata('videoHash', response.hash)
+
+      new Notification('Song-A-Day Toolkit', {
+        body: `Video uploaded complete`,
+      })
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
+
+      new Notification('Song-A-Day Toolkit', {
+        body: `Video uploaded failed`,
+      })
     } finally {
       setLoadingVideo(false)
     }
