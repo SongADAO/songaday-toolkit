@@ -74,6 +74,7 @@ export const UploadEdition = () => {
     handleSubmit: handleSubmitMetadata,
     formState: { errors: errorsAttributes },
     watch: watchMetadata,
+    setValue: setValueMetadata,
   } = useForm<MetadataValues>({})
 
   const selectedAttributesFile = watchMetadata('file_')
@@ -96,7 +97,9 @@ export const UploadEdition = () => {
         method: 'POST',
         body: formdata,
       })
+
       setImageHash(response.hash)
+      setValueMetadata('imageHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
@@ -121,7 +124,9 @@ export const UploadEdition = () => {
         method: 'POST',
         body: formdata,
       })
+
       setVideoHash(response.hash)
+      setValueMetadata('videoHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
@@ -146,7 +151,9 @@ export const UploadEdition = () => {
         method: 'POST',
         body: formdata,
       })
+
       setAudioHash(response.hash)
+      setValueMetadata('audioHash', response.hash)
     } catch (error) {
       console.log({ error })
       toast.error((error as any).response.error)
@@ -251,7 +258,18 @@ export const UploadEdition = () => {
             <Stack>
               {imageHash && (
                 <>
-                  <Text>Image Hash: {imageHash}</Text>
+                  <Text>
+                    Image Hash: {imageHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(imageHash)
+                        setValueMetadata('imageHash', imageHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -316,7 +334,18 @@ export const UploadEdition = () => {
             <Stack>
               {videoHash && (
                 <>
-                  <Text>Video Hash: {videoHash}</Text>
+                  <Text>
+                    Video Hash: {videoHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(videoHash)
+                        setValueMetadata('videoHash', videoHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -381,7 +410,18 @@ export const UploadEdition = () => {
             <Stack>
               {audioHash && (
                 <>
-                  <Text>Audio Hash: {audioHash}</Text>
+                  <Text>
+                    Audio Hash: {audioHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(audioHash)
+                        setValueMetadata('audioHash', audioHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
@@ -477,7 +517,17 @@ export const UploadEdition = () => {
             <Stack>
               {metadataHash && (
                 <>
-                  <Text>Metadata Hash: {metadataHash}</Text>
+                  <Text>
+                    Metadata Hash: {metadataHash}{' '}
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(metadataHash)
+                      }}
+                      size="sm"
+                    >
+                      Copy
+                    </Button>
+                  </Text>
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
