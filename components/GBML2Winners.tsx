@@ -185,7 +185,7 @@ const GBML2Winners = () => {
         winners[i].distributed = false
       }
     }
-    console.log(winners)
+    // console.log(winners)
 
     return winners
   }
@@ -204,7 +204,7 @@ const GBML2Winners = () => {
     })
 
     for (const i in winners) {
-      console.log(results[i])
+      // console.log(results[i])
       if (
         results[i].status === 'success' &&
         results[i].result !== '0x0000000000000000000000000000000000000000'
@@ -214,7 +214,7 @@ const GBML2Winners = () => {
         // winners[i].highestBidder = '0xf1f6Ccaa7e8f2f78E26D25b44d80517951c20284' // DEBUG
       }
     }
-    console.log(winners)
+    // console.log(winners)
 
     return winners
   }
@@ -233,14 +233,14 @@ const GBML2Winners = () => {
     })
 
     for (const i in winners) {
-      console.log(results[i])
+      // console.log(results[i])
       if (results[i].status === 'success') {
         winners[i].endsAt = Number(results[i].result) * 1000
         winners[i].endsAtDate = new Date(winners[i].endsAt).toLocaleString()
         winners[i].completed = now > winners[i].endsAt
       }
     }
-    console.log(winners)
+    // console.log(winners)
 
     return winners
   }
@@ -259,12 +259,12 @@ const GBML2Winners = () => {
     })
 
     for (const i in winners) {
-      console.log(results[i])
+      // console.log(results[i])
       if (results[i].status === 'success') {
         winners[i].claimed = results[i].result
       }
     }
-    console.log(winners)
+    // console.log(winners)
 
     return winners
   }
@@ -281,7 +281,7 @@ const GBML2Winners = () => {
         )
       )
     } catch (error) {
-      console.log({ error })
+      // console.log({ error })
       toast.error((error as any).message)
     }
   }
@@ -385,10 +385,10 @@ const GBML2Winners = () => {
       //   )
       // }
 
-      console.log(toDistribute)
-      console.log(TREASURY_CONTRACT)
-      console.log(winnerAddress)
-      console.log(BigInt(toDistribute.tokenId))
+      // console.log(toDistribute)
+      // console.log(TREASURY_CONTRACT)
+      // console.log(winnerAddress)
+      // console.log(BigInt(toDistribute.tokenId))
 
       if (toDistribute.minted) {
         const { hash } = await writeContract({
@@ -416,8 +416,8 @@ const GBML2Winners = () => {
           functionName: 'getEditionTokenId',
           args: [toDistribute._auctionID],
         })
-        console.log('Edition Token ID')
-        console.log(editionTokenId)
+        // console.log('Edition Token ID')
+        // console.log(editionTokenId)
 
         // if (!editionTokenId) {
         //   throw new Error('Could not determine Zora edition id')
@@ -430,8 +430,8 @@ const GBML2Winners = () => {
           functionName: 'uri',
           args: [editionTokenId],
         })
-        console.log('Edition URI')
-        console.log(editionURI)
+        // console.log('Edition URI')
+        // console.log(editionURI)
 
         if (
           !editionURI ||
@@ -442,8 +442,8 @@ const GBML2Winners = () => {
         }
 
         const ipfsHash = editionURI.replace('ipfs://', '')
-        console.log('Edition IPFS Hash')
-        console.log(ipfsHash)
+        // console.log('Edition IPFS Hash')
+        // console.log(ipfsHash)
 
         const transactions = [
           {
@@ -470,7 +470,7 @@ const GBML2Winners = () => {
           },
         ]
 
-        console.log(transactions)
+        // console.log(transactions)
 
         await appsSdk?.txs.send({ txs: transactions })
       }
@@ -497,7 +497,7 @@ const GBML2Winners = () => {
   async function claim(claims) {
     setIsClaiming(true)
 
-    console.log(claims)
+    // console.log(claims)
 
     try {
       const { hash } = await writeContract({
