@@ -285,9 +285,9 @@ export const UploadEdition = () => {
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
-                    stored in the output directory so its okay if you dont copy.
-                    You will need this hash when you are ready to upload the
-                    song metadata.
+                    stored in the output directory so its okay if you don't
+                    copy. You will need this hash when you are ready to upload
+                    the song metadata.
                   </Text>
                   <Text>2. Upload the video to pinata.</Text>
                 </>
@@ -360,9 +360,9 @@ export const UploadEdition = () => {
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
-                    stored in the output directory so its okay if you dont copy.
-                    You will need this hash when you are ready to upload the
-                    song metadata.
+                    stored in the output directory so its okay if you don't
+                    copy. You will need this hash when you are ready to upload
+                    the song metadata.
                   </Text>
                   <Text>2. Upload the song metadata to pinata.</Text>
                 </>
@@ -435,9 +435,9 @@ export const UploadEdition = () => {
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
-                    stored in the output directory so its okay if you dont copy.
-                    You will need this hash when you are ready to upload the
-                    song metadata.
+                    stored in the output directory so its okay if you don't
+                    copy. You will need this hash when you are ready to upload
+                    the song metadata.
                   </Text>
                   <Text>2. Upload the song metadata to pinata.</Text>
                 </>
@@ -541,8 +541,8 @@ export const UploadEdition = () => {
                   <Text>Next Steps:</Text>
                   <Text>
                     1. You might want to copy this hash, though the hash is also
-                    stored in the output directory so its okay if you dont copy.
-                    You will need this hash to start an edition mint.
+                    stored in the output directory so its okay if you don't
+                    copy. You will need this hash to start an edition mint.
                   </Text>
                   <Text>2. Setup the song edition mint.</Text>
                 </>

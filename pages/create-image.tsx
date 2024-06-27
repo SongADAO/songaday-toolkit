@@ -163,7 +163,7 @@ export const CreateImage = () => {
           <FormLabel>Auto Fill</FormLabel>
           <Textarea
             onChange={(e) => handleAutoFill(e.target.value)}
-            placeholder={`4749	1/1/2022	It's Not FUD, It's Your Feelings	Hartford, CT Studio 2	Ethereum	Synths	Synths	Drum Machine	Pleading	Beard	Electro	Wistful, Dark, Groovy	Wistful	Dark, Groovy			1:02	B	95	https://youtu.be/tBLKuj8PqQo	Background, Location, Topic, Beard, Mood, Instrument	Happy new year! What are we really saying when we say "NO FUD!"?Fear, uncertainty, doubt - these are a fundemental part of the human condition. Repress that shit at your peril. Let's feel our feelings this year!`}
+            placeholder={`4749	1/1/2022	It's Not FUD, It's Your Feelings	Hartford, CT Studio 2	Ethereum	Synths	Synths	Drum Machine	Pleading	Beard	Electro	Wistful, Dark, Groovy	Wistful	Dark, Groovy			1:02	B	95	https://youtu.be/tBLKuj8PqQo	Background, Location, Topic, Beard, Mood, Instrument	Happy new year! What are we really saying when we say "NO FUD!"?Fear, uncertainty, doubt - these are a fundamental part of the human condition. Repress that shit at your peril. Let's feel our feelings this year!`}
           />
         </FormControl>
         <form onSubmit={handleSubmit(onSubmit)}>
