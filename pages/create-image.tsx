@@ -81,7 +81,7 @@ export const CreateImage = () => {
   const selectedImageFile = watch('customImage')
   const [loading, setLoading] = useState(false)
 
-  const [generatedImage, setGeneratedImage] = useState<string>()
+  const [generatedImage, setGeneratedImage] = useState<string>('')
   const onSubmit = async (data: Attributes) => {
     setGeneratedImage(undefined)
     setLoading(true)

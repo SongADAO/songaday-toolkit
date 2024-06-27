@@ -17,8 +17,8 @@ import toast from 'react-hot-toast'
 import { useContractRead } from 'wagmi'
 import { readContract } from '@wagmi/core'
 const FindOwner = () => {
-  const [songNbr, setSongNbr] = useState<string>()
-  const [tokenOwner, setTokenOwner] = useState<string>()
+  const [songNbr, setSongNbr] = useState<string>('')
+  const [tokenOwner, setTokenOwner] = useState<string>('')
 
   const { data: contractOwner } = useContractRead({
     abi: songabi,

@@ -23,7 +23,7 @@ const RepairEditionMetadata = () => {
   const { chain } = useNetwork()
   const { isConnected } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
-  const [songNbrs, setSongNbrs] = useState<string>()
+  const [songNbrs, setSongNbrs] = useState<string>('')
 
   const repairMetadata = async () => {
     setLoading(true)

@@ -46,8 +46,8 @@ export const Upload = () => {
 
   const selectedImageFile = watchImage('file_')
   const [loadingImage, setLoadingImage] = useState(false)
-  const [imageHash, setImageHash] = useState<string>()
-  const [songNbr, setSongNbr] = useState<string>()
+  const [imageHash, setImageHash] = useState<string>('')
+  const [songNbr, setSongNbr] = useState<string>('')
 
   // VIDEO
   const {
@@ -59,7 +59,7 @@ export const Upload = () => {
 
   const selectedVideoFile = watchVideo('file_')
   const [loadingVideo, setLoadingVideo] = useState(false)
-  const [videoHash, setVideoHash] = useState<string>()
+  const [videoHash, setVideoHash] = useState<string>('')
 
   // AUDIO
   const {
@@ -71,7 +71,7 @@ export const Upload = () => {
 
   const selectedAudioFile = watchAudio('file_')
   const [loadingAudio, setLoadingAudio] = useState(false)
-  const [audioHash, setAudioHash] = useState<string>()
+  const [audioHash, setAudioHash] = useState<string>('')
 
   // Metadata
   const {
@@ -84,7 +84,7 @@ export const Upload = () => {
 
   const selectedAttributesFile = watchMetadata('file_')
   const [loadingMetadata, setLoadingMetadata] = useState(false)
-  const [metadataHash, setMetadataHash] = useState<string>()
+  const [metadataHash, setMetadataHash] = useState<string>('')
 
   const onSubmitImage = async (data: FormValues) => {
     if (!songNbr) {

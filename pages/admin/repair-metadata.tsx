@@ -21,7 +21,7 @@ const RepairMetadata = () => {
   const [loading, setLoading] = useState(false)
   const { isConnected } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
-  const [songNbrs, setSongNbrs] = useState<string>()
+  const [songNbrs, setSongNbrs] = useState<string>('')
 
   const repairMetadata = async () => {
     setLoading(true)

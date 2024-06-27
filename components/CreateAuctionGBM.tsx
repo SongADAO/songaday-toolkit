@@ -32,7 +32,7 @@ import { gbmabi } from '@/utils/abi/gbmabi'
 const CreateAuctionGBM = () => {
   const [approved, setApproved] = useState(false)
   const [created, setCreated] = useState(false)
-  const [songNbr, setSongNbr] = useState<string>()
+  const [songNbr, setSongNbr] = useState<string>('')
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local().plus({ day: 1 }).toISODate()}T00:00`

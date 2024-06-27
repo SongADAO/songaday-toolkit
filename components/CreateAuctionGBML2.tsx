@@ -81,8 +81,8 @@ async function getBulkSubscriptions(
 const CreateAuctionGBML2 = () => {
   const [created, setCreated] = useState(false)
   const [hypersubSent, setHypersubSent] = useState(false)
-  const [songNbr, setSongNbr] = useState<string>()
-  const [ipfsHash, setIpfsHash] = useState<string>()
+  const [songNbr, setSongNbr] = useState<string>('')
+  const [ipfsHash, setIpfsHash] = useState<string>('')
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local()
