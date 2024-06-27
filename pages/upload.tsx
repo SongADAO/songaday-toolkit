@@ -224,8 +224,7 @@ export const Upload = () => {
       <Stack>
         <Heading>Upload Image</Heading>
         <Text>
-          Select the image from your computer to upload to your nft.storage
-          account.
+          Select the image from your computer to upload to your pinata account.
         </Text>
         <form onSubmit={handleSubmitImage(onSubmitImage)}>
           <Stack spacing="6">
@@ -290,7 +289,7 @@ export const Upload = () => {
                     You will need this hash when you are ready to upload the
                     song metadata.
                   </Text>
-                  <Text>2. Upload the video to nft.storage.</Text>
+                  <Text>2. Upload the video to pinata.</Text>
                 </>
               )}
             </Stack>
@@ -300,8 +299,7 @@ export const Upload = () => {
       <Stack>
         <Heading>Upload Video</Heading>
         <Text>
-          Select the video from your computer to upload to your nft.storage
-          account.
+          Select the video from your computer to upload to your pinata account.
         </Text>
         <form onSubmit={handleSubmitVideo(onSubmitVideo)}>
           <Stack spacing="6">
@@ -366,7 +364,7 @@ export const Upload = () => {
                     You will need this hash when you are ready to upload the
                     song metadata.
                   </Text>
-                  <Text>2. Upload the song metadata to nft.storage.</Text>
+                  <Text>2. Upload the song metadata to pinata.</Text>
                 </>
               )}
             </Stack>
@@ -376,8 +374,7 @@ export const Upload = () => {
       <Stack>
         <Heading>Upload Audio</Heading>
         <Text>
-          Select the audio from your computer to upload to your nft.storage
-          account.
+          Select the audio from your computer to upload to your pinata account.
         </Text>
         <form onSubmit={handleSubmitAudio(onSubmitAudio)}>
           <Stack spacing="6">
@@ -442,7 +439,7 @@ export const Upload = () => {
                     You will need this hash when you are ready to upload the
                     song metadata.
                   </Text>
-                  <Text>2. Upload the song metadata to nft.storage.</Text>
+                  <Text>2. Upload the song metadata to pinata.</Text>
                 </>
               )}
             </Stack>
@@ -453,7 +450,7 @@ export const Upload = () => {
         <Heading>Generate and Upload Song Metadata</Heading>
         <Text>
           Provide your image, video hash, audio hash, and song attributes.json
-          to generate a metadata and upload it to nft.storage.
+          to generate a metadata and upload it to pinata.
         </Text>
         <form onSubmit={handleSubmitMetadata(onSubmitMetadata)}>
           <Stack spacing="6">

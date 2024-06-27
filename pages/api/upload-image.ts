@@ -30,7 +30,7 @@ export default withSession<{ hash: string }>(async (req, res) => {
     `image_${fields.songNbr}_${nanoid(6)}.${fileExt}`
   )
 
-  // rename the file so that its easier to browse assets on nft.storage
+  // rename the file so that its easier to browse assets on pinata
   renameSync(files.file.filepath, newFilePath)
 
   const pinata = new pinataSDK({
