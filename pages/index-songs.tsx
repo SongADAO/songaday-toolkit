@@ -57,7 +57,7 @@ const IndexSongs = () => {
       <Stack>
         <Heading>Index All Songs</Heading>
         <Text>
-          Index songs (From the drop and songs uptill now) to algolia so that
+          Index songs (From the drop and songs up till now) to algolia so that
           explore page works fine
         </Text>
 
