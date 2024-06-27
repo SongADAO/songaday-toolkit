@@ -113,6 +113,8 @@ export default withSession<{ hash: string }>(async (req, res) => {
   const blob = new Blob([JSON.stringify(metadata)])
   const ipfsHash = await nftStorageClient.storeBlob(blob)
 
+  ensureDir(join(projectPath, `/output/${fields.songNbr}`))
+
   writeFileSync(
     join(projectPath, `/output/${fields.songNbr}/metadata_hash.txt`),
     ipfsHash
