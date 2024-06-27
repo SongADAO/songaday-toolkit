@@ -1,7 +1,7 @@
 import { AppLayout } from '@/components/AppLayout'
 import { Card } from '@/components/Card'
 import { BULK_ROUTES } from '@/utils/constants'
-import { Heading, Link, Stack, Text } from '@chakra-ui/react'
+import { Heading, Stack, Text } from '@chakra-ui/react'
 import { Link as NextLink } from '@chakra-ui/next-js'
 
 export default function Bulk() {
