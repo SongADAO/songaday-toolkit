@@ -17,6 +17,7 @@
     "@fontsource/inter": "^4.5.0",
     "@gnosis.pm/safe-apps-react-sdk": "^4.2.1",
     "@gnosis.pm/safe-apps-sdk": "^7.0.0",
+    "@pinata/sdk": "^2.1.0",
     "@types/d3-color": "^3.0.2",
     "@types/form-data": "^2.5.0",
     "@types/luxon": "^2.0.7",
