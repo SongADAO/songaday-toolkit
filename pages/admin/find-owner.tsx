@@ -1,6 +1,6 @@
 import { AppLayout } from '@/components/AppLayout'
 import { songabi } from '@/utils/abi/songabi'
-import { CHAIN_ID, SONG_CONTRACT } from '@/utils/constants'
+import { SONG_CONTRACT } from '@/utils/constants'
 import {
   Button,
   FormControl,

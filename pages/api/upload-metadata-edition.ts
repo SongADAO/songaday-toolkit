@@ -1,7 +1,7 @@
 import { ensureDir, projectPath } from '@/utils/generator/helpers'
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { copyFileSync, createReadStream, readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'fs'
 import { trim } from 'lodash'
 import { DateTime } from 'luxon'
 import pinataSDK from '@pinata/sdk'

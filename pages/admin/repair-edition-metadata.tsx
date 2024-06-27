@@ -16,7 +16,6 @@ import toast from 'react-hot-toast'
 import { useAccount, useNetwork } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
-import { UnsupportedChainIdError } from '@0xsplits/splits-sdk'
 
 const RepairEditionMetadata = () => {
   const [loading, setLoading] = useState(false)

@@ -3,37 +3,23 @@ import { songabi } from '@/utils/abi/songabi'
 import { SONG_CONTRACT, TREASURY_CONTRACT } from '@/utils/constants'
 import {
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Box,
   Heading,
   Stack,
   Text,
-  Wrap,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
-  Checkbox,
   Tag,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import {
-  useAccount,
-  useNetwork,
-  type PublicClient,
-  usePublicClient,
-} from 'wagmi'
+import { useAccount, useNetwork, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 import { ethers } from 'ethers'
-import { DateTime } from 'luxon'
-import { readContract } from '@wagmi/core'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
 query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
