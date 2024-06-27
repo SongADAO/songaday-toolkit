@@ -1,6 +1,5 @@
 import { formatAddress } from '@/utils/helpers'
-import { Button } from '@chakra-ui/button'
-import { Box, Flex, HStack, Text } from '@chakra-ui/layout'
+import { Button, Box, Flex, HStack, Text } from '@chakra-ui/react'
 import { useWeb3Modal } from '@web3modal/react'
 import { FC } from 'react'
 import { HiX } from 'react-icons/hi'

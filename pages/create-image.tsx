@@ -1,25 +1,28 @@
 import { AppLayout } from '@/components/AppLayout'
 import fetchJson from '@/utils/fetchJson'
-import { Button } from '@chakra-ui/button'
 import {
+  Button,
   FormControl,
   FormLabel,
   FormHelperText,
   FormErrorMessage,
-} from '@chakra-ui/form-control'
-import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Flex, Text, Wrap } from '@chakra-ui/layout'
-import {
+  Input,
+  Box,
+  Heading,
+  Stack,
+  Flex,
+  Text,
+  Wrap,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-} from '@chakra-ui/number-input'
+  Textarea,
+} from '@chakra-ui/react'
 import { toast } from 'react-hot-toast'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Textarea } from '@chakra-ui/textarea'
 import { DateTime } from 'luxon'
 import { FileUpload } from '@/components/FileUpload'
 import { Icon } from '@chakra-ui/react'

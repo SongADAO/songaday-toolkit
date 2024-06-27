@@ -1,8 +1,18 @@
 import { AppLayout } from '@/components/AppLayout'
 import { SONG_CONTRACT } from '@/utils/constants'
-import { Button } from '@chakra-ui/button'
-import { Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
-import { Table, Tbody, Td, Th, Thead, Tr } from '@chakra-ui/react'
+import {
+  Button,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@chakra-ui/react'
 import { orderBy } from 'lodash'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'

@@ -1,16 +1,21 @@
 import { AppLayout } from '@/components/AppLayout'
 import { FileUpload } from '@/components/FileUpload'
 import fetchJson from '@/utils/fetchJson'
-import { Button } from '@chakra-ui/button'
 import {
+  Button,
   FormControl,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
-} from '@chakra-ui/form-control'
-import Icon from '@chakra-ui/icon'
-import { Input } from '@chakra-ui/input'
-import { Box, Flex, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
+  Icon,
+  Input,
+  Box,
+  Flex,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
+} from '@chakra-ui/react'
 import { useRouter } from 'next/dist/client/router'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'

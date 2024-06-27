@@ -5,10 +5,17 @@ import {
   SONG_EDITION_CONTRACT,
   SONG_EDITION_CHAIN_ID,
 } from '@/utils/constants'
-import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
-import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Box,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'

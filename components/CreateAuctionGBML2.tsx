@@ -8,11 +8,18 @@ import {
 } from '@/utils/constants'
 import { ethers } from 'ethers'
 import fetchJson from '@/utils/fetchJson'
-import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
-import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
-import { Checkbox } from '@chakra-ui/react'
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Box,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
+  Checkbox,
+} from '@chakra-ui/react'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'

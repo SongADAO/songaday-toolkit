@@ -12,12 +12,16 @@ import {
   ZERO_ADDRESS,
   GBM_L2_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
-import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
-import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
-import { JsonRpcProvider } from '@ethersproject/providers'
 import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Box,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
   Table,
   Tbody,
   Td,
@@ -27,6 +31,8 @@ import {
   Checkbox,
   Tag,
 } from '@chakra-ui/react'
+import { JsonRpcProvider } from '@ethersproject/providers'
+
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'

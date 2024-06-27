@@ -1,8 +1,16 @@
 import { AppLayout } from '@/components/AppLayout'
 import fetchJson from '@/utils/fetchJson'
-import { Button } from '@chakra-ui/button'
-import { Heading, Stack, Text, Wrap, Box } from '@chakra-ui/layout'
-import { FormControl, FormLabel, Input } from '@chakra-ui/react'
+import {
+  Button,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
+  Box,
+  FormControl,
+  FormLabel,
+  Input,
+} from '@chakra-ui/react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 

@@ -1,11 +1,16 @@
 import { AppLayout } from '@/components/AppLayout'
 import { songabi } from '@/utils/abi/songabi'
 import { SONG_CONTRACT, TREASURY_CONTRACT } from '@/utils/constants'
-import { Button } from '@chakra-ui/button'
-import { FormControl, FormLabel } from '@chakra-ui/form-control'
-import { Input } from '@chakra-ui/input'
-import { Box, Heading, Stack, Text, Wrap } from '@chakra-ui/layout'
 import {
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Box,
+  Heading,
+  Stack,
+  Text,
+  Wrap,
   Table,
   Tbody,
   Td,

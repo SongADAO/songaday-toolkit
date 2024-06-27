@@ -1,7 +1,6 @@
 import { ConnectWallet } from '@/components/ConnectWallet'
 import { ROUTES } from '@/utils/constants'
-import { Box, Heading, HStack, Spacer } from '@chakra-ui/layout'
-import { Button } from '@chakra-ui/button'
+import { Box, Heading, HStack, Spacer, Button } from '@chakra-ui/react'
 import { Link as NextLink } from '@chakra-ui/next-js'
 import { useState, useEffect } from 'react'
 
