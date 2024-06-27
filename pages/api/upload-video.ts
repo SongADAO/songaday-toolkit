@@ -1,13 +1,12 @@
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { copyFileSync, readFileSync, renameSync, writeFileSync } from 'fs'
+import { copyFileSync, createReadStream, renameSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import os from 'os'
 import { ensureDir, projectPath } from '@/utils/generator/helpers'
 import { last } from 'lodash'
 import { nanoid } from 'nanoid'
-import { NFTStorage } from 'nft.storage'
-import { Blob } from '@web-std/file'
+import pinataSDK from '@pinata/sdk'
 import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
@@ -38,12 +37,24 @@ export default withSession<{ hash: string }>(async (req, res) => {
 
   // rename the file so that its easier to browse assets on nft.storage
   renameSync(files.file.filepath, newFilePath)
-  const nftStorageClient = new NFTStorage({
-    token: String(externalConfig.NFTSTORAGE_API_KEY),
+
+  const pinata = new pinataSDK({
+    pinataJWTKey: String(externalConfig.PINATA_JWT),
   })
-  const fileBuffer = readFileSync(newFilePath)
-  const blob = new Blob([fileBuffer])
-  const ipfsHash = await nftStorageClient.storeBlob(blob)
+  // const pinata = new pinataSDK({
+  //   pinataApiKey: String(externalConfig.PINATA_API_KEY),
+  //   pinataSecretApiKey: String(externalConfig.PINATA_SECRET_API_KEY),
+  // })
+  const toPinStream = createReadStream(newFilePath)
+  const pinataRes = await pinata.pinFileToIPFS(toPinStream, {
+    pinataMetadata: {
+      name: `${fields.songNbr}.${fileExt}`,
+    },
+    pinataOptions: {
+      cidVersion: 1,
+    },
+  })
+  const ipfsHash = pinataRes.IpfsHash
 
   ensureDir(join(projectPath, `/output/${fields.songNbr}`))
 

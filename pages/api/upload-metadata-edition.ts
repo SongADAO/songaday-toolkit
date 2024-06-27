@@ -1,12 +1,11 @@
 import { ensureDir, projectPath } from '@/utils/generator/helpers'
 import withSession from '@/utils/withSession'
 import formidable from 'formidable'
-import { copyFileSync, readFileSync, writeFileSync } from 'fs'
+import { copyFileSync, createReadStream, readFileSync, writeFileSync } from 'fs'
 import { trim } from 'lodash'
 import { DateTime } from 'luxon'
-import { NFTStorage } from 'nft.storage'
+import pinataSDK from '@pinata/sdk'
 import { join } from 'path'
-import { Blob } from '@web-std/file'
 import externalConfig from '../../config.json'
 
 export default withSession<{ hash: string }>(async (req, res) => {
@@ -107,11 +106,22 @@ export default withSession<{ hash: string }>(async (req, res) => {
     attributes: attributesArray,
   }
 
-  const nftStorageClient = new NFTStorage({
-    token: String(externalConfig.NFTSTORAGE_API_KEY),
+  const pinata = new pinataSDK({
+    pinataJWTKey: String(externalConfig.PINATA_JWT),
   })
-  const blob = new Blob([JSON.stringify(metadata)])
-  const ipfsHash = await nftStorageClient.storeBlob(blob)
+  // const pinata = new pinataSDK({
+  //   pinataApiKey: String(externalConfig.PINATA_API_KEY),
+  //   pinataSecretApiKey: String(externalConfig.PINATA_SECRET_API_KEY),
+  // })
+  const pinataRes = await pinata.pinJSONToIPFS(metadata, {
+    pinataMetadata: {
+      name: `edition-${fields.songNbr}.json`,
+    },
+    pinataOptions: {
+      cidVersion: 1,
+    },
+  })
+  const ipfsHash = pinataRes.IpfsHash
 
   ensureDir(join(projectPath, `/output/${fields.songNbr}`))
 
