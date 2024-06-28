@@ -41,6 +41,22 @@ import {
 } from 'viem'
 import { zora } from 'viem/chains'
 
+type SongTrait = {
+  trait_type: string
+  value: string
+}
+
+type Song = {
+  token_id: number
+  name: string
+  description: string
+  image: string
+  animation_url: string
+  external_url: string
+  youtube_url: string
+  attributes: SongTrait[]
+}
+
 type TokenDetail = {
   owner: `0x${string}`
   tokenId: bigint
@@ -91,6 +107,7 @@ const CreateAuctionGBML2 = () => {
   )
   const [loading, setLoading] = useState(false)
   const [hypersubLoading, setHypersubLoading] = useState(false)
+  const [solanaFormLoading, setSolanaFormLoading] = useState(false)
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
 
@@ -101,6 +118,72 @@ const CreateAuctionGBML2 = () => {
   const auctionNetwork = GBM_L2_CHAIN
 
   const auctionAddress = GBM_L2_CONTRACT_ADDRESS
+
+  async function getSolanaFormURL(songNbr: number) {
+    const song: Song = await fetchJson(
+      `/api/read-output-metadata/?token_id=${songNbr}`
+    )
+
+    if (Number(song?.token_id) !== Number(songNbr)) {
+      throw new Error('could not find metadata')
+    }
+
+    const dateAttr = song.attributes.find((attr) => attr.trait_type === 'Date')
+    const month = dateAttr.value.substring(5, 7)
+    const day = dateAttr.value.substring(8, 10)
+    const year = dateAttr.value.substring(0, 4)
+
+    const attributes = song.attributes.map((attr) => {
+      return `{"Key":"${attr.trait_type}","Value":"${attr.value}"}`
+      // return { Key: attr.trait_type, Value: attr.value }
+    })
+    const attributesStr = '[' + attributes.join(',') + ']'
+
+    const paramsObj = new URLSearchParams()
+
+    paramsObj.append('creatorName', 'Jonathan Mann')
+    paramsObj.append('preferredDrop[month]', month)
+    paramsObj.append('preferredDrop[day]', day)
+    paramsObj.append('preferredDrop[year]', year)
+    paramsObj.append('email', 'jonathan@jonathanmann.net')
+    paramsObj.append('name', song.name)
+    // paramsObj.append('description', song.description);
+    paramsObj.append(
+      'rarity',
+      'Common (Base piece that goes to all active subscribers)'
+    )
+    paramsObj.append('imageLink', song.image)
+    paramsObj.append('animationLink', song.animation_url)
+    paramsObj.append('supply', 'Open')
+    paramsObj.append('additionalFile24', '')
+    paramsObj.append('anyAdditional', '')
+    paramsObj.append('doYou42', 'No')
+    paramsObj.append('typeA15', attributesStr)
+    // paramsObj.append(
+    //   'anyAdditional',
+    //   `external_url: ${song.external_url} youtube_url: ${song.youtube_url}`
+    // )
+
+    const searchParams = new URLSearchParams(paramsObj)
+
+    const endpoint = 'https://form.jotform.com/240875856274368?'
+
+    const url =
+      endpoint +
+      searchParams +
+      '&description=' +
+      song.description.replaceAll(' ', '%20')
+
+    console.log(url)
+
+    return url
+  }
+
+  async function openSolanaForm(songNbr: number) {
+    const url = await getSolanaFormURL(songNbr)
+
+    window.open(url)
+  }
 
   const createAuctionHandler = async () => {
     setCreated(false)
@@ -185,6 +268,8 @@ const CreateAuctionGBML2 = () => {
 
       toast.success('Auction created')
       setCreated(true)
+
+      openSolanaForm(Number(songNbr))
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)
     } finally {
@@ -330,6 +415,24 @@ const CreateAuctionGBML2 = () => {
     }
   }
 
+  const onOpenSolanaForm = async () => {
+    setSolanaFormLoading(true)
+    try {
+      if (!songNbr) {
+        toast.error('Song number is not present')
+        return
+      }
+
+      openSolanaForm(Number(songNbr))
+
+      setSolanaFormLoading(true)
+    } catch (error) {
+      toast.error((error as any).error?.message || (error as any)?.message)
+    } finally {
+      setSolanaFormLoading(false)
+    }
+  }
+
   return (
     <Stack spacing="6">
       {isConnected && (
@@ -431,6 +534,17 @@ const CreateAuctionGBML2 = () => {
                   Switch Chain
                 </Button>
               )}
+            </Wrap>
+
+            <Wrap>
+              <Button
+                loadingText="Opening Solana Form"
+                isLoading={solanaFormLoading}
+                disabled={loading || hypersubLoading || solanaFormLoading}
+                onClick={() => onOpenSolanaForm()}
+              >
+                Open Solana NFT Form
+              </Button>
             </Wrap>
 
             <Stack>
