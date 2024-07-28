@@ -152,8 +152,14 @@ const CreateAuctionGBML2 = () => {
       'rarity',
       'Common (Base piece that goes to all active subscribers)'
     )
-    paramsObj.append('imageLink', song.image)
-    paramsObj.append('animationLink', song.animation_url)
+    paramsObj.append(
+      'imageLink',
+      song.image.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    )
+    paramsObj.append(
+      'animationLink',
+      song.animation_url.replace('ipfs://', 'https://ipfs.io/ipfs/')
+    )
     paramsObj.append('supply', 'Open')
     paramsObj.append('additionalFile24', '')
     paramsObj.append('anyAdditional', '')
