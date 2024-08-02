@@ -52,6 +52,8 @@ import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 import { mainnet, sepolia, zora } from 'viem/chains'
 
 const GBML2Winners = () => {
+  const batchSize = 262144 // 256kB;
+
   const now = new Date().getTime()
 
   const mainnetPublicClient = usePublicClient({ chainId: 1 })
@@ -168,6 +170,7 @@ const GBML2Winners = () => {
 
     const results = await mainnetPublicClient.multicall({
       contracts: contracts,
+      batchSize: batchSize,
     })
 
     for (const i in winners) {
@@ -206,6 +209,7 @@ const GBML2Winners = () => {
 
     const results = await auctionPublicClient.multicall({
       contracts: contracts,
+      batchSize: batchSize,
     })
 
     for (const i in winners) {
@@ -235,6 +239,7 @@ const GBML2Winners = () => {
 
     const results = await auctionPublicClient.multicall({
       contracts: contracts,
+      batchSize: batchSize,
     })
 
     for (const i in winners) {
@@ -261,6 +266,7 @@ const GBML2Winners = () => {
 
     const results = await auctionPublicClient.multicall({
       contracts: contracts,
+      batchSize: batchSize,
     })
 
     for (const i in winners) {
