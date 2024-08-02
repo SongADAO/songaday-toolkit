@@ -138,7 +138,12 @@ const GBML2Winners = () => {
     // console.log(logs)
     // console.log(events)
 
-    const eventsReversed = events.reverse()
+    const eventsReversed = events.toSorted((eventA, eventB) =>
+      Number((eventA.args as any)._tokenID) <
+      Number((eventB.args as any)._tokenID)
+        ? 1
+        : -1
+    )
 
     const auctions = eventsReversed.map((event) => {
       return {
