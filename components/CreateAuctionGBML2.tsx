@@ -178,7 +178,7 @@ const CreateAuctionGBML2 = () => {
       endpoint +
       searchParams +
       '&description=' +
-      song.description.replaceAll(' ', '%20')
+      encodeURIComponent(song.description)
 
     console.log(url)
 
