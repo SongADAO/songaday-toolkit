@@ -2,8 +2,8 @@
   "name": "toolkit",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "https": "next dev --experimental-https",
+    "dev": "next dev -p 80",
+    "https": "next dev --experimental-https -p 443",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
