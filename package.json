@@ -52,7 +52,7 @@
     "swr": "^1.0.1",
     "tempy": "^2.0.0",
     "viem": "1.2.10",
-    "wagmi": "^1.2.1"
+    "wagmi": "^1.4.12"
   },
   "devDependencies": {
     "@types/formidable": "^2.0.0",

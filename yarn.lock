@@ -10725,7 +10725,7 @@ viem@^2.1.1:
     isows "1.0.4"
     ws "8.17.1"
 
-wagmi@^1.2.1:
+wagmi@^1.4.12:
   version "1.4.13"
   resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-1.4.13.tgz#dc8dc077c7c2195877d7e33477b0417f5d2add4f"
   integrity sha512-AScVYFjqNt1wMgL99Bob7MLdhoTZ3XKiOZL5HVBdy4W1sh7QodA3gQ8IsmTuUrQ7oQaTxjiXEhwg7sWNrPBvJA==
