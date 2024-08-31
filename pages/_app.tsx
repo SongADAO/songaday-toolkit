@@ -20,8 +20,10 @@ import { CHAIN_ID, INFURA_ID } from '@/utils/constants'
 import { arbitrum, optimism, mainnet, sepolia, zora } from 'viem/chains'
 import { WagmiConfig, configureChains, createConfig } from 'wagmi'
 import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { publicProvider } from 'wagmi/providers/public'
 import { infuraProvider } from 'wagmi/providers/infura'
+// import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { Web3Modal } from '@web3modal/react'
 
 const ClientOnly = ({ children }) => {
@@ -56,8 +58,19 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const { publicClient } = configureChains(chains, [
     infuraProvider({ apiKey: INFURA_ID }),
-    publicProvider(),
+    // alchemyProvider({ apiKey: INFURA_ID }),
     // w3mProvider({ projectId }),
+    jsonRpcProvider({
+      rpc: (chain) => {
+        if (chain.id !== zora.id) return null
+
+        return {
+          http: ['https://rpc.zora.energy'],
+          webSocket: ['wss://rpc.zora.energy'],
+        } as any
+      },
+    }),
+    publicProvider(),
   ])
   const wagmiConfig = createConfig({
     autoConnect: true,
