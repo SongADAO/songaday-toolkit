@@ -114,7 +114,8 @@ const GBML2Winners = () => {
   }
 
   async function fetchSongFromSubgraph() {
-    const rpc = zora.rpcUrls.default.http[0]
+    // const rpc = zora.rpcUrls.default.http[0]
+    const rpc = 'https://rpc.zora.energy'
 
     const auctionProvider = new JsonRpcProvider(rpc)
 
