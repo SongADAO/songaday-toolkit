@@ -39,7 +39,6 @@ import {
   parseAbi,
   encodeFunctionData,
 } from 'viem'
-import { zora } from 'viem/chains'
 
 type SongTrait = {
   trait_type: string
