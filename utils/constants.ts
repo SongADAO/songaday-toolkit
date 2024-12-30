@@ -68,11 +68,11 @@ export const AUCTION_ROUTES = [
     name: 'Create Auction - GBM L2 Base',
     description: 'Create auction for a newly minted song',
   },
-  {
-    path: '/auctions/create-gbm-l2-zora',
-    name: 'Create Auction - GBM L2 Zora',
-    description: 'Create auction for a newly minted song',
-  },
+  // {
+  //   path: '/auctions/create-gbm-l2-zora',
+  //   name: 'Create Auction - GBM L2 Zora',
+  //   description: 'Create auction for a newly minted song',
+  // },
   // {
   //   path: '/auctions/create-gbm',
   //   name: 'Create Auction - GBM',
