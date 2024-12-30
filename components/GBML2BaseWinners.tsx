@@ -49,7 +49,8 @@ import { DateTime } from 'luxon'
 import { readContract } from '@wagmi/core'
 import { encodeFunctionData } from 'viem'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
-import { mainnet, sepolia, zora } from 'viem/chains'
+import { mainnet, sepolia } from 'viem/chains'
+import { base } from 'utils/base-chain'
 
 const GBML2BaseWinners = () => {
   const batchSize = 262144 // 256kB;
@@ -62,7 +63,7 @@ const GBML2BaseWinners = () => {
 
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
-  // const basePublicClient = usePublicClient({ chainId: 8453 })
+  const basePublicClient = usePublicClient({ chainId: 8453 })
 
   const zoraPublicClient = usePublicClient({ chainId: 7777777 })
 
@@ -84,7 +85,7 @@ const GBML2BaseWinners = () => {
 
   const auctionAddress = GBM_L2_BASE_CONTRACT_ADDRESS
 
-  const auctionPublicClient = zoraPublicClient
+  const auctionPublicClient = basePublicClient
 
   const sadContract = {
     chainId: 1,
@@ -114,8 +115,7 @@ const GBML2BaseWinners = () => {
   }
 
   async function fetchSongFromSubgraph() {
-    // const rpc = zora.rpcUrls.default.http[0]
-    const rpc = 'https://rpc.zora.energy'
+    const rpc = base.rpcUrls.default.http[0]
 
     const auctionProvider = new JsonRpcProvider(rpc)
 
@@ -375,27 +375,27 @@ const GBML2BaseWinners = () => {
         )
       }
 
-      // const isAddressAContractBase = await isContract(
-      //   winnerAddress,
-      //   basePublicClient
-      // )
+      const isAddressAContractBase = await isContract(
+        winnerAddress,
+        basePublicClient
+      )
 
-      // if (isAddressAContractBase) {
-      //   throw new Error(
-      //     'Address is a contract on Base. Unverified transfer is unsafe'
-      //   )
-      // }
+      if (isAddressAContractBase) {
+        throw new Error(
+          'Address is a contract on Base. Unverified transfer is unsafe'
+        )
+      }
 
-      // const isAddressAContractZora = await isContract(
-      //   winnerAddress,
-      //   zoraPublicClient
-      // )
+      const isAddressAContractZora = await isContract(
+        winnerAddress,
+        zoraPublicClient
+      )
 
-      // if (isAddressAContractZora) {
-      //   throw new Error(
-      //     'Address is a contract on Zora. Unverified transfer is unsafe'
-      //   )
-      // }
+      if (isAddressAContractZora) {
+        throw new Error(
+          'Address is a contract on Zora. Unverified transfer is unsafe'
+        )
+      }
 
       // console.log(toDistribute)
       // console.log(TREASURY_CONTRACT)
@@ -432,11 +432,11 @@ const GBML2BaseWinners = () => {
         // console.log(editionTokenId)
 
         // if (!editionTokenId) {
-        //   throw new Error('Could not determine Zora edition id')
+        //   throw new Error('Could not determine base edition id')
         // }
 
         const editionURI = await readContract({
-          chainId: zora.id,
+          chainId: base.id,
           address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
           abi: zoraeditionabi,
           functionName: 'uri',
@@ -450,7 +450,7 @@ const GBML2BaseWinners = () => {
           editionURI ===
             'ipfs://bafkreidjyzontu7nocz6gbxzldocdnvr52cabwj5l334i4aqgckt4xpa6a'
         ) {
-          throw new Error('Could not determine Zora edition URI')
+          throw new Error('Could not determine Base edition URI')
         }
 
         const ipfsHash = editionURI.replace('ipfs://', '')
@@ -552,7 +552,7 @@ const GBML2BaseWinners = () => {
           <Heading>GBM L2 Winners</Heading>
 
           <Box>
-            {(chain?.id === zora.id && (
+            {(chain?.id === base.id && (
               <Button
                 type="button"
                 isLoading={isClaiming}
@@ -562,7 +562,7 @@ const GBML2BaseWinners = () => {
               </Button>
             )) || (
               <Button
-                onClick={() => switchNetwork(zora.id)}
+                onClick={() => switchNetwork(base.id)}
                 isLoading={isSwitching}
               >
                 Switch Chain

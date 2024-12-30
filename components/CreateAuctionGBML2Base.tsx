@@ -112,7 +112,7 @@ const CreateAuctionGBML2 = () => {
 
   const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 
-  const zoraPublicClient = usePublicClient({ chainId: 7777777 })
+  const basePublicClient = usePublicClient({ chainId: 8453 })
 
   const auctionNetwork = GBM_L2_BASE_CHAIN
 
@@ -307,7 +307,7 @@ const CreateAuctionGBML2 = () => {
           'function supplyDetail() view returns (uint256 count, uint256 cap)',
           'function subscriptionOf(address account) external view returns (uint256 tokenId, uint256 refundableAmount, uint256 rewardPoints, uint256 expiresAt)',
         ]),
-        publicClient: zoraPublicClient,
+        publicClient: basePublicClient,
       })
 
       const tokenHolders = await getTokenHolders(contract)
