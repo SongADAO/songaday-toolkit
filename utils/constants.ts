@@ -51,16 +51,16 @@ export const ROUTES = [
     description: 'Sound.xyz Winners',
   },
   {
-    path: '/gbm-l2-winners',
-    name: 'GBM L2 Winners',
-    description: 'GBM L2 Winners',
+    path: '/gbm-l2-zora-winners',
+    name: 'GBM L2 Zora Winners',
+    description: 'GBM L2 Zora Winners',
   },
 ]
 
 export const AUCTION_ROUTES = [
   {
-    path: '/auctions/create-gbm-l2',
-    name: 'Create Auction - GBM L2',
+    path: '/auctions/create-gbm-l2-zora',
+    name: 'Create Auction - GBM L2 Zora',
     description: 'Create auction for a newly minted song',
   },
   // {
@@ -143,26 +143,26 @@ export const GBM_CONTRACT = '0x1c51Abab1160879e697733124da80e4072590BBD'
 export const GBM_INITIATOR_CONTRACT =
   '0xc3f71feebd2ac213cacb5da33b4ddb38d0f163ca'
 
-// export const GBM_L2_EDITION_MINTER =
+// export const GBM_L2_ZORA_EDITION_MINTER =
 //   '0x1Cd1C1f3b8B779B50Db23155F2Cb244FCcA06B21'
-// export const GBM_L2_CONTRACT_ADDRESS =
+// export const GBM_L2_ZORA_CONTRACT_ADDRESS =
 //   '0x21ca9c4D80dFBaFe71f8e438a495906BEFef0069'
-// export const GBM_L2_CHAIN = 11155111
-// export const GBM_L2_IOU_CONTRACT_ADDRESS =
+// export const GBM_L2_ZORA_CHAIN = 11155111
+// export const GBM_L2_ZORA_IOU_CONTRACT_ADDRESS =
 //   '0x94E22CEB05a425EecCd5c007A1335C63FBC0E715'
 
-export const GBM_L2_EDITION_MINTER =
+export const GBM_L2_ZORA_EDITION_MINTER =
   '0x04E2516A2c207E84a1839755675dfd8eF6302F0a'
-export const GBM_L2_CONTRACT_ADDRESS =
+export const GBM_L2_ZORA_CONTRACT_ADDRESS =
   '0x2cc2D8256798b35a4c1D181284127BAaCa750014'
-export const GBM_L2_CHAIN = 7777777
-// export const GBM_L2_EDITION_CONTRACT_ADDRESS =
+export const GBM_L2_ZORA_CHAIN = 7777777
+// export const GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS =
 //   '0x7bc59F464F1Dd85cD0cFef9729edE680B4E554E7' // DEBUG
-// export const GBM_L2_IOU_CONTRACT_ADDRESS =
+// export const GBM_L2_ZORA_IOU_CONTRACT_ADDRESS =
 //   '0x000000000000000000000000000000000000dEaD' // DEBUG
-export const GBM_L2_EDITION_CONTRACT_ADDRESS =
+export const GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS =
   '0x430095df3b880cabd2891d7af0acba66d91371c4' // PROD
-export const GBM_L2_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
+export const GBM_L2_ZORA_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
 
 export const BATCH_IDS = [
   1502, 1513, 1845, 1952, 1983, 2509, 3025, 3515, 3591, 4140, 4406, 4410, 4415,
