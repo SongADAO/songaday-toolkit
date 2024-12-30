@@ -1,10 +1,10 @@
 import { AppLayout } from '@/components/AppLayout'
 import {
-  GBM_L2_CONTRACT_ADDRESS,
-  GBM_L2_CHAIN,
-  GBM_L2_IOU_CONTRACT_ADDRESS,
-  GBM_L2_EDITION_MINTER,
-  GBM_L2_EDITION_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_CHAIN,
+  GBM_L2_ZORA_IOU_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_EDITION_MINTER,
+  GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
 import { ethers } from 'ethers'
 import fetchJson from '@/utils/fetchJson'
@@ -93,7 +93,7 @@ async function getBulkSubscriptions(
   return Promise.all(promises)
 }
 
-const CreateAuctionGBML2 = () => {
+const CreateAuctionGBML2Zora = () => {
   const [created, setCreated] = useState(false)
   const [hypersubSent, setHypersubSent] = useState(false)
   const [songNbr, setSongNbr] = useState<string>('')
@@ -114,9 +114,9 @@ const CreateAuctionGBML2 = () => {
 
   const zoraPublicClient = usePublicClient({ chainId: 7777777 })
 
-  const auctionNetwork = GBM_L2_CHAIN
+  const auctionNetwork = GBM_L2_ZORA_CHAIN
 
-  const auctionAddress = GBM_L2_CONTRACT_ADDRESS
+  const auctionAddress = GBM_L2_ZORA_CONTRACT_ADDRESS
 
   async function getSolanaFormURL(songNbr: number) {
     const song: Song = await fetchJson(
@@ -205,8 +205,8 @@ const CreateAuctionGBML2 = () => {
       }
 
       console.log(chain.id)
-      console.log(GBM_L2_CHAIN)
-      if (chain?.id !== GBM_L2_CHAIN) {
+      console.log(GBM_L2_ZORA_CHAIN)
+      if (chain?.id !== GBM_L2_ZORA_CHAIN) {
         toast.error('Switch to auction L2')
         return
       }
@@ -244,17 +244,17 @@ const CreateAuctionGBML2 = () => {
       }
 
       const { hash } = await writeContract({
-        chainId: GBM_L2_CHAIN,
-        address: GBM_L2_CONTRACT_ADDRESS,
+        chainId: GBM_L2_ZORA_CHAIN,
+        address: GBM_L2_ZORA_CONTRACT_ADDRESS,
         abi: gbml2abi,
         functionName: 'registerAnAuctionTokenSongAdao',
         args: [
-          GBM_L2_IOU_CONTRACT_ADDRESS,
+          GBM_L2_ZORA_IOU_CONTRACT_ADDRESS,
           BigInt(songNbr),
           BigInt(1),
           BigInt(endTimestamp),
           editionURI,
-          GBM_L2_EDITION_MINTER,
+          GBM_L2_ZORA_EDITION_MINTER,
           BigInt(editionEndTimestamp),
           BigInt('0'),
           BigInt(editionPrice),
@@ -265,7 +265,7 @@ const CreateAuctionGBML2 = () => {
 
       await waitForTransaction({
         hash,
-        chainId: GBM_L2_CHAIN,
+        chainId: GBM_L2_ZORA_CHAIN,
         confirmations: 1,
       })
 
@@ -292,8 +292,8 @@ const CreateAuctionGBML2 = () => {
       }
 
       console.log(chain.id)
-      console.log(GBM_L2_CHAIN)
-      if (chain?.id !== GBM_L2_CHAIN) {
+      console.log(GBM_L2_ZORA_CHAIN)
+      if (chain?.id !== GBM_L2_ZORA_CHAIN) {
         toast.error('Switch to auction L2')
         return
       }
@@ -344,7 +344,7 @@ const CreateAuctionGBML2 = () => {
         abi: gbml2abi,
         functionName: 'getAuctionID',
         args: [
-          GBM_L2_IOU_CONTRACT_ADDRESS,
+          GBM_L2_ZORA_IOU_CONTRACT_ADDRESS,
           '0x73ad2146',
           BigInt(Number(songNbr)),
           BigInt(0),
@@ -383,8 +383,8 @@ const CreateAuctionGBML2 = () => {
       console.log(mintCalldata)
 
       // const { hash } = await writeContract({
-      //   chainId: GBM_L2_CHAIN,
-      //   address: GBM_L2_EDITION_CONTRACT_ADDRESS,
+      //   chainId: GBM_L2_ZORA_CHAIN,
+      //   address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
       //   abi: zoraeditionabi,
       //   functionName: 'adminMint',
       //   args: [
@@ -396,8 +396,8 @@ const CreateAuctionGBML2 = () => {
       // })
 
       const { hash } = await writeContract({
-        chainId: GBM_L2_CHAIN,
-        address: GBM_L2_EDITION_CONTRACT_ADDRESS,
+        chainId: GBM_L2_ZORA_CHAIN,
+        address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
         abi: zoraeditionabi,
         functionName: 'multicall',
         args: [mintCalldata],
@@ -407,7 +407,7 @@ const CreateAuctionGBML2 = () => {
 
       await waitForTransaction({
         hash,
-        chainId: GBM_L2_CHAIN,
+        chainId: GBM_L2_ZORA_CHAIN,
         confirmations: 1,
       })
 
@@ -442,7 +442,7 @@ const CreateAuctionGBML2 = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>Create Auction - GBM L2</Heading>
+          <Heading>Create Auction - GBM L2 Zora</Heading>
           <Text>First you need to create an auction.</Text>
           <Stack spacing="6">
             <Stack spacing="4">
@@ -502,7 +502,7 @@ const CreateAuctionGBML2 = () => {
               </Text>
             </Stack>
             <Wrap>
-              {(chain?.id === GBM_L2_CHAIN && (
+              {(chain?.id === GBM_L2_ZORA_CHAIN && (
                 <Button
                   loadingText="Creating"
                   isLoading={loading}
@@ -513,7 +513,7 @@ const CreateAuctionGBML2 = () => {
                 </Button>
               )) || (
                 <Button
-                  onClick={() => switchNetwork(GBM_L2_CHAIN)}
+                  onClick={() => switchNetwork(GBM_L2_ZORA_CHAIN)}
                   isLoading={isSwitching}
                 >
                   Switch Chain
@@ -522,7 +522,7 @@ const CreateAuctionGBML2 = () => {
             </Wrap>
 
             <Wrap>
-              {(chain?.id === GBM_L2_CHAIN && (
+              {(chain?.id === GBM_L2_ZORA_CHAIN && (
                 <Button
                   loadingText="Sending Editions"
                   isLoading={hypersubLoading}
@@ -533,7 +533,7 @@ const CreateAuctionGBML2 = () => {
                 </Button>
               )) || (
                 <Button
-                  onClick={() => switchNetwork(GBM_L2_CHAIN)}
+                  onClick={() => switchNetwork(GBM_L2_ZORA_CHAIN)}
                   isLoading={isSwitching}
                 >
                   Switch Chain
@@ -586,5 +586,5 @@ const CreateAuctionGBML2 = () => {
   )
 }
 
-CreateAuctionGBML2.Layout = AppLayout
-export default CreateAuctionGBML2
+CreateAuctionGBML2Zora.Layout = AppLayout
+export default CreateAuctionGBML2Zora

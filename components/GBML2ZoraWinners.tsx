@@ -5,12 +5,12 @@ import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
 import {
   SONG_CONTRACT,
   TREASURY_CONTRACT,
-  GBM_L2_CONTRACT_ADDRESS,
-  GBM_L2_CHAIN,
-  GBM_L2_IOU_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_CHAIN,
+  GBM_L2_ZORA_IOU_CONTRACT_ADDRESS,
   INFURA_ID,
   ZERO_ADDRESS,
-  GBM_L2_EDITION_CONTRACT_ADDRESS,
+  GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
 import {
   Button,
@@ -51,7 +51,7 @@ import { encodeFunctionData } from 'viem'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 import { mainnet, sepolia, zora } from 'viem/chains'
 
-const GBML2Winners = () => {
+const GBML2ZoraWinners = () => {
   const batchSize = 262144 // 256kB;
 
   const now = new Date().getTime()
@@ -80,9 +80,9 @@ const GBML2Winners = () => {
 
   const [isClaiming, setIsClaiming] = useState<boolean>(false)
 
-  const auctionNetwork = GBM_L2_CHAIN
+  const auctionNetwork = GBM_L2_ZORA_CHAIN
 
-  const auctionAddress = GBM_L2_CONTRACT_ADDRESS
+  const auctionAddress = GBM_L2_ZORA_CONTRACT_ADDRESS
 
   const auctionPublicClient = zoraPublicClient
 
@@ -437,7 +437,7 @@ const GBML2Winners = () => {
 
         const editionURI = await readContract({
           chainId: zora.id,
-          address: GBM_L2_EDITION_CONTRACT_ADDRESS,
+          address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
           abi: zoraeditionabi,
           functionName: 'uri',
           args: [editionTokenId],
@@ -766,5 +766,5 @@ const GBML2Winners = () => {
   )
 }
 
-GBML2Winners.Layout = AppLayout
-export default GBML2Winners
+GBML2ZoraWinners.Layout = AppLayout
+export default GBML2ZoraWinners
