@@ -549,7 +549,7 @@ const GBML2ZoraWinners = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>GBM L2 Winners</Heading>
+          <Heading>GBM L2 Zora Winners</Heading>
 
           <Box>
             {(chain?.id === zora.id && (
