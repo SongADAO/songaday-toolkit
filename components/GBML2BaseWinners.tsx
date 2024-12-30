@@ -549,7 +549,7 @@ const GBML2BaseWinners = () => {
     <Stack spacing="6">
       {isConnected && (
         <Stack>
-          <Heading>GBM L2 Winners</Heading>
+          <Heading>GBM L2 Base Winners</Heading>
 
           <Box>
             {(chain?.id === base.id && (
