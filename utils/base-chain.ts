@@ -11,10 +11,14 @@ export const base = defineChain({
   },
   rpcUrls: {
     default: {
-      http: ['https://mainnet.base.org'],
+      http: [
+        'https://base-mainnet.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
+      ],
     },
     public: {
-      http: ['https://mainnet.base.org'],
+      http: [
+        'https://base-mainnet.infura.io/v3/60a7b2c16321439a917c9e74a994f7df',
+      ],
     },
   },
   blockExplorers: {
