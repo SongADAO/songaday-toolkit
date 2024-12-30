@@ -51,6 +51,11 @@ export const ROUTES = [
     description: 'Sound.xyz Winners',
   },
   {
+    path: '/gbm-l2-base-winners',
+    name: 'GBM L2 Base Winners',
+    description: 'GBM L2 Base Winners',
+  },
+  {
     path: '/gbm-l2-zora-winners',
     name: 'GBM L2 Zora Winners',
     description: 'GBM L2 Zora Winners',
@@ -58,6 +63,11 @@ export const ROUTES = [
 ]
 
 export const AUCTION_ROUTES = [
+  {
+    path: '/auctions/create-gbm-l2-base',
+    name: 'Create Auction - GBM L2 Base',
+    description: 'Create auction for a newly minted song',
+  },
   {
     path: '/auctions/create-gbm-l2-zora',
     name: 'Create Auction - GBM L2 Zora',
@@ -163,6 +173,15 @@ export const GBM_L2_ZORA_CHAIN = 7777777
 export const GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS =
   '0x430095df3b880cabd2891d7af0acba66d91371c4' // PROD
 export const GBM_L2_ZORA_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
+
+export const GBM_L2_BASE_EDITION_MINTER =
+  '0x04E2516A2c207E84a1839755675dfd8eF6302F0a'
+export const GBM_L2_BASE_CONTRACT_ADDRESS =
+  '0xf89694f0db979a9e2a02273e74aaeab378090f32'
+export const GBM_L2_BASE_CHAIN = 8453
+export const GBM_L2_BASE_EDITION_CONTRACT_ADDRESS =
+  '0xb3bad5fE12268EDC8a52Ff786076C1D1fA92eF0d' // PROD
+export const GBM_L2_BASE_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
 
 export const BATCH_IDS = [
   1502, 1513, 1845, 1952, 1983, 2509, 3025, 3515, 3591, 4140, 4406, 4410, 4415,
