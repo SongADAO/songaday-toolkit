@@ -57,6 +57,7 @@ type Attributes = {
     beard: string
   }
   customImage: FileList
+  lyrics?: string
 }
 
 export const CreateImage = () => {
@@ -111,8 +112,6 @@ export const CreateImage = () => {
     try {
       const attributes = value.split('	')
 
-      const songNbr = Number(attributes[0])
-
       setValue('songNbr', attributes[0])
       setValue(
         'date',
@@ -134,16 +133,8 @@ export const CreateImage = () => {
       setValue('inKey', attributes[17])
       setValue('tempo', attributes[18])
       setValue('videoUrl', attributes[19])
-
-      if (songNbr >= 5479 && songNbr <= 5529) {
-        // Year >= 16
-        setValue('soundxyzContract', attributes[20])
-        setValue('description', attributes[22])
-      } else {
-        // Year <= 15
-        setValue('soundxyzContract', '')
-        setValue('description', attributes[21])
-      }
+      setValue('lyrics', attributes[20])
+      setValue('description', attributes[21])
     } catch (error) {
       console.log({ error })
       toast.error('Number of columns incorrect')
@@ -424,6 +415,15 @@ export const CreateImage = () => {
                       placeholder="https://youtu.be/RmVC1kAbKC8"
                       type="text"
                       {...register('videoUrl', { required: true })}
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl>
+                    <FormLabel>Lyrics</FormLabel>
+                    <Textarea
+                      placeholder="Enter song lyrics here"
+                      {...register('lyrics')}
                     />
                   </FormControl>
                 </Box>

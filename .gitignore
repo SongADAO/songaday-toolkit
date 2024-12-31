@@ -39,3 +39,5 @@ output
 save-asset-folder
 
 certificates
+/sheets-oauth-token.json
+/youtube-oauth-token.json

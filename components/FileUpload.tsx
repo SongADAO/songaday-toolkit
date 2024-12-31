@@ -1,4 +1,4 @@
-import { InputGroup } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { ReactNode, useRef } from 'react'
 import { UseFormRegisterReturn } from 'react-hook-form'
 
@@ -16,12 +16,14 @@ export const FileUpload = (props: FileUploadProps) => {
     ref: (instance: HTMLInputElement | null) => void
   }
 
-  const handleClick = () => inputRef.current?.click()
+  const handleClick = () => {
+    inputRef.current?.click()
+  }
 
   return (
-    <InputGroup onClick={handleClick}>
+    <Box onClick={handleClick} cursor="pointer">
       <input
-        type={'file'}
+        type="file"
         multiple={multiple || false}
         hidden
         accept={accept}
@@ -31,7 +33,7 @@ export const FileUpload = (props: FileUploadProps) => {
           inputRef.current = e
         }}
       />
-      <>{children}</>
-    </InputGroup>
+      {children}
+    </Box>
   )
 }
