@@ -129,7 +129,7 @@ const GBML2BaseWinners = () => {
 
     const filter: any = auctionContract.filters.Auction_Initialized()
 
-    filter.fromBlock = 24089004
+    filter.fromBlock = 24490993
     filter.toBlock = 'latest'
 
     // filter.fromBlock = 0 // DEBUG
