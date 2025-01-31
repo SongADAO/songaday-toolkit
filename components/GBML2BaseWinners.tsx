@@ -5,6 +5,7 @@ import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
 import {
   SONG_CONTRACT,
   TREASURY_CONTRACT,
+  SONGADAY_MINTER,
   GBM_L2_BASE_CONTRACT_ADDRESS,
   GBM_L2_BASE_CHAIN,
   GBM_L2_BASE_IOU_CONTRACT_ADDRESS,
@@ -187,7 +188,9 @@ const GBML2BaseWinners = () => {
       winners[i].minted = true
 
       if (
-        winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
+        winners[i].tokenOwner.toLowerCase() !==
+          TREASURY_CONTRACT.toLowerCase() &&
+        winners[i].tokenOwner.toLowerCase() !== SONGADAY_MINTER.toLowerCase()
       ) {
         winners[i].distributed = true
       } else {
@@ -582,11 +585,7 @@ const GBML2BaseWinners = () => {
           address: SONG_CONTRACT,
           abi: songabi,
           functionName: 'safeTransferFrom',
-          args: [
-            TREASURY_CONTRACT,
-            winnerAddress,
-            BigInt(toDistribute.tokenId),
-          ],
+          args: [SONGADAY_MINTER, winnerAddress, BigInt(toDistribute.tokenId)],
         })
         toast.success('Waiting for tx to confirm')
         await waitForTransaction({
