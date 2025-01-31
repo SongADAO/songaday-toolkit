@@ -323,7 +323,7 @@ const GBML2BaseWinners = () => {
     )
   }
 
-  async function distribute(tokenId) {
+  async function mintAndDistribute(tokenId) {
     setWinners(
       winners.map((winner) => {
         if (winner.tokenId === tokenId) {
@@ -488,6 +488,203 @@ const GBML2BaseWinners = () => {
       }
 
       toast.success('Song Transferred')
+
+      initWinners()
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    } finally {
+    }
+  }
+
+  async function distribute(tokenId) {
+    setWinners(
+      winners.map((winner) => {
+        if (winner.tokenId === tokenId) {
+          winner.isDistributing = true
+        }
+
+        return winner
+      })
+    )
+
+    try {
+      const toDistribute = winners.find((winner) => {
+        return winner.tokenId === tokenId
+      })
+      // console.log(toDistribute)
+
+      const winnerAddress = toDistribute.highestBidder
+
+      const isAddressAContractMainnet = await isContract(
+        winnerAddress,
+        mainnetPublicClient
+      )
+
+      if (isAddressAContractMainnet) {
+        throw new Error(
+          'Address is a contract on mainnet. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractOptimism = await isContract(
+        winnerAddress,
+        optimismPublicClient
+      )
+
+      if (isAddressAContractOptimism) {
+        throw new Error(
+          'Address is a contract on optimism. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractArbitrum = await isContract(
+        winnerAddress,
+        arbitrumPublicClient
+      )
+
+      if (isAddressAContractArbitrum) {
+        throw new Error(
+          'Address is a contract on arbitrum. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractBase = await isContract(
+        winnerAddress,
+        basePublicClient
+      )
+
+      if (isAddressAContractBase) {
+        throw new Error(
+          'Address is a contract on Base. Unverified transfer is unsafe'
+        )
+      }
+
+      const isAddressAContractZora = await isContract(
+        winnerAddress,
+        zoraPublicClient
+      )
+
+      if (isAddressAContractZora) {
+        throw new Error(
+          'Address is a contract on Zora. Unverified transfer is unsafe'
+        )
+      }
+
+      // console.log(toDistribute)
+      // console.log(TREASURY_CONTRACT)
+      // console.log(winnerAddress)
+      // console.log(BigInt(toDistribute.tokenId))
+
+      if (toDistribute.minted) {
+        const { hash } = await writeContract({
+          chainId: 1,
+          address: SONG_CONTRACT,
+          abi: songabi,
+          functionName: 'safeTransferFrom',
+          args: [
+            TREASURY_CONTRACT,
+            winnerAddress,
+            BigInt(toDistribute.tokenId),
+          ],
+        })
+        toast.success('Waiting for tx to confirm')
+        await waitForTransaction({
+          hash,
+          chainId: 1,
+          confirmations: 1,
+        })
+      }
+
+      toast.success('Song Transferred')
+
+      initWinners()
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    } finally {
+      setWinners(
+        winners.map((winner) => {
+          if (winner.tokenId === tokenId) {
+            winner.isDistributing = false
+          }
+
+          return winner
+        })
+      )
+    }
+  }
+
+  async function mint(tokenId) {
+    setWinners(
+      winners.map((winner) => {
+        if (winner.tokenId === tokenId) {
+          winner.isDistributing = true
+        }
+
+        return winner
+      })
+    )
+
+    try {
+      const toDistribute = winners.find((winner) => {
+        return winner.tokenId === tokenId
+      })
+      // console.log(toDistribute)
+
+      if (!toDistribute.minted) {
+        const editionTokenId = await readContract({
+          chainId: auctionNetwork,
+          address: auctionAddress,
+          abi: gbml2abi,
+          functionName: 'getEditionTokenId',
+          args: [toDistribute._auctionID],
+        })
+        // console.log('Edition Token ID')
+        // console.log(editionTokenId)
+
+        // if (!editionTokenId) {
+        //   throw new Error('Could not determine base edition id')
+        // }
+
+        const editionURI = await readContract({
+          chainId: base.id,
+          address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
+          abi: zoraeditionabi,
+          functionName: 'uri',
+          args: [editionTokenId],
+        })
+        // console.log('Edition URI')
+        // console.log(editionURI)
+
+        if (
+          !editionURI ||
+          editionURI ===
+            'ipfs://bafkreidjyzontu7nocz6gbxzldocdnvr52cabwj5l334i4aqgckt4xpa6a'
+        ) {
+          throw new Error('Could not determine Base edition URI')
+        }
+
+        const ipfsHash = editionURI.replace('ipfs://', '')
+        // console.log('Edition IPFS Hash')
+        // console.log(ipfsHash)
+
+        const { hash } = await writeContract({
+          chainId: 1,
+          address: SONG_CONTRACT,
+          abi: songabi,
+          functionName: 'dailyMint',
+          args: [toDistribute.tokenId, ipfsHash],
+        })
+        toast.success('Waiting for tx to confirm')
+        await waitForTransaction({
+          hash,
+          chainId: 1,
+          confirmations: 1,
+        })
+      }
+
+      toast.success('Song Minted')
 
       initWinners()
     } catch (error) {
@@ -733,9 +930,9 @@ const GBML2BaseWinners = () => {
                                 <Button
                                   type="button"
                                   isLoading={winner.isDistributing}
-                                  onClick={() => distribute(winner.tokenId)}
+                                  onClick={() => mint(winner.tokenId)}
                                 >
-                                  Mint & Distribute
+                                  Mint
                                 </Button>
                               )}
                             </>
