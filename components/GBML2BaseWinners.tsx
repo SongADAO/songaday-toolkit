@@ -115,7 +115,7 @@ const GBML2BaseWinners = () => {
     return bytecode ? true : false
   }
 
-  async function fetchSongFromSubgraph() {
+  async function fetchSongsFromContractEvents() {
     const rpc = base.rpcUrls.default.http[0]
 
     const auctionProvider = new JsonRpcProvider(rpc)
@@ -290,7 +290,7 @@ const GBML2BaseWinners = () => {
         await wasClaimed(
           await lookupEndTime(
             await lookupHighestBidder(
-              await lookupTokenHolders(await fetchSongFromSubgraph())
+              await lookupTokenHolders(await fetchSongsFromContractEvents())
             )
           )
         )
