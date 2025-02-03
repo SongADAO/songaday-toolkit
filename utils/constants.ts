@@ -183,6 +183,8 @@ export const GBM_L2_BASE_CHAIN = 8453
 export const GBM_L2_BASE_EDITION_CONTRACT_ADDRESS =
   '0xb3bad5fE12268EDC8a52Ff786076C1D1fA92eF0d' // PROD
 export const GBM_L2_BASE_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
+export const GBM_L2_BASE_SUBGRAPH =
+  'https://api.goldsky.com/api/public/project_cls54edc9ynxy01tq9ibk30n4/subgraphs/songadaygbmbase/v0.0.4/gn'
 
 export const BATCH_IDS = [
   1502, 1513, 1845, 1952, 1983, 2509, 3025, 3515, 3591, 4140, 4406, 4410, 4415,
