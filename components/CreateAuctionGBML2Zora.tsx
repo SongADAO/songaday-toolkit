@@ -269,14 +269,14 @@ const CreateAuctionGBML2Zora = () => {
         confirmations: 1,
       })
 
-      if (GBM_L2_ZORA_CHAIN !== 11155111) {
+      if (GBM_L2_ZORA_CHAIN === 7777777) {
         await fetchJson(`/api/index-song/?token_id=${songNbr}`)
       }
 
       toast.success('Auction created')
       setCreated(true)
 
-      if (GBM_L2_ZORA_CHAIN !== 11155111) {
+      if (GBM_L2_ZORA_CHAIN === 7777777) {
         openSolanaForm(Number(songNbr))
       }
     } catch (error) {
