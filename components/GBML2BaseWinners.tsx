@@ -36,6 +36,7 @@ import {
   usePublicClient,
   useSwitchNetwork,
 } from 'wagmi'
+import { getAddress } from 'viem'
 import { readContract } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
 import { base } from 'utils/base-chain'
@@ -267,6 +268,20 @@ const GBML2BaseWinners = () => {
       // console.log(toDistribute)
 
       const winnerAddress = toDistribute.highestBidder
+
+      const realHighestBidder = await readContract({
+        chainId: auctionNetwork,
+        address: auctionAddress,
+        abi: gbml2abi,
+        functionName: 'getAuctionHighestBidder',
+        args: [toDistribute.id],
+      })
+
+      if (getAddress(realHighestBidder) !== getAddress(winnerAddress)) {
+        throw new Error(
+          'Highest bidder in the contract does not match the value in the subgraph.  Wait a few minutes for subgraph to sync.'
+        )
+      }
 
       const isAddressAContractMainnet = await isContract(
         winnerAddress,
