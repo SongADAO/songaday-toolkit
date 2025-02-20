@@ -103,66 +103,68 @@ interface TweetThreadOptions {
   description: string
   songNumber: number
   imagePath?: string
-}
-
-async function getInitialTweetText(): Promise<string> {
-  const rl = createInterface({
-    input: process.stdin,
-    output: process.stdout
-  })
-
-  return new Promise((resolve) => {
-    rl.question('Enter your tweet text: ', (answer) => {
-      rl.close()
-      resolve(answer)
-    })
-  })
+  tweetCount?: string
 }
 
 export async function postTweetThread({
   videoPath,
   description,
   songNumber,
-  imagePath
+  imagePath,
+  tweetCount = '2' // Default to 2 for backward compatibility
 }: TweetThreadOptions) {
   try {
     console.log('\nPreparing to post Twitter thread...')
-    const initialTweet = await getInitialTweetText()
     
     // Upload video
     console.log('Uploading video to Twitter...')
     const mediaId = await uploadVideo(videoPath)
     
-    // Post first tweet with video
-    console.log('Posting initial tweet with video...')
-    const firstTweet = await v2Client.tweet({
-      text: initialTweet,
-      media: { media_ids: [mediaId] }
-    })
+    if (tweetCount === '1') {
+      // Single tweet with video and link
+      console.log('Posting single tweet with video...')
+      const tweetText = `${description}\n\nhttps://songaday.world/${songNumber}`
+      const tweet = await v2Client.tweet({
+        text: tweetText,
+        media: { media_ids: [mediaId] }
+      })
 
-    // Upload image if provided
-    let imageMediaId: string | undefined
-    if (imagePath) {
-      console.log('Uploading image for second tweet...')
-      imageMediaId = await v1Client.uploadMedia(imagePath)
+      console.log('Tweet posted successfully!')
+      return {
+        firstTweetId: tweet.data.id,
+        firstTweetUrl: `https://twitter.com/songadaymann/status/${tweet.data.id}`
+      }
+    } else {
+      // Original two-tweet thread behavior
+      console.log('Posting initial tweet with video...')
+      const firstTweet = await v2Client.tweet({
+        text: description,
+        media: { media_ids: [mediaId] }
+      })
+
+      // Upload image if provided
+      let imageMediaId: string | undefined
+      if (imagePath) {
+        console.log('Uploading image for second tweet...')
+        imageMediaId = await v1Client.uploadMedia(imagePath)
+      }
+
+      // Post second tweet as reply
+      console.log('Posting follow-up tweet...')
+      const secondTweetText = `${description}\n\nbid on the 1/1:\nhttps://songaday.world/${songNumber}\n(You get an edition just for bidding)`
+      
+      await v2Client.tweet({
+        text: secondTweetText,
+        reply: { in_reply_to_tweet_id: firstTweet.data.id },
+        ...(imageMediaId && { media: { media_ids: [imageMediaId] } })
+      })
+
+      console.log('Twitter thread posted successfully!')
+      return {
+        firstTweetId: firstTweet.data.id,
+        firstTweetUrl: `https://twitter.com/songadaymann/status/${firstTweet.data.id}`
+      }
     }
-
-    // Post second tweet as reply
-    console.log('Posting follow-up tweet...')
-    const secondTweetText = `${description}\n\nbid on the 1/1:\nhttps://songaday.world/${songNumber}\n(You get an edition just for bidding)`
-    
-    await v2Client.tweet({
-      text: secondTweetText,
-      reply: { in_reply_to_tweet_id: firstTweet.data.id },
-      ...(imageMediaId && { media: { media_ids: [imageMediaId] } })
-    })
-
-    console.log('Twitter thread posted successfully!')
-    return {
-      firstTweetId: firstTweet.data.id,
-      firstTweetUrl: `https://twitter.com/songadaymann/status/${firstTweet.data.id}`
-    }
-
   } catch (error) {
     console.error('Error posting to Twitter:', error)
     throw error

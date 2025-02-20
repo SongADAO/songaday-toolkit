@@ -1,0 +1,173 @@
+This is my Song A Day Toolkit.
+
+It is a tool that helps me post to Bluesky and Twitter, etc
+
+It is built with Next.js, Tailwind CSS, and Vercel (I think)
+
+TOOLKIT UPDATE MAP:
+
+Upload video ----> save initial metadata to local output -----> Are there lyrics?
+                                                                |      |
+                                                                |      |
+                                                     |------- NO    YES----|
+                                                     |                     |
+                            Assemly transcribe lyrics---------> Split video into audio and screenhot
+                                    |                                      |
+                                    |                                      |
+                                    |                   IPFS<-----video, audio, screenshot saved to dropbox
+                            save lyrics                                    |
+                                    |                   hashes added       |
+                    |---------------to all---|                |      video uploaded to youtube
+                    |                |       |                |            |
+                    |                |       |<---------------|------------ add YT link
+                    |                |       |                |            |
+                dropbox      spreadsheet    inital metadata                |
+                                                            |             |
+                                                            |     video uploaded to twitter (and other services?)
+                                                completed metadata
+                                                            |      |
+                                                            |    saved
+                                                            |      |
+                                                    IPFS---> hash ---> to local output
+                                                            |
+                                                            |
+                                                    print on front end
+
+TOOLKIT DIRECTORY STRUCTURE:
+
+songaday-toolkit/
+├── lib/                        # Core functionality
+│   ├── assembly.ts            # Assembly AI integration for transcription
+│   ├── config.ts              # Configuration management
+│   ├── file-utils.ts          # File handling utilities
+│   ├── ipfs-utils.ts          # IPFS integration
+│   ├── lyrics.ts              # Lyrics processing
+│   ├── metadata.ts            # Metadata handling
+│   ├── paths.ts               # Path management
+│   ├── sheet-utils.ts         # Google Sheets utilities
+│   ├── sheets.ts              # Google Sheets integration
+│   ├── threads.ts             # Threads (Instagram) integration
+│   ├── twitter.ts             # Twitter integration
+│   ├── video.ts               # Video processing
+│   └── youtube.ts             # YouTube integration
+│
+├── pages/                     # Frontend pages
+│   ├── api/                   # API routes
+│   ├── upload-song.tsx        # Song upload interface
+│   ├── create-image.tsx       # Image creation interface
+│   └── index.tsx              # Main page
+│
+├── components/                # Reusable UI components
+│
+├── scripts/                   # Utility scripts
+│
+├── output/                    # Generated output files
+│
+├── public/                    # Static assets
+│
+└── config files
+    ├── config.json           # Main configuration
+    ├── package.json          # Dependencies
+    └── tsconfig.json         # TypeScript configuration
+
+Key Features:
+- Video Processing & Transcoding
+- Lyrics Transcription (Assembly AI)
+- Social Media Integration
+  - Twitter
+  - YouTube
+  - Threads
+  - Bluesky
+- IPFS Storage
+- Metadata Management
+- Google Sheets Integration
+- Dropbox Integration
+
+Main Runner:
+The main orchestration script is `pages/api/process-video.ts`. This Next.js API route handles the entire video processing pipeline, including:
+- Video upload and processing
+- Lyrics transcription via Assembly AI
+- Saving files to Dropbox
+- Updating Google Sheets
+- Managing metadata
+- Social media posting (YouTube, Twitter, Bluesky)
+- IPFS integration
+
+The script acts as the central coordinator that ties together all the individual components from the `lib/` directory to create the complete workflow shown in the toolkit update map above.
+
+DETAILED PROCESSING STEPS:
+
+1. Video Upload & Initial Processing
+   - Receive video file and metadata from frontend
+   - Save initial metadata to local output directory
+   - Parse metadata including song number, title, description, etc.
+   - Verify YouTube authentication status
+
+2. Video Processing & Asset Generation
+   - Process video using ffmpeg to generate:
+     * Audio file extraction
+     * Screenshot/thumbnail image
+     * GIF preview
+   - Check for existing lyrics in Dropbox folder
+   - If no lyrics exist:
+     * Transcribe audio using Assembly AI
+     * Update initial metadata with transcribed lyrics
+
+3. Asset Storage & Distribution
+   - Save all generated files to Dropbox:
+     * Original video
+     * Extracted audio
+     * Screenshot/thumbnail
+     * GIF preview
+     * Lyrics (if generated)
+   - Update Google Sheets with song information
+   - Upload video to YouTube with:
+     * Title, description, and tags
+     * Lyrics in description (if available)
+   - Update spreadsheet with YouTube URL
+   - Update initial metadata with YouTube URL
+
+4. Social Media Distribution
+   - Post to Bluesky:
+     * Video upload
+     * Song information and YouTube link
+   - Post to Farcaster:
+     * Process video for Farcaster HLS format
+     * Upload to IPFS via Pinata
+     * Post with video and thumbnail URLs
+   - Post to Twitter:
+     * Create tweet thread
+     * Include video and image
+     * Add song information
+
+5. IPFS & Metadata Management
+   - Upload assets to IPFS:
+     * Video file
+     * Audio file
+     * Image/thumbnail
+     * GIF preview
+   - Format and create metadata JSON including:
+     * Basic song information
+     * All social media links
+     * IPFS hashes
+     * Attributes (location, mood, instruments, etc.)
+   - Save final metadata to:
+     * Unclean directory
+     * Local output
+     * Backup location
+
+6. Final Steps
+   - Open auctions page with metadata hash and song number
+   - Return complete processing results including:
+     * Local file paths
+     * Metadata
+     * Lyrics
+     * IPFS hashes
+     * Social media URLs
+
+Error Handling:
+- Each step includes error catching and logging
+- Process continues even if individual social media posts fail
+- Maintains detailed logs of all operations
+- Saves state at each step to allow for recovery
+

@@ -4,11 +4,15 @@ import { join } from 'path'
 const LOCAL_OUTPUT = '/Users/jonathanmann/songaday-toolkit copy/output'
 const UNCLEAN_METADATA_PATH = '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Metadata unclean'
 
-interface InitialMetadata {
+export interface InitialMetadata {
   songNbr: string
   title: string
   date: string
   description?: string
+  youtubeUrl?: string
+  farcasterUrl?: string
+  year?: number
+  lyrics?: string
   location?: string
   topic?: string
   instrument?: string
@@ -19,7 +23,17 @@ interface InitialMetadata {
   otherStyles?: string
   noun?: string
   properNoun?: string
+}
+
+export interface SongSheetUpdate {
+  songNumber: string
+  date: string
+  title?: string
   lyrics?: string
+  youtubeUrl?: string
+  localVideoPath?: string
+  localImagePath?: string
+  metadata?: any
 }
 
 export function saveInitialMetadata(metadata: InitialMetadata) {

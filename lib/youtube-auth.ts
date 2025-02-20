@@ -5,59 +5,48 @@ import { join } from 'path'
 import { PATHS } from './paths'
 import readline from 'readline'
 
-const TOKEN_PATH = join(process.cwd(), 'youtube-oauth-token.json')
+const CREDENTIALS_PATH = '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/python_scripts/home for wayward files needed in scripts/client_secret_298332297239-26f4ipajoihjjjtqadu0bnt24kaaqfah.apps.googleusercontent.com.json'
+export const TOKEN_PATH = '/Users/jonathanmann/songaday-toolkit/youtube-oauth-token.json'
 const SCOPES = [
   'https://www.googleapis.com/auth/youtube.upload',
   'https://www.googleapis.com/auth/youtube'
 ]
 
-export async function getAuthenticatedClient(): Promise<OAuth2Client> {
+export async function getOAuth2Client(): Promise<OAuth2Client> {
+  const credentials = JSON.parse(readFileSync(CREDENTIALS_PATH, 'utf8'))
+  const { client_secret, client_id, redirect_uris } = credentials.installed
+
+  const oauth2Client = new google.auth.OAuth2(
+    client_id,
+    client_secret,
+    redirect_uris[0]
+  )
+
   try {
-    const credentials = JSON.parse(readFileSync(PATHS.YOUTUBE_CLIENT_SECRET, 'utf8'))
-    const { client_secret, client_id } = credentials.installed
+    const token = JSON.parse(readFileSync(TOKEN_PATH, 'utf8'))
+    oauth2Client.setCredentials(token)
+  } catch (error) {
+    // Token doesn't exist or is invalid - that's okay, we'll get a new one
+    console.log('No valid token found, will need to authenticate')
+  }
 
-    const oauth2Client = new google.auth.OAuth2(
-      client_id,
-      client_secret,
-      'urn:ietf:wg:oauth:2.0:oob'
-    )
+  return oauth2Client
+}
 
-    // Check if we have previously stored a token
-    if (existsSync(TOKEN_PATH)) {
-      console.log('Found existing token at:', TOKEN_PATH)
-      const token = JSON.parse(readFileSync(TOKEN_PATH, 'utf8'))
-      
-      // Check if token has refresh_token
-      if (!token.refresh_token) {
-        console.log('Token exists but has no refresh token, getting new token...')
-        return getNewToken(oauth2Client)
-      }
-
-      oauth2Client.setCredentials(token)
-
-      // Check if token is expired
-      if (token.expiry_date && token.expiry_date < Date.now()) {
-        try {
-          console.log('Token expired, attempting refresh...')
-          const newToken = await oauth2Client.refreshToken(token.refresh_token)
-          oauth2Client.setCredentials(newToken.tokens)
-          writeFileSync(TOKEN_PATH, JSON.stringify(newToken.tokens))
-          console.log('Token refreshed successfully')
-        } catch (error) {
-          console.log('Token refresh failed, getting new token...')
-          return getNewToken(oauth2Client)
-        }
-      }
-
+export async function getAuthenticatedClient(): Promise<OAuth2Client> {
+  const oauth2Client = await getOAuth2Client()
+  
+  // Check if we have valid credentials
+  try {
+    const credentials = await oauth2Client.getAccessToken()
+    if (credentials && credentials.token) {
       return oauth2Client
     }
-
-    console.log('No token found at:', TOKEN_PATH)
-    return getNewToken(oauth2Client)
   } catch (error) {
-    console.error('Error in getAuthenticatedClient:', error)
-    throw error
+    console.error('Error getting access token:', error)
   }
+
+  throw new Error('No valid credentials available')
 }
 
 async function getNewToken(oauth2Client: OAuth2Client): Promise<OAuth2Client> {

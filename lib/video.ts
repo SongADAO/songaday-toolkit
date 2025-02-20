@@ -2,6 +2,7 @@ import { spawn } from 'child_process'
 import { join } from 'path'
 import { mkdirSync, existsSync, copyFileSync } from 'fs'
 import ffmpeg from 'fluent-ffmpeg'
+import fs from 'fs'
 
 const DROPBOX_PATHS = {
   VIDEO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
@@ -126,4 +127,166 @@ export async function processVideo(videoPath: string, songNumber: string) {
     console.error('Error processing video:', error)
     throw error
   }
+}
+
+export async function processVideoForBluesky(videoPath: string, songNumber: string): Promise<string> {
+  const outputDir = join(process.cwd(), 'output', songNumber)
+  if (!existsSync(outputDir)) {
+    mkdirSync(outputDir, { recursive: true })
+  }
+
+  const outputPath = join(outputDir, 'bluesky.mp4')
+
+  // Get video duration first
+  const duration = await getVideoDuration(videoPath)
+  console.log('Original video duration:', duration, 'seconds')
+
+  return new Promise((resolve, reject) => {
+    let ffmpegCommand = ffmpeg(videoPath)
+      .size('1080x1920') // Bluesky's preferred vertical video format
+      .videoBitrate('2000k')
+      .videoCodec('libx264')
+      .audioCodec('aac')
+      .audioBitrate('128k')
+      .fps(30)
+
+    // If video is longer than 60 seconds, trim it
+    if (duration > 60) {
+      console.log('Video longer than 60 seconds, trimming...')
+      ffmpegCommand = ffmpegCommand.setDuration(60)
+    }
+
+    ffmpegCommand
+      .on('end', () => {
+        console.log('Bluesky video processing complete')
+        resolve(outputPath)
+      })
+      .on('error', (err) => {
+        console.error('Error processing video for Bluesky:', err)
+        reject(err)
+      })
+      .save(outputPath)
+  })
+}
+
+export async function processVideoForFarcaster(videoPath: string, songNumber: string): Promise<{
+  manifestPath: string;
+  thumbnailPath: string;
+  outputDir: string;
+}> {
+  const outputDir = join(process.cwd(), 'output', songNumber, 'farcaster');
+  
+  // Create main output directory
+  if (!existsSync(outputDir)) {
+    mkdirSync(outputDir, { recursive: true });
+  }
+
+  // Create resolution subdirectories
+  const resolutions = [
+    {
+      name: '480p',
+      scale: '854:480',
+      bandwidth: '2444200',
+      codecs: 'avc1.64001f,mp4a.40.2'
+    },
+    {
+      name: '720p',
+      scale: '1280:720',
+      bandwidth: '4747600',
+      codecs: 'avc1.640020,mp4a.40.2'
+    }
+  ];
+
+  for (const res of resolutions) {
+    const resDir = join(outputDir, res.name);
+    if (!existsSync(resDir)) {
+      mkdirSync(resDir, { recursive: true });
+    }
+  }
+
+  const thumbnailPath = join(outputDir, 'thumbnail.jpg');
+  const manifestPath = join(outputDir, 'manifest.m3u8');
+
+  // Get video duration first
+  const duration = await getVideoDuration(videoPath);
+  console.log('Original video duration:', duration, 'seconds');
+
+  // Create thumbnail from middle of video
+  await new Promise((resolve, reject) => {
+    ffmpeg(videoPath)
+      .screenshots({
+        timestamps: ['00:00:01'],
+        filename: 'thumbnail.jpg',
+        folder: outputDir,
+        size: '1280x720'  // Changed from 1280:720 to 1280x720
+      })
+      .on('end', resolve)
+      .on('error', reject);
+  });
+
+  // Process each resolution sequentially
+  for (const resolution of resolutions) {
+    console.log(`Starting ${resolution.name} conversion...`);
+    await new Promise((resolve, reject) => {
+      let command = ffmpeg(videoPath)
+        .outputOptions([
+          '-c:v libx264',          // Video codec
+          '-c:a aac',              // Audio codec
+          '-preset fast',          // Encoding preset
+          '-movflags +faststart',  // Optimize for web playback
+          `-vf scale=${resolution.scale}:force_original_aspect_ratio=disable`,  // Force scale
+          '-f hls',
+          '-hls_time 10',
+          '-hls_list_size 0',
+          '-hls_segment_type mpegts',
+          '-hls_playlist_type vod'
+        ]);
+
+      // If video is longer than 60 seconds, trim it
+      if (duration > 60) {
+        console.log(`Video longer than 60 seconds, trimming for ${resolution.name}...`);
+        command = command.setDuration(60);
+      }
+
+      command
+        .output(join(outputDir, resolution.name, 'video.m3u8'))
+        .on('start', (commandLine) => {
+          console.log(`FFmpeg spawned with command: ${commandLine}`);
+        })
+        .on('stderr', (stderrLine) => {
+          console.log('FFmpeg stderr:', stderrLine);
+        })
+        .on('progress', (progress) => {
+          console.log(`Processing ${resolution.name}: ${progress.percent}% done`);
+        })
+        .on('end', () => {
+          console.log(`Finished processing ${resolution.name}`);
+          resolve(null);
+        })
+        .on('error', (err, stdout, stderr) => {
+          console.error(`Error processing ${resolution.name}:`, err);
+          console.error('stdout:', stdout);
+          console.error('stderr:', stderr);
+          reject(err);
+        })
+        .run();
+    });
+  }
+
+  // Create master playlist with proper codec information
+  const masterPlaylist = `#EXTM3U
+#EXT-X-VERSION:3
+
+#EXT-X-STREAM-INF:BANDWIDTH=2444200,CODECS="avc1.64001f,mp4a.40.2",RESOLUTION=854x480
+480p/video.m3u8
+#EXT-X-STREAM-INF:BANDWIDTH=4747600,CODECS="avc1.640020,mp4a.40.2",RESOLUTION=1280x720
+720p/video.m3u8`;
+
+  fs.writeFileSync(manifestPath, masterPlaylist);
+
+  return {
+    manifestPath,
+    thumbnailPath,
+    outputDir
+  };
 }

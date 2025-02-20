@@ -7,36 +7,31 @@ import { join } from 'path'
 import { existsSync } from 'fs'
 import formidable from 'formidable'
 import { saveToDropbox } from '@/lib/file-utils'
-import { saveInitialMetadata, updateInitialMetadata, saveFinalMetadata } from '@/lib/metadata'
+import { 
+  saveInitialMetadata, 
+  updateInitialMetadata, 
+  saveFinalMetadata,
+  InitialMetadata,
+  SongSheetUpdate
+} from '@/lib/metadata'
 import { uploadToYoutube } from '@/lib/youtube'
 import ffmpeg from 'fluent-ffmpeg'
 import { uploadToIPFSAndFormatMetadata } from '@/lib/ipfs-utils'
 import { postTweetThread } from '@/lib/twitter'
+import { BlueskyPoster } from '@/lib/bluesky'
 import fs from 'fs'
+import { FarcasterPoster } from '@/lib/farcaster'
+import { processVideoForFarcaster } from '@/lib/video'
+import { uploadFolderToPinata } from '@/lib/pinata-utils'
+import { checkYouTubeAuth } from '@/lib/youtube'
+import readline from 'readline'
+import { handleYouTubeAuth } from '@/lib/youtube'
+import { exec } from 'child_process'
 
 type FormidableParseResult = {
-  files: {
-    [key: string]: formidable.File;
-  };
-  fields: {
-    [key: string]: string;
-  };
+  files: formidable.Files;
+  fields: formidable.Fields;
 };
-
-interface SongSheetUpdate {
-  songNumber: string;
-  date: string;
-  lyrics?: string;
-  youtubeUrl?: string;
-  title?: string;
-  localVideoPath?: string;
-  localImagePath?: string;
-  metadata?: any; // Replace 'any' with proper metadata type if available
-}
-
-interface InitialMetadata {
-  youtubeUrl?: string;
-}
 
 export const config = {
   api: {
@@ -80,14 +75,82 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
       })
     })
 
-    if (!files || !files.file) {
-      console.error('No file found in request')
-      return res.status(400).json({ error: 'Missing video file' })
+    const videoFile = files.file
+    if (!videoFile || Array.isArray(videoFile)) {
+      console.error('No valid video file found in request')
+      return res.status(400).json({ error: 'Missing or invalid video file' })
     }
 
     console.log('3. Parsing metadata...')
-    const videoFile = files.file
     const metadata = JSON.parse(fields.data as string)
+
+    // Get tweet preferences first
+    console.log('4. Getting tweet preferences...')
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+
+    const tweetCount = await new Promise<string>((resolve) => {
+      rl.question('One tweet or two? Enter 1 or 2: ', (answer) => {
+        rl.close()
+        resolve(answer.trim())
+      })
+    })
+
+    if (tweetCount !== '1' && tweetCount !== '2') {
+      return res.status(400).json({ error: 'Invalid tweet count. Must be 1 or 2.' })
+    }
+
+    metadata.tweetCount = tweetCount
+
+    // Get tweet text
+    console.log('5. Getting tweet text...')
+    const rl2 = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    })
+
+    const tweetText = await new Promise<string>((resolve) => {
+      rl2.question('Enter your tweet text: ', (answer) => {
+        rl2.close()
+        resolve(answer)
+      })
+    })
+
+    metadata.description = tweetText
+    console.log('Tweet text:', metadata.description)
+
+    // Check YouTube auth status and handle CLI auth if needed
+    console.log('Checking YouTube authentication...')
+    try {
+      const { needsAuth, authUrl } = await checkYouTubeAuth()
+      if (needsAuth) {
+        console.log('\nYouTube authentication required.')
+        console.log('1. Visit this URL to authorize:')
+        console.log(authUrl)
+        console.log('\n2. After authorizing, you will see a code.')
+        console.log('3. Copy that code and paste it below.\n')
+
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout
+        })
+
+        const code = await new Promise<string>((resolve) => {
+          rl.question('Enter the code from the page: ', (code) => {
+            rl.close()
+            resolve(code)
+          })
+        })
+
+        await handleYouTubeAuth(code)
+      }
+    } catch (error) {
+      console.error('Error with YouTube authentication:', error)
+      return res.status(500).json({ error: 'Failed to authenticate with YouTube' })
+    }
+    console.log('YouTube authentication verified')
 
     // Save initial metadata
     const metadataPath = saveInitialMetadata(metadata)
@@ -199,6 +262,93 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
       youtubeUrl: youtubeResult.url 
     })
 
+    // Post to Bluesky
+    console.log('Attempting to post to Bluesky...')
+    try {
+      const blueskyPoster = new BlueskyPoster()
+      const initialized = await blueskyPoster.initialize()
+      
+      if (!initialized) {
+        console.log('Skipping Bluesky post - Could not initialize Bluesky client')
+      } else {
+        const blueskyText = `🎵 Song A Day #${metadata.songNbr}: ${metadata.title}\n\n${metadata.description || ''}\n\nWatch on YouTube: ${youtubeResult.url}`
+        
+        await blueskyPoster.postWithVideo(
+          blueskyText,
+          videoFile.filepath,
+          metadata.songNbr
+        )
+        console.log('Successfully posted to Bluesky')
+      }
+    } catch (error) {
+      console.log('Skipping Bluesky post due to error:', error.message)
+      // Continue with the rest of the process
+    }
+
+    // Post to Farcaster
+    let farcasterUrl: string | undefined;
+    console.log('Attempting to post to Farcaster...')
+    try {
+      const farcasterPoster = new FarcasterPoster()
+      const initialized = await farcasterPoster.initialize()
+      
+      if (!initialized) {
+        console.log('Skipping Farcaster post - Could not initialize Farcaster client')
+      } else {
+        try {
+          // Process video for Farcaster
+          console.log('Processing video for Farcaster...')
+          const { manifestPath, thumbnailPath, outputDir } = await processVideoForFarcaster(
+            videoFile.filepath,
+            metadata.songNbr
+          )
+          console.log('Video processed for Farcaster successfully')
+
+          // Upload the HLS directory to IPFS via Pinata
+          console.log('Uploading HLS directory to IPFS...')
+          const ipfsHash = await uploadFolderToPinata(outputDir)
+          console.log('Successfully uploaded to IPFS with hash:', ipfsHash)
+          
+          // Construct the URLs using the whitelisted gateway
+          const videoUrl = `https://songaday.mypinata.cloud/ipfs/${ipfsHash}/manifest.m3u8`
+          const thumbnailUrl = `https://songaday.mypinata.cloud/ipfs/${ipfsHash}/thumbnail.jpg`
+
+          const farcasterText = `${metadata.description || ''}\nsongaday.world/${metadata.songNbr}`
+          
+          console.log('Posting to Farcaster...')
+          const farcasterResult = await farcasterPoster.postWithVideo(
+            farcasterText,
+            videoUrl,
+            thumbnailUrl
+          )
+          console.log('Successfully posted to Farcaster:', farcasterResult)
+          farcasterUrl = farcasterResult.url
+
+          // Add Farcaster URL to metadata
+          if (farcasterUrl) {
+            await updateInitialMetadata(metadata.songNbr, { 
+              farcasterUrl 
+            })
+            console.log('Added Farcaster URL to metadata')
+          }
+        } catch (innerError) {
+          console.error('Error during Farcaster processing/posting:', innerError)
+          console.log('Continuing with the rest of the process...')
+        } finally {
+          // Always try to close the Farcaster client
+          try {
+            await farcasterPoster.close()
+          } catch (closeError) {
+            console.error('Error closing Farcaster client:', closeError)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Fatal error in Farcaster section:', error)
+      console.log('Continuing with the rest of the process...')
+    }
+
+    // Continue with IPFS upload and metadata formatting
     console.log('Uploading to IPFS and formatting metadata...')
     const ipfsResult = await uploadToIPFSAndFormatMetadata(
       {
@@ -213,12 +363,18 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
     )
     console.log('IPFS upload complete:', ipfsResult)
 
+    // Open the auctions page with metadata hash and song number
+    const auctionsUrl = `http://localhost/auctions/create-gbm-l2-base?metadataHash=${ipfsResult.metadataHash}&songNumber=${metadata.songNbr}`
+    console.log('Opening auctions page:', auctionsUrl)
+    exec(`open "${auctionsUrl}"`)
+
     console.log('Posting to Twitter...')
     const twitterResult = await postTweetThread({
       videoPath: videoFile.filepath,
       description: metadata.description || '',
       songNumber: metadata.songNbr,
-      imagePath: imagePath
+      imagePath: imagePath,
+      tweetCount: metadata.tweetCount
     })
     console.log('Twitter thread posted:', twitterResult.firstTweetUrl)
 

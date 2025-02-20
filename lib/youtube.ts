@@ -1,6 +1,7 @@
 import { google } from 'googleapis'
-import { getAuthenticatedClient } from './youtube-auth'
+import { getAuthenticatedClient, getOAuth2Client } from './youtube-auth'
 import fs from 'fs'
+import { TOKEN_PATH } from './youtube-auth'
 
 interface UploadOptions {
   videoPath: string
@@ -28,7 +29,7 @@ export async function uploadToYoutube({
 ${description}
 
 You can find this and all Song A Day songs over at:
-http://songaday.world
+https://songaday.world
 
 [lyrics]
 ${lyrics}
@@ -74,6 +75,56 @@ Theme songs: http://jonathanmann.net/themes`
 
   } catch (error) {
     console.error('Error uploading to YouTube:', error)
+    throw error
+  }
+}
+
+export async function checkYouTubeAuth(): Promise<{ needsAuth: boolean; authUrl?: string }> {
+  try {
+    const oauth2Client = await getOAuth2Client()
+    
+    // Check if we have valid credentials
+    const credentials = await oauth2Client.getAccessToken()
+    if (credentials && credentials.token) {
+      return { needsAuth: false }
+    }
+
+    // If no valid credentials, generate auth URL
+    const authUrl = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['https://www.googleapis.com/auth/youtube.upload']
+    })
+
+    return { 
+      needsAuth: true, 
+      authUrl 
+    }
+  } catch (error) {
+    console.error('Error checking YouTube auth:', error)
+    // If there's an error, assume we need new auth
+    const oauth2Client = await getOAuth2Client()
+    const authUrl = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: ['https://www.googleapis.com/auth/youtube.upload']
+    })
+    return { 
+      needsAuth: true, 
+      authUrl 
+    }
+  }
+}
+
+export async function handleYouTubeAuth(code: string): Promise<void> {
+  try {
+    const oauth2Client = await getOAuth2Client()
+    const { tokens } = await oauth2Client.getToken(code)
+    oauth2Client.setCredentials(tokens)
+    
+    // Save the token
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens))
+    console.log('Successfully authenticated with YouTube')
+  } catch (error) {
+    console.error('Error handling YouTube auth:', error)
     throw error
   }
 } 

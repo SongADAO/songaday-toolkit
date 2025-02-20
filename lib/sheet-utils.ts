@@ -31,8 +31,45 @@ export async function updateSongSheet({
 
     const sheets = google.sheets({ version: 'v4', auth })
     
-    const dateObj = new Date(date)
-    const year = dateObj.getFullYear()
+    // Parse the date, fallback to today if there's an issue
+    let dateObj = new Date(date)
+    if (isNaN(dateObj.getTime())) {
+      console.log('Debug - Invalid date provided:', date)
+      dateObj = new Date() // Fallback to today
+    }
+    console.log('Debug - Using date:', dateObj)
+    
+    // Hardcode the year to 2025 and tab to YR17
+    const year = 2025
+    const tabName = 'YR17'
+    console.log('Debug - Using hardcoded year:', year)
+    console.log('Debug - Using hardcoded tab:', tabName)
+
+    // Check if the sheet exists
+    try {
+      await sheets.spreadsheets.get({
+        spreadsheetId: SPREADSHEET_ID,
+        ranges: [`${tabName}!A1`],
+      })
+    } catch (error) {
+      // Sheet doesn't exist, create it
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId: SPREADSHEET_ID,
+        requestBody: {
+          requests: [{
+            addSheet: {
+              properties: {
+                title: tabName,
+                gridProperties: {
+                  rowCount: 367,
+                  columnCount: 23
+                }
+              }
+            }
+          }]
+        }
+      })
+    }
     
     // Calculate day of year accounting for leap years
     const isLeapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)
@@ -41,12 +78,9 @@ export async function updateSongSheet({
     const oneDay = 1000 * 60 * 60 * 24
     const dayOfYear = Math.floor(diff / oneDay)
     
-    // Add 1 for normal years, 2 for leap years
-    const row = dayOfYear + (isLeapYear ? 2 : 1)
-
-    // Calculate which year (YR1, YR2, etc)
-    const yearNumber = year - 2008
-    const tabName = `YR${yearNumber}`
+    // Add 2 for normal years (1 for header + 1 for day offset), 3 for leap years (1 for header + 2 for day offset)
+    const row = dayOfYear + (isLeapYear ? 3 : 2)
+    console.log('Debug - Final row number:', row)
 
     const updates = []
 
