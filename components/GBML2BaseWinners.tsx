@@ -1,3 +1,4 @@
+import { gql, useQuery } from '@apollo/client'
 import { AppLayout } from '@/components/AppLayout'
 import { songabi } from '@/utils/abi/songabi'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
@@ -5,54 +6,131 @@ import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
 import {
   SONG_CONTRACT,
   TREASURY_CONTRACT,
+  SONGADAY_MINTER,
   GBM_L2_BASE_CONTRACT_ADDRESS,
   GBM_L2_BASE_CHAIN,
-  GBM_L2_BASE_IOU_CONTRACT_ADDRESS,
-  INFURA_ID,
   ZERO_ADDRESS,
   GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
 import {
   Button,
-  FormControl,
-  FormLabel,
-  Input,
   Box,
   Heading,
   Stack,
   Text,
-  Wrap,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
   Tr,
-  Checkbox,
   Tag,
 } from '@chakra-ui/react'
-import { JsonRpcProvider } from '@ethersproject/providers'
 
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import {
   useAccount,
   useNetwork,
-  type PublicClient,
   usePublicClient,
   useSwitchNetwork,
 } from 'wagmi'
-import { Contract, ethers } from 'ethers'
-import { DateTime } from 'luxon'
+import { getAddress } from 'viem'
 import { readContract } from '@wagmi/core'
-import { encodeFunctionData } from 'viem'
-import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
-import { mainnet, sepolia } from 'viem/chains'
+import { mainnet } from 'viem/chains'
 import { base } from 'utils/base-chain'
 
+// Auction Query
+// ===========================================================================
+
+interface Auction {
+  // bidDecimals: string;
+  // bidMultiplier: string;
+  claimAt: string
+  claimed: boolean
+  editionContractAddress: `0x${string}`
+  editionTokenId: number
+  endsAt: string
+  // gbmFees: string;
+  highestBid: string
+  highestBidder: `0x${string}`
+  id: string
+  // incMax: string;
+  // incMin: string;
+  lastBidTime: string
+  lastBidTxHash: string
+  // platformFees: string;
+  startsAt: string
+  // stepMin: string;
+  tokenId: string
+}
+
+interface AuctionsResult {
+  auctions: Auction[]
+}
+
+interface AuctionsQueryVars {
+  timestamp: number
+}
+
+const AUCTIONS_QUERY = gql`
+  query GetAuctions($timestamp: Int) {
+    auctions(first: 100, orderBy: tokenId, orderDirection: desc) {
+      # bidDecimals
+      # bidMultiplier
+      claimAt
+      claimed
+      # contractAddress
+      editionContractAddress
+      editionTokenId
+      endsAt
+      # endsAtOriginal
+      # firstBid
+      # firstBidder
+      # gbmFees
+      # hammerTimeDuration
+      highestBid
+      highestBidder
+      id
+      # incMax
+      # incMin
+      lastBidTime
+      lastBidTxHash
+      # platformFees
+      # presetId
+      # quantity
+      startsAt
+      # stepMin
+      tokenId
+      # type
+    }
+  }
+`
+
 const GBML2BaseWinners = () => {
+  const [timestamp, setTimestamp] = useState<number | null>(null)
+
+  useEffect(() => {
+    setTimestamp(Math.floor(Date.now() / 1000))
+  }, [])
+
+  const {
+    loading: auctionsLoading,
+    error: auctionsError,
+    data: auctions,
+  } = useQuery<AuctionsResult, AuctionsQueryVars>(AUCTIONS_QUERY, {
+    // Optional: Fetch policy
+    fetchPolicy: 'network-only',
+    // Optional: Polling interval in milliseconds
+    pollInterval: 0,
+    // Optional: Skip the query if not looking for latest auction.
+    skip: !timestamp,
+    variables: {
+      timestamp: Number(timestamp),
+    },
+  })
+
   const batchSize = 262144 // 256kB;
 
   const now = new Date().getTime()
@@ -85,24 +163,11 @@ const GBML2BaseWinners = () => {
 
   const auctionAddress = GBM_L2_BASE_CONTRACT_ADDRESS
 
-  const auctionPublicClient = basePublicClient
-
   const sadContract = {
     chainId: 1,
     abi: songabi,
     address: SONG_CONTRACT,
   } as const
-
-  const gbmContract = {
-    chainId: auctionNetwork,
-    abi: gbml2abi,
-    address: auctionAddress,
-  } as const
-
-  const opts = {
-    allowedDomains: [/gnosis-safe.io/],
-  }
-  const appsSdk = new SafeAppsSDK(opts)
 
   async function isContract(address, publicClient) {
     // address = SONG_CONTRACT // DEBUG
@@ -112,52 +177,6 @@ const GBML2BaseWinners = () => {
     })
 
     return bytecode ? true : false
-  }
-
-  async function fetchSongFromSubgraph() {
-    const rpc = base.rpcUrls.default.http[0]
-
-    const auctionProvider = new JsonRpcProvider(rpc)
-
-    const iface = new ethers.utils.Interface(gbml2abi)
-
-    const auctionContract = new Contract(
-      auctionAddress,
-      gbml2abi,
-      auctionProvider
-    )
-
-    const filter: any = auctionContract.filters.Auction_Initialized()
-
-    filter.fromBlock = 24490993
-    filter.toBlock = 'latest'
-
-    // filter.fromBlock = 0 // DEBUG
-    // filter.toBlock = 'latest' // DEBUG
-
-    const logs = await auctionProvider.getLogs(filter)
-    const events = logs.map((log) => iface.parseLog(log))
-    // console.log(filter)
-    // console.log(logs)
-    // console.log(events)
-
-    const eventsReversed = events.toSorted((eventA, eventB) =>
-      Number((eventA.args as any)._tokenID) <
-      Number((eventB.args as any)._tokenID)
-        ? 1
-        : -1
-    )
-
-    const auctions = eventsReversed.map((event) => {
-      return {
-        _auctionID: event.args._auctionID,
-        contractAddress: event.args._contractAddress,
-        tokenId: event.args._tokenID.toString(),
-      }
-    })
-    // console.log(auctions)
-
-    return auctions
   }
 
   async function lookupTokenHolders(winners) {
@@ -174,124 +193,44 @@ const GBML2BaseWinners = () => {
       batchSize: batchSize,
     })
 
-    for (const i in winners) {
-      if (results[i].status !== 'success') {
-        // throw new Error('could not determine token holder')
-        winners[i].tokenOwner = ZERO_ADDRESS
-        winners[i].minted = false
-        winners[i].distributed = false
-        continue
-      }
-
-      winners[i].tokenOwner = results[i].result
-      winners[i].minted = true
-
-      if (
-        winners[i].tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase()
-      ) {
-        winners[i].distributed = true
+    return winners.map((winner, i) => {
+      if (results[i].status === 'success') {
+        winner.tokenOwner = results[i].result
+        winner.minted = true
+        winner.distributed =
+          winner.tokenOwner.toLowerCase() !== TREASURY_CONTRACT.toLowerCase() &&
+          winner.tokenOwner.toLowerCase() !== SONGADAY_MINTER.toLowerCase()
       } else {
-        winners[i].distributed = false
+        winner.tokenOwner = ZERO_ADDRESS
+        winner.minted = false
+        winner.distributed = false
       }
-    }
-    // console.log(winners)
 
-    return winners
-  }
-
-  async function lookupHighestBidder(winners) {
-    const contracts = winners.map((winner) => {
-      return {
-        ...gbmContract,
-        functionName: 'getAuctionHighestBidder',
-        args: [winner._auctionID],
-      }
+      return winner
     })
-
-    const results = await auctionPublicClient.multicall({
-      contracts: contracts,
-      batchSize: batchSize,
-    })
-
-    for (const i in winners) {
-      // console.log(results[i])
-      if (
-        results[i].status === 'success' &&
-        results[i].result !== '0x0000000000000000000000000000000000000000'
-      ) {
-        winners[i].highestBidder = results[i].result
-      } else {
-        // winners[i].highestBidder = '0xf1f6Ccaa7e8f2f78E26D25b44d80517951c20284' // DEBUG
-      }
-    }
-    // console.log(winners)
-
-    return winners
   }
 
   async function lookupEndTime(winners) {
-    const contracts = winners.map((winner) => {
-      return {
-        ...gbmContract,
-        functionName: 'getAuctionEndTime',
-        args: [winner._auctionID],
-      }
+    return winners.map((winner) => {
+      winner.endsAt = Number(winner.endsAt) * 1000
+      winner.endsAtDate = new Date(winner.endsAt).toLocaleString()
+      winner.completed = now > winner.endsAt
+
+      return winner
     })
-
-    const results = await auctionPublicClient.multicall({
-      contracts: contracts,
-      batchSize: batchSize,
-    })
-
-    for (const i in winners) {
-      // console.log(results[i])
-      if (results[i].status === 'success') {
-        winners[i].endsAt = Number(results[i].result) * 1000
-        winners[i].endsAtDate = new Date(winners[i].endsAt).toLocaleString()
-        winners[i].completed = now > winners[i].endsAt
-      }
-    }
-    // console.log(winners)
-
-    return winners
-  }
-
-  async function wasClaimed(winners) {
-    const contracts = winners.map((winner) => {
-      return {
-        ...gbmContract,
-        functionName: 'wasClaimed',
-        args: [winner._auctionID],
-      }
-    })
-
-    const results = await auctionPublicClient.multicall({
-      contracts: contracts,
-      batchSize: batchSize,
-    })
-
-    for (const i in winners) {
-      // console.log(results[i])
-      if (results[i].status === 'success') {
-        winners[i].claimed = results[i].result
-      }
-    }
-    // console.log(winners)
-
-    return winners
   }
 
   async function initWinners() {
     try {
-      setWinners(
-        await wasClaimed(
+      if (auctions?.auctions) {
+        setWinners(
           await lookupEndTime(
-            await lookupHighestBidder(
-              await lookupTokenHolders(await fetchSongFromSubgraph())
+            await lookupTokenHolders(
+              JSON.parse(JSON.stringify(auctions.auctions))
             )
           )
         )
-      )
+      }
     } catch (error) {
       // console.log({ error })
       toast.error((error as any).message)
@@ -303,24 +242,12 @@ const GBML2BaseWinners = () => {
       setClaims(
         winners
           .filter((winner) => winner.completed && !winner.claimed)
-          .map((claim) => claim._auctionID)
+          .map((claim) => claim.id)
       )
     } catch (error) {
       console.log({ error })
       toast.error((error as any).message)
     }
-  }
-
-  function toggleChecked(tokenId) {
-    setWinners(
-      winners.map((winner) => {
-        if (winner.tokenId === tokenId) {
-          winner.willDistribute = !winner.willDistribute
-        }
-
-        return winner
-      })
-    )
   }
 
   async function distribute(tokenId) {
@@ -341,6 +268,20 @@ const GBML2BaseWinners = () => {
       // console.log(toDistribute)
 
       const winnerAddress = toDistribute.highestBidder
+
+      const realHighestBidder = await readContract({
+        chainId: auctionNetwork,
+        address: auctionAddress,
+        abi: gbml2abi,
+        functionName: 'getAuctionHighestBidder',
+        args: [toDistribute.id],
+      })
+
+      if (getAddress(realHighestBidder) !== getAddress(winnerAddress)) {
+        throw new Error(
+          'Highest bidder in the contract does not match the value in the subgraph.  Wait a few minutes for subgraph to sync.'
+        )
+      }
 
       const isAddressAContractMainnet = await isContract(
         winnerAddress,
@@ -408,11 +349,7 @@ const GBML2BaseWinners = () => {
           address: SONG_CONTRACT,
           abi: songabi,
           functionName: 'safeTransferFrom',
-          args: [
-            TREASURY_CONTRACT,
-            winnerAddress,
-            BigInt(toDistribute.tokenId),
-          ],
+          args: [SONGADAY_MINTER, winnerAddress, BigInt(toDistribute.tokenId)],
         })
         toast.success('Waiting for tx to confirm')
         await waitForTransaction({
@@ -420,13 +357,51 @@ const GBML2BaseWinners = () => {
           chainId: 1,
           confirmations: 1,
         })
-      } else {
+      }
+
+      toast.success('Song Transferred')
+
+      initWinners()
+    } catch (error) {
+      console.log({ error })
+      toast.error((error as any).message)
+    } finally {
+      setWinners(
+        winners.map((winner) => {
+          if (winner.tokenId === tokenId) {
+            winner.isDistributing = false
+          }
+
+          return winner
+        })
+      )
+    }
+  }
+
+  async function mint(tokenId) {
+    setWinners(
+      winners.map((winner) => {
+        if (winner.tokenId === tokenId) {
+          winner.isDistributing = true
+        }
+
+        return winner
+      })
+    )
+
+    try {
+      const toDistribute = winners.find((winner) => {
+        return winner.tokenId === tokenId
+      })
+      // console.log(toDistribute)
+
+      if (!toDistribute.minted) {
         const editionTokenId = await readContract({
           chainId: auctionNetwork,
           address: auctionAddress,
           abi: gbml2abi,
           functionName: 'getEditionTokenId',
-          args: [toDistribute._auctionID],
+          args: [toDistribute.id],
         })
         // console.log('Edition Token ID')
         // console.log(editionTokenId)
@@ -457,37 +432,22 @@ const GBML2BaseWinners = () => {
         // console.log('Edition IPFS Hash')
         // console.log(ipfsHash)
 
-        const transactions = [
-          {
-            to: SONG_CONTRACT ?? '',
-            value: '0',
-            data: encodeFunctionData({
-              abi: songabi,
-              functionName: 'dailyMint',
-              args: [toDistribute.tokenId, ipfsHash],
-            }),
-          },
-          {
-            to: SONG_CONTRACT ?? '',
-            value: '0',
-            data: encodeFunctionData({
-              abi: songabi,
-              functionName: 'safeTransferFrom',
-              args: [
-                TREASURY_CONTRACT,
-                winnerAddress,
-                BigInt(toDistribute.tokenId),
-              ],
-            }),
-          },
-        ]
-
-        // console.log(transactions)
-
-        await appsSdk?.txs.send({ txs: transactions })
+        const { hash } = await writeContract({
+          chainId: 1,
+          address: SONG_CONTRACT,
+          abi: songabi,
+          functionName: 'dailyMint',
+          args: [toDistribute.tokenId, ipfsHash],
+        })
+        toast.success('Waiting for tx to confirm')
+        await waitForTransaction({
+          hash,
+          chainId: 1,
+          confirmations: 1,
+        })
       }
 
-      toast.success('Song Transferred')
+      toast.success('Song Minted')
 
       initWinners()
     } catch (error) {
@@ -543,7 +503,7 @@ const GBML2BaseWinners = () => {
 
   useEffect(() => {
     initWinners()
-  }, [])
+  }, [auctions])
 
   return (
     <Stack spacing="6">
@@ -733,9 +693,9 @@ const GBML2BaseWinners = () => {
                                 <Button
                                   type="button"
                                   isLoading={winner.isDistributing}
-                                  onClick={() => distribute(winner.tokenId)}
+                                  onClick={() => mint(winner.tokenId)}
                                 >
-                                  Mint & Distribute
+                                  Mint
                                 </Button>
                               )}
                             </>
