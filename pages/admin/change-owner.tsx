@@ -26,7 +26,7 @@ const ChangeOwner = () => {
   const changeOwnerHandler = async () => {
     setLoading(true)
     try {
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'transferOwnership',

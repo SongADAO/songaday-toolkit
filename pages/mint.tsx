@@ -45,7 +45,7 @@ const Mint = () => {
     setMinted(false)
     setLoading(true)
     try {
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'dailyMint',

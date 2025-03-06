@@ -255,7 +255,7 @@ const MintEdition = () => {
       console.log(data.split)
       console.log(feeNumerator)
 
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
         functionName: 'registerMint',

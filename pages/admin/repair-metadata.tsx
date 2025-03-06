@@ -33,7 +33,7 @@ const RepairMetadata = () => {
     }
 
     try {
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         abi: songabi,
         functionName: 'repairMetadata',
         address: SONG_CONTRACT,

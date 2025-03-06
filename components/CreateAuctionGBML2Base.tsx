@@ -243,7 +243,7 @@ const CreateAuctionGBML2 = () => {
         throw new Error('End time must be at least 24 hours')
       }
 
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_CONTRACT_ADDRESS,
         abi: gbml2abi,
@@ -382,7 +382,7 @@ const CreateAuctionGBML2 = () => {
       console.log('Multicall calldata')
       console.log(mintCalldata)
 
-      // const { hash } = await writeContract(config, {
+      // const hash = await writeContract(config, {
       //   chainId: GBM_L2_BASE_CHAIN,
       //   address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
       //   abi: zoraeditionabi,
@@ -395,7 +395,7 @@ const CreateAuctionGBML2 = () => {
       //   ],
       // })
 
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
         abi: zoraeditionabi,

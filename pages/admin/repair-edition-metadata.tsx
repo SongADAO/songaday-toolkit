@@ -37,7 +37,7 @@ const RepairEditionMetadata = () => {
         throw new Error('Please switch to Optimism')
       }
 
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
         functionName: 'repairMetadata',

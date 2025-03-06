@@ -256,7 +256,7 @@ const SoundxyzWinners = () => {
       console.log(winnerAddress)
       console.log(BigInt(toDistribute.tokenId))
 
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         chainId: 1,
         address: SONG_CONTRACT,
         abi: songabi,

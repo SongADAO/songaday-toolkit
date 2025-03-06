@@ -397,7 +397,7 @@ const GBML2ZoraWinners = () => {
       // console.log(BigInt(toDistribute.tokenId))
 
       if (toDistribute.minted) {
-        const { hash } = await writeContract(config, {
+        const hash = await writeContract(config, {
           chainId: 1,
           address: SONG_CONTRACT,
           abi: songabi,
@@ -506,7 +506,7 @@ const GBML2ZoraWinners = () => {
     // console.log(claims)
 
     try {
-      const { hash } = await writeContract(config, {
+      const hash = await writeContract(config, {
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,
