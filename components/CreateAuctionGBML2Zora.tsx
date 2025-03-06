@@ -336,7 +336,7 @@ const CreateAuctionGBML2Zora = () => {
         throw new Error('No subscribers')
       }
 
-      const auctionId = await readContract({
+      const auctionId = await readContract(config, {
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,
@@ -355,7 +355,7 @@ const CreateAuctionGBML2Zora = () => {
         throw new Error('Start the auction first')
       }
 
-      const editionTokenId = await readContract({
+      const editionTokenId = await readContract(config, {
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,

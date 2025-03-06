@@ -262,7 +262,7 @@ const GBML2BaseWinners = () => {
 
       const winnerAddress = toDistribute.highestBidder
 
-      const realHighestBidder = await readContract({
+      const realHighestBidder = await readContract(config, {
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,
@@ -389,7 +389,7 @@ const GBML2BaseWinners = () => {
       // console.log(toDistribute)
 
       if (!toDistribute.minted) {
-        const editionTokenId = await readContract({
+        const editionTokenId = await readContract(config, {
           chainId: auctionNetwork,
           address: auctionAddress,
           abi: gbml2abi,
@@ -403,7 +403,7 @@ const GBML2BaseWinners = () => {
         //   throw new Error('Could not determine base edition id')
         // }
 
-        const editionURI = await readContract({
+        const editionURI = await readContract(config, {
           chainId: base.id,
           address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
           abi: zoraeditionabi,

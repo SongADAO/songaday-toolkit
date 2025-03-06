@@ -415,7 +415,7 @@ const GBML2ZoraWinners = () => {
           confirmations: 1,
         })
       } else {
-        const editionTokenId = await readContract({
+        const editionTokenId = await readContract(config, {
           chainId: auctionNetwork,
           address: auctionAddress,
           abi: gbml2abi,
@@ -429,7 +429,7 @@ const GBML2ZoraWinners = () => {
         //   throw new Error('Could not determine Zora edition id')
         // }
 
-        const editionURI = await readContract({
+        const editionURI = await readContract(config, {
           chainId: zora.id,
           address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
           abi: zoraeditionabi,

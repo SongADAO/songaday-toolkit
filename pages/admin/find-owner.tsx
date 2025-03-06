@@ -16,6 +16,8 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useContractRead } from 'wagmi'
 import { readContract } from '@wagmi/core'
+import { wagmiConfig as config } from '@/utils/wagmi'
+
 const FindOwner = () => {
   const [songNbr, setSongNbr] = useState<string>('')
   const [tokenOwner, setTokenOwner] = useState<string>('')
@@ -29,7 +31,7 @@ const FindOwner = () => {
   const tokenOwnerHandler = async () => {
     setTokenOwner(undefined)
     try {
-      const tokenOwner = await readContract({
+      const tokenOwner = await readContract(config, {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'ownerOf',
