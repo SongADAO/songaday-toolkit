@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount } from 'wagmi'
 import { songabi } from '@/utils/abi/songabi'
 import { wagmiConfig as config } from '@/utils/wagmi'
@@ -46,7 +46,7 @@ const RepairMetadata = () => {
         ],
       })
 
-      await waitForTransaction({ hash })
+      await waitForTransactionReceipt(config, { hash })
 
       toast.success(`Successfully repaired metadata for song ${songNbrs}`)
     } catch (error) {

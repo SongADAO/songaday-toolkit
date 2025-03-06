@@ -22,7 +22,7 @@ import toast from 'react-hot-toast'
 import { DateTime } from 'luxon'
 import { SplitsClient } from '@0xsplits/splits-sdk'
 import { useAccount } from 'wagmi'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
 import { wagmiConfig as config } from '@/utils/wagmi'
 
@@ -272,7 +272,7 @@ const MintEdition = () => {
         ],
       })
       handleResponse()
-      await waitForTransaction({ hash })
+      await waitForTransactionReceipt(config, { hash })
       handleConfirm()
 
       setMinted(true)

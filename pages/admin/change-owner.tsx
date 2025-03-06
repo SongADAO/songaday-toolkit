@@ -14,7 +14,7 @@ import {
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { songabi } from '@/utils/abi/songabi'
 import { wagmiConfig as config } from '@/utils/wagmi'
 
@@ -33,7 +33,7 @@ const ChangeOwner = () => {
         args: [newOwner?.trim() ?? ''],
       })
 
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
       })
 

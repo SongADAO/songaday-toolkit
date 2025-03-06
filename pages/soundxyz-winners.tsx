@@ -17,7 +17,7 @@ import {
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { formatEther } from 'viem'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 import { wagmiConfig as config } from '@/utils/wagmi'
@@ -265,7 +265,7 @@ const SoundxyzWinners = () => {
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({ hash })
+      await waitForTransactionReceipt(config, { hash })
       toast.success('Song Transferred')
 
       initWinners()

@@ -23,7 +23,7 @@ import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAccount, useSwitchChain, usePublicClient } from 'wagmi'
-import { writeContract, waitForTransaction, readContract } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt, readContract } from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
 import {
@@ -257,7 +257,7 @@ const CreateAuctionGBML2Zora = () => {
 
       toast.success('Waiting for tx to confirm')
 
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
         chainId: GBM_L2_ZORA_CHAIN,
         confirmations: 1,
@@ -403,7 +403,7 @@ const CreateAuctionGBML2Zora = () => {
 
       toast.success('Waiting for tx to confirm')
 
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
         chainId: GBM_L2_ZORA_CHAIN,
         confirmations: 1,

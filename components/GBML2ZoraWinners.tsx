@@ -36,7 +36,7 @@ import { JsonRpcProvider } from '@ethersproject/providers'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
 import { type PublicClient } from 'viem'
 import { Contract, ethers } from 'ethers'
@@ -409,7 +409,7 @@ const GBML2ZoraWinners = () => {
           ],
         })
         toast.success('Waiting for tx to confirm')
-        await waitForTransaction({
+        await waitForTransactionReceipt(config, {
           hash,
           chainId: 1,
           confirmations: 1,
@@ -515,7 +515,7 @@ const GBML2ZoraWinners = () => {
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
         chainId: auctionNetwork,
         confirmations: 1,

@@ -14,7 +14,7 @@ import {
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
 import { wagmiConfig as config } from '@/utils/wagmi'
 
@@ -50,7 +50,7 @@ const RepairEditionMetadata = () => {
         ],
       })
 
-      await waitForTransaction({ hash })
+      await waitForTransactionReceipt(config, { hash })
       toast.success(`Successfully repaired metadata for song ${songNbrs}`)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)

@@ -29,7 +29,7 @@ import {
 import { wagmiConfig as config } from '@/utils/wagmi'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
 import { getAddress } from 'viem'
 import { readContract } from '@wagmi/core'
@@ -345,7 +345,7 @@ const GBML2BaseWinners = () => {
           args: [SONGADAY_MINTER, winnerAddress, BigInt(toDistribute.tokenId)],
         })
         toast.success('Waiting for tx to confirm')
-        await waitForTransaction({
+        await waitForTransactionReceipt(config, {
           hash,
           chainId: 1,
           confirmations: 1,
@@ -433,7 +433,7 @@ const GBML2BaseWinners = () => {
           args: [toDistribute.tokenId, ipfsHash],
         })
         toast.success('Waiting for tx to confirm')
-        await waitForTransaction({
+        await waitForTransactionReceipt(config, {
           hash,
           chainId: 1,
           confirmations: 1,
@@ -474,7 +474,7 @@ const GBML2BaseWinners = () => {
       })
 
       toast.success('Waiting for tx to confirm')
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
         chainId: auctionNetwork,
         confirmations: 1,

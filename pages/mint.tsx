@@ -15,7 +15,7 @@ import {
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { writeContract, waitForTransaction } from '@wagmi/core'
+import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount } from 'wagmi'
 import { wagmiConfig as config } from '@/utils/wagmi'
 
@@ -53,7 +53,7 @@ const Mint = () => {
       })
 
       handleResponse()
-      await waitForTransaction({ hash })
+      await waitForTransactionReceipt(config, { hash })
       handleConfirm()
 
       setMinted(true)
