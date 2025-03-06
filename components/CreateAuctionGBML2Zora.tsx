@@ -23,7 +23,11 @@ import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useAccount, useSwitchChain, usePublicClient } from 'wagmi'
-import { writeContract, waitForTransactionReceipt, readContract } from '@wagmi/core'
+import {
+  writeContract,
+  waitForTransactionReceipt,
+  readContract,
+} from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
 import {
@@ -510,7 +514,9 @@ const CreateAuctionGBML2Zora = () => {
                   Create Auction
                 </Button>
               )) || (
-                <Button onClick={() => switchChain({chainId: GBM_L2_ZORA_CHAIN})}>
+                <Button
+                  onClick={() => switchChain({ chainId: GBM_L2_ZORA_CHAIN })}
+                >
                   Switch Chain
                 </Button>
               )}
@@ -527,7 +533,9 @@ const CreateAuctionGBML2Zora = () => {
                   Send Hypersub Editions
                 </Button>
               )) || (
-                <Button onClick={() => switchChain({chainId: GBM_L2_ZORA_CHAIN}}>
+                <Button
+                  onClick={() => switchChain({ chainId: GBM_L2_ZORA_CHAIN })}
+                >
                   Switch Chain
                 </Button>
               )}
