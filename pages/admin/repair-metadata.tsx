@@ -20,7 +20,7 @@ import { wagmiConfig as config } from '@/utils/wagmi'
 
 const RepairMetadata = () => {
   const [loading, setLoading] = useState(false)
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
   const [songNbrs, setSongNbrs] = useState<string>('')
 
@@ -34,6 +34,7 @@ const RepairMetadata = () => {
 
     try {
       const hash = await writeContract(config, {
+        account: address,
         abi: songabi,
         functionName: 'repairMetadata',
         address: SONG_CONTRACT,

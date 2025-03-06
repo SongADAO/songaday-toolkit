@@ -70,7 +70,7 @@ const SoundxyzWinners = () => {
 
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
-  const { isConnected, chain } = useAccount()
+  const { isConnected, chain, address } = useAccount()
 
   const [winners, setWinners] = useState<any>([])
 
@@ -257,6 +257,7 @@ const SoundxyzWinners = () => {
       console.log(BigInt(toDistribute.tokenId))
 
       const hash = await writeContract(config, {
+        account: address,
         chainId: 1,
         address: SONG_CONTRACT,
         abi: songabi,

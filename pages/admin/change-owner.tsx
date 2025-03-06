@@ -21,12 +21,13 @@ import { wagmiConfig as config } from '@/utils/wagmi'
 const ChangeOwner = () => {
   const [newOwner, setNewOwner] = useState<string>('')
   const [loading, setLoading] = useState(false)
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
 
   const changeOwnerHandler = async () => {
     setLoading(true)
     try {
       const hash = await writeContract(config, {
+        account: address,
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'transferOwnership',

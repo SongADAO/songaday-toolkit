@@ -30,7 +30,7 @@ const Mint = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const { isConnected } = useAccount()
+  const { isConnected, address } = useAccount()
 
   const handleConfirm = () => {
     toast.success('Song Minted')
@@ -46,6 +46,7 @@ const Mint = () => {
     setLoading(true)
     try {
       const hash = await writeContract(config, {
+        account: address,
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'dailyMint',

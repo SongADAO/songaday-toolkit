@@ -111,7 +111,7 @@ const MintEdition = () => {
 
   const [splitAddress, setSplitAddress] = useState('')
 
-  const { isConnected, chain } = useAccount()
+  const { isConnected, chain, address } = useAccount()
   const signer = useEthersSigner()
   const provider = useEthersProvider()
 
@@ -256,6 +256,7 @@ const MintEdition = () => {
       console.log(feeNumerator)
 
       const hash = await writeContract(config, {
+        account: address,
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
         functionName: 'registerMint',

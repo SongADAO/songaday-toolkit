@@ -106,7 +106,7 @@ const CreateAuctionGBML2 = () => {
   const [loading, setLoading] = useState(false)
   const [hypersubLoading, setHypersubLoading] = useState(false)
   const [solanaFormLoading, setSolanaFormLoading] = useState(false)
-  const { isConnected, chain } = useAccount()
+  const { isConnected, chain, address } = useAccount()
 
   const { switchChain } = useSwitchChain()
 
@@ -244,6 +244,7 @@ const CreateAuctionGBML2 = () => {
       }
 
       const hash = await writeContract(config, {
+        account: address,
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_CONTRACT_ADDRESS,
         abi: gbml2abi,
@@ -383,6 +384,7 @@ const CreateAuctionGBML2 = () => {
       console.log(mintCalldata)
 
       // const hash = await writeContract(config, {
+      //   account: address,
       //   chainId: GBM_L2_BASE_CHAIN,
       //   address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
       //   abi: zoraeditionabi,
@@ -396,6 +398,7 @@ const CreateAuctionGBML2 = () => {
       // })
 
       const hash = await writeContract(config, {
+        account: address,
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
         abi: zoraeditionabi,

@@ -64,7 +64,7 @@ const GBML2ZoraWinners = () => {
 
   // const sepoliaPublicClient = usePublicClient({ chainId: 11155111 })
 
-  const { isConnected, chain } = useAccount()
+  const { isConnected, chain, address } = useAccount()
 
   const { switchChain } = useSwitchChain()
 
@@ -398,6 +398,7 @@ const GBML2ZoraWinners = () => {
 
       if (toDistribute.minted) {
         const hash = await writeContract(config, {
+          account: address,
           chainId: 1,
           address: SONG_CONTRACT,
           abi: songabi,
@@ -507,6 +508,7 @@ const GBML2ZoraWinners = () => {
 
     try {
       const hash = await writeContract(config, {
+        account: address,
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,
