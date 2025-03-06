@@ -315,7 +315,7 @@ const CreateAuctionGBML2Zora = () => {
           'function supplyDetail() view returns (uint256 count, uint256 cap)',
           'function subscriptionOf(address account) external view returns (uint256 tokenId, uint256 refundableAmount, uint256 rewardPoints, uint256 expiresAt)',
         ]),
-        client: zoraPublicClient,
+        client: { public: zoraPublicClient },
       })
 
       const tokenHolders = await getTokenHolders(contract)
