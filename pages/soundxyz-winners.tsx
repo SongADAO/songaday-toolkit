@@ -16,10 +16,10 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { formatEther } from 'viem'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { useAccount, useNetwork, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
-import { ethers } from 'ethers'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
 query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
@@ -330,7 +330,7 @@ const SoundxyzWinners = () => {
 
                     <Text fontSize="12px">Sold: {winner.numSold}</Text>
                     <Text fontSize="12px">
-                      Raised: {ethers.utils.formatEther(winner.totalRaised)} Ξ
+                      Raised: {formatEther(winner.totalRaised)} Ξ
                     </Text>
 
                     <Text fontSize="12px">Ends: {winner.endsAtDate}</Text>
