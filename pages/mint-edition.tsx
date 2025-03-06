@@ -205,6 +205,8 @@ const MintEdition = () => {
       return
     }
 
+    throw new Error('Needs updated to viem')
+
     setMinted(false)
     setLoading(true)
     try {
