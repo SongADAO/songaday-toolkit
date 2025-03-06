@@ -45,6 +45,7 @@ import { readContract } from '@wagmi/core'
 import { encodeFunctionData } from 'viem'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 import { mainnet, sepolia, zora } from 'viem/chains'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 const GBML2ZoraWinners = () => {
   const batchSize = 262144 // 256kB;
@@ -396,7 +397,7 @@ const GBML2ZoraWinners = () => {
       // console.log(BigInt(toDistribute.tokenId))
 
       if (toDistribute.minted) {
-        const { hash } = await writeContract({
+        const { hash } = await writeContract(config, {
           chainId: 1,
           address: SONG_CONTRACT,
           abi: songabi,
@@ -505,7 +506,7 @@ const GBML2ZoraWinners = () => {
     // console.log(claims)
 
     try {
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         chainId: auctionNetwork,
         address: auctionAddress,
         abi: gbml2abi,

@@ -20,6 +20,7 @@ import { formatEther } from 'viem'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
 query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
@@ -255,7 +256,7 @@ const SoundxyzWinners = () => {
       console.log(winnerAddress)
       console.log(BigInt(toDistribute.tokenId))
 
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         chainId: 1,
         address: SONG_CONTRACT,
         abi: songabi,

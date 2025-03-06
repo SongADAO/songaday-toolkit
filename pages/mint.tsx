@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { useAccount } from 'wagmi'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 type FormValues = {
   songNbr: string
@@ -44,7 +45,7 @@ const Mint = () => {
     setMinted(false)
     setLoading(true)
     try {
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'dailyMint',

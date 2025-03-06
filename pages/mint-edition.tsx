@@ -24,6 +24,7 @@ import { SplitsClient } from '@0xsplits/splits-sdk'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 import * as React from 'react'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -254,7 +255,7 @@ const MintEdition = () => {
       console.log(data.split)
       console.log(feeNumerator)
 
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
         functionName: 'registerMint',

@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { useAccount } from 'wagmi'
 import { songabi } from '@/utils/abi/songabi'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 const RepairMetadata = () => {
   const [loading, setLoading] = useState(false)
@@ -32,7 +33,7 @@ const RepairMetadata = () => {
     }
 
     try {
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         abi: songabi,
         functionName: 'repairMetadata',
         address: SONG_CONTRACT,

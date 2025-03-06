@@ -33,6 +33,7 @@ import {
   parseAbi,
   encodeFunctionData,
 } from 'viem'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 type SongTrait = {
   trait_type: string
@@ -236,7 +237,7 @@ const CreateAuctionGBML2Zora = () => {
         throw new Error('End time must be at least 24 hours')
       }
 
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         chainId: GBM_L2_ZORA_CHAIN,
         address: GBM_L2_ZORA_CONTRACT_ADDRESS,
         abi: gbml2abi,
@@ -379,7 +380,7 @@ const CreateAuctionGBML2Zora = () => {
       console.log('Multicall calldata')
       console.log(mintCalldata)
 
-      // const { hash } = await writeContract({
+      // const { hash } = await writeContract(config, {
       //   chainId: GBM_L2_ZORA_CHAIN,
       //   address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
       //   abi: zoraeditionabi,
@@ -392,7 +393,7 @@ const CreateAuctionGBML2Zora = () => {
       //   ],
       // })
 
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         chainId: GBM_L2_ZORA_CHAIN,
         address: GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
         abi: zoraeditionabi,

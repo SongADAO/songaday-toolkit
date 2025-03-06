@@ -16,6 +16,8 @@ import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { songabi } from '@/utils/abi/songabi'
+import { wagmiConfig as config } from '@/utils/wagmi'
+
 const ChangeOwner = () => {
   const [newOwner, setNewOwner] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -24,7 +26,7 @@ const ChangeOwner = () => {
   const changeOwnerHandler = async () => {
     setLoading(true)
     try {
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'transferOwnership',

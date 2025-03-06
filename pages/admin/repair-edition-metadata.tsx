@@ -16,6 +16,7 @@ import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
+import { wagmiConfig as config } from '@/utils/wagmi'
 
 const RepairEditionMetadata = () => {
   const [loading, setLoading] = useState(false)
@@ -36,7 +37,7 @@ const RepairEditionMetadata = () => {
         throw new Error('Please switch to Optimism')
       }
 
-      const { hash } = await writeContract({
+      const { hash } = await writeContract(config, {
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
         functionName: 'repairMetadata',
