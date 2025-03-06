@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { DateTime } from 'luxon'
 import { SplitsClient } from '@0xsplits/splits-sdk'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
 
@@ -115,8 +115,7 @@ const MintEdition = () => {
 
   const [splitAddress, setSplitAddress] = useState('')
 
-  const { chain } = useNetwork()
-  const { isConnected } = useAccount()
+  const { isConnected, chain } = useAccount()
   const signer = useEthersSigner()
   const provider = useEthersProvider()
 

@@ -13,14 +13,13 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
 
 const RepairEditionMetadata = () => {
   const [loading, setLoading] = useState(false)
-  const { chain } = useNetwork()
-  const { isConnected } = useAccount()
+  const { isConnected, chain } = useAccount()
   const [ipfsHashes, setIpfsHashes] = useState('')
   const [songNbrs, setSongNbrs] = useState<string>('')
 

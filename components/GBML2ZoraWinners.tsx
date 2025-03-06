@@ -39,7 +39,6 @@ import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import {
   useAccount,
-  useNetwork,
   type PublicClient,
   usePublicClient,
   useSwitchNetwork,
@@ -68,9 +67,7 @@ const GBML2ZoraWinners = () => {
 
   // const sepoliaPublicClient = usePublicClient({ chainId: 11155111 })
 
-  const { isConnected } = useAccount()
-
-  const { chain } = useNetwork()
+  const { isConnected, chain } = useAccount()
 
   const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 

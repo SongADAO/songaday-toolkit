@@ -22,12 +22,7 @@ import {
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import {
-  useAccount,
-  useNetwork,
-  useSwitchNetwork,
-  usePublicClient,
-} from 'wagmi'
+import { useAccount, useSwitchNetwork, usePublicClient } from 'wagmi'
 import { writeContract, waitForTransaction, readContract } from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
@@ -106,8 +101,7 @@ const CreateAuctionGBML2Zora = () => {
   const [loading, setLoading] = useState(false)
   const [hypersubLoading, setHypersubLoading] = useState(false)
   const [solanaFormLoading, setSolanaFormLoading] = useState(false)
-  const { isConnected } = useAccount()
-  const { chain } = useNetwork()
+  const { isConnected, chain } = useAccount()
 
   const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 

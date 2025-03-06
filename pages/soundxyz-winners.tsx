@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { formatEther } from 'viem'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import { useAccount, useNetwork, usePublicClient } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
@@ -69,9 +69,7 @@ const SoundxyzWinners = () => {
 
   const arbitrumPublicClient = usePublicClient({ chainId: 42161 })
 
-  const { isConnected } = useAccount()
-
-  const { chain } = useNetwork()
+  const { isConnected, chain } = useAccount()
 
   const [winners, setWinners] = useState<any>([])
 

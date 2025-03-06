@@ -30,12 +30,7 @@ import {
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import {
-  useAccount,
-  useNetwork,
-  usePublicClient,
-  useSwitchNetwork,
-} from 'wagmi'
+import { useAccount, usePublicClient, useSwitchNetwork } from 'wagmi'
 import { getAddress } from 'viem'
 import { readContract } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
@@ -147,9 +142,7 @@ const GBML2BaseWinners = () => {
 
   // const sepoliaPublicClient = usePublicClient({ chainId: 11155111 })
 
-  const { isConnected } = useAccount()
-
-  const { chain } = useNetwork()
+  const { isConnected, chain } = useAccount()
 
   const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
 
