@@ -24,7 +24,63 @@ import { SplitsClient } from '@0xsplits/splits-sdk'
 import { useAccount, useNetwork } from 'wagmi'
 import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
-import { useEthersProvider, useEthersSigner } from '@/utils/hooks/ethers'
+
+import * as React from 'react'
+import {
+  type PublicClient,
+  usePublicClient,
+  useWalletClient,
+  type WalletClient,
+} from 'wagmi'
+import { providers } from 'ethers'
+import { type HttpTransport } from 'viem'
+
+function publicClientToProvider(publicClient: PublicClient) {
+  const { chain, transport } = publicClient
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  if (transport.type === 'fallback')
+    return new providers.FallbackProvider(
+      (transport.transports as ReturnType<HttpTransport>[]).map(
+        ({ value }) => new providers.JsonRpcProvider(value?.url, network)
+      )
+    )
+  return new providers.JsonRpcProvider(transport.url, network)
+}
+
+/** Hook to convert a viem Public Client to an ethers.js Provider. */
+function useEthersProvider({ chainId }: { chainId?: number } = {}) {
+  const publicClient = usePublicClient({ chainId })
+  return React.useMemo(
+    () => publicClientToProvider(publicClient),
+    [publicClient]
+  )
+}
+
+function walletClientToSigner(walletClient: WalletClient) {
+  const { account, chain, transport } = walletClient
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  // @ts-ignore
+  const provider = new providers.Web3Provider(transport, network)
+  const signer = provider.getSigner(account.address)
+  return signer
+}
+
+/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
+function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: walletClient } = useWalletClient({ chainId })
+  return React.useMemo(
+    () => (walletClient ? walletClientToSigner(walletClient) : undefined),
+    [walletClient]
+  )
+}
 
 type FormValues = {
   split: string
