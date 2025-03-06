@@ -41,7 +41,7 @@ import {
   useAccount,
   type PublicClient,
   usePublicClient,
-  useSwitchNetwork,
+  useSwitchChain,
 } from 'wagmi'
 import { Contract, ethers } from 'ethers'
 import { DateTime } from 'luxon'
@@ -69,7 +69,7 @@ const GBML2ZoraWinners = () => {
 
   const { isConnected, chain } = useAccount()
 
-  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
+  const { switchChain } = useSwitchChain()
 
   const [winners, setWinners] = useState<any>([])
 
@@ -558,10 +558,7 @@ const GBML2ZoraWinners = () => {
                 Claim Funds
               </Button>
             )) || (
-              <Button
-                onClick={() => switchNetwork(zora.id)}
-                isLoading={isSwitching}
-              >
+              <Button onClick={() => switchChain({ chainId: zora.id })}>
                 Switch Chain
               </Button>
             )}
@@ -738,8 +735,9 @@ const GBML2ZoraWinners = () => {
                             </>
                           )) || (
                             <Button
-                              onClick={() => switchNetwork(mainnet.id)}
-                              isLoading={isSwitching}
+                              onClick={() =>
+                                switchChain({ chainId: mainnet.id })
+                              }
                             >
                               Switch Chain
                             </Button>

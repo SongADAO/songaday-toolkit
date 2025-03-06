@@ -30,7 +30,7 @@ import {
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import { useAccount, usePublicClient, useSwitchNetwork } from 'wagmi'
+import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
 import { getAddress } from 'viem'
 import { readContract } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
@@ -144,7 +144,7 @@ const GBML2BaseWinners = () => {
 
   const { isConnected, chain } = useAccount()
 
-  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
+  const { switchChain } = useSwitchChain()
 
   const [winners, setWinners] = useState<any>([])
 
@@ -514,10 +514,7 @@ const GBML2BaseWinners = () => {
                 Claim Funds
               </Button>
             )) || (
-              <Button
-                onClick={() => switchNetwork(base.id)}
-                isLoading={isSwitching}
-              >
+              <Button onClick={() => switchChain({ chainId: base.id })}>
                 Switch Chain
               </Button>
             )}
@@ -694,8 +691,9 @@ const GBML2BaseWinners = () => {
                             </>
                           )) || (
                             <Button
-                              onClick={() => switchNetwork(mainnet.id)}
-                              isLoading={isSwitching}
+                              onClick={() =>
+                                switchChain({ chainId: mainnet.id })
+                              }
                             >
                               Switch Chain
                             </Button>

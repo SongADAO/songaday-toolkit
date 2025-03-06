@@ -22,7 +22,7 @@ import {
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useSwitchNetwork, usePublicClient } from 'wagmi'
+import { useAccount, useSwitchChain, usePublicClient } from 'wagmi'
 import { writeContract, waitForTransaction, readContract } from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
@@ -103,7 +103,7 @@ const CreateAuctionGBML2Zora = () => {
   const [solanaFormLoading, setSolanaFormLoading] = useState(false)
   const { isConnected, chain } = useAccount()
 
-  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
+  const { switchChain } = useSwitchChain()
 
   const zoraPublicClient = usePublicClient({ chainId: 7777777 })
 
@@ -509,10 +509,7 @@ const CreateAuctionGBML2Zora = () => {
                   Create Auction
                 </Button>
               )) || (
-                <Button
-                  onClick={() => switchNetwork(GBM_L2_ZORA_CHAIN)}
-                  isLoading={isSwitching}
-                >
+                <Button onClick={() => switchChain({chainId: GBM_L2_ZORA_CHAIN})}>
                   Switch Chain
                 </Button>
               )}
@@ -529,10 +526,7 @@ const CreateAuctionGBML2Zora = () => {
                   Send Hypersub Editions
                 </Button>
               )) || (
-                <Button
-                  onClick={() => switchNetwork(GBM_L2_ZORA_CHAIN)}
-                  isLoading={isSwitching}
-                >
+                <Button onClick={() => switchChain({chainId: GBM_L2_ZORA_CHAIN}}>
                   Switch Chain
                 </Button>
               )}

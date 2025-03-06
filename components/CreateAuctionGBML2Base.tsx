@@ -22,7 +22,7 @@ import {
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useSwitchNetwork, usePublicClient } from 'wagmi'
+import { useAccount, useSwitchChain, usePublicClient } from 'wagmi'
 import { writeContract, waitForTransaction, readContract } from '@wagmi/core'
 import { gbml2abi } from '@/utils/abi/gbml2abi'
 import { zoraeditionabi } from '@/utils/abi/zoraeditionabi'
@@ -103,7 +103,7 @@ const CreateAuctionGBML2 = () => {
   const [solanaFormLoading, setSolanaFormLoading] = useState(false)
   const { isConnected, chain } = useAccount()
 
-  const { isLoading: isSwitching, switchNetwork } = useSwitchNetwork()
+  const { switchChain } = useSwitchChain()
 
   const basePublicClient = usePublicClient({ chainId: 8453 })
 
@@ -508,8 +508,7 @@ const CreateAuctionGBML2 = () => {
                 </Button>
               )) || (
                 <Button
-                  onClick={() => switchNetwork(GBM_L2_BASE_CHAIN)}
-                  isLoading={isSwitching}
+                  onClick={() => switchChain({ chainId: GBM_L2_BASE_CHAIN })}
                 >
                   Switch Chain
                 </Button>
@@ -528,8 +527,7 @@ const CreateAuctionGBML2 = () => {
                 </Button>
               )) || (
                 <Button
-                  onClick={() => switchNetwork(GBM_L2_BASE_CHAIN)}
-                  isLoading={isSwitching}
+                  onClick={() => switchChain({ chainId: GBM_L2_BASE_CHAIN })}
                 >
                   Switch Chain
                 </Button>
