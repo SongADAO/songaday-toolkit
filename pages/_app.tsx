@@ -15,16 +15,10 @@ import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import Head from 'next/head'
-import { CHAIN_ID, INFURA_ID } from '@/utils/constants'
-import { arbitrum, optimism, mainnet, sepolia, zora } from 'viem/chains'
-import { base } from 'utils/base-chain'
-import { WagmiConfig, configureChains, createConfig } from 'wagmi'
-import { EthereumClient, w3mConnectors, w3mProvider } from '@web3modal/ethereum'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
-import { publicProvider } from 'wagmi/providers/public'
-import { infuraProvider } from 'wagmi/providers/infura'
-// import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { EthereumClient } from '@web3modal/ethereum'
 import { Web3Modal } from '@web3modal/react'
+import { wagmiConfig, chains, walletConnectProjectId } from '@/utils/wagmi'
+import { WagmiProvider } from 'wagmi'
 
 const ClientOnly = ({ children }) => {
   const [isMounted, setIsMounted] = useState(false)
@@ -40,43 +34,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
 
-  const chains = [
-    mainnet,
-    optimism,
-    arbitrum,
-    base,
-    zora,
-    // Testnets
-    sepolia,
-    // baseSepolia,
-    // zoraSepolia,
-    // Local
-    // hardhat,
-  ]
-
-  const projectId = '55df63e3faebd774218c3990b418f5cd'
-
-  const { publicClient } = configureChains(chains, [
-    infuraProvider({ apiKey: INFURA_ID }),
-    // alchemyProvider({ apiKey: INFURA_ID }),
-    // w3mProvider({ projectId }),
-    jsonRpcProvider({
-      rpc: (chain) => {
-        if (chain.id !== zora.id) return null
-
-        return {
-          http: ['https://rpc.zora.energy'],
-          webSocket: ['wss://rpc.zora.energy'],
-        } as any
-      },
-    }),
-    publicProvider(),
-  ])
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    connectors: w3mConnectors({ projectId, chains }),
-    publicClient,
-  })
   const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
   return (
@@ -92,15 +49,18 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Head>
           <link rel="manifest" href="/manifest.json" />
         </Head>
-        <WagmiConfig config={wagmiConfig}>
+        <WagmiProvider config={wagmiConfig}>
           <ChakraProvider theme={theme}>
             <Layout>
               <Component {...pageProps} />
             </Layout>
           </ChakraProvider>
           <Toaster position="bottom-center" />
-        </WagmiConfig>
-        <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
+        </WagmiProvider>
+        <Web3Modal
+          projectId={walletConnectProjectId}
+          ethereumClient={ethereumClient}
+        />
       </SWRConfig>
     </ClientOnly>
   )
