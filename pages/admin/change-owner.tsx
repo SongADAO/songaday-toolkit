@@ -26,12 +26,19 @@ const ChangeOwner = () => {
   const changeOwnerHandler = async () => {
     setLoading(true)
     try {
+      const trimmedNewOwner = newOwner?.trim()
+
+      if (!trimmedNewOwner) {
+        toast.error('Please fill in all fields')
+        return
+      }
+
       const hash = await writeContract(config, {
         account: address,
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'transferOwnership',
-        args: [newOwner?.trim() ?? ''],
+        args: [trimmedNewOwner as `0x${string}`],
       })
 
       await waitForTransactionReceipt(config, {

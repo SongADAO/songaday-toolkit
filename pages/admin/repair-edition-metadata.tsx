@@ -46,7 +46,7 @@ const RepairEditionMetadata = () => {
           songNbrs
             .split(',')
             .map((nbrstr) => nbrstr.trim())
-            .map(Number),
+            .map(BigInt),
           ipfsHashes.split(',').map((hash) => 'ipfs://' + hash.trim()),
         ],
       })

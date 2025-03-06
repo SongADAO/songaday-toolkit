@@ -29,7 +29,12 @@ import { wagmiConfig as config } from '@/utils/wagmi'
 import * as React from 'react'
 import { usePublicClient, useWalletClient } from 'wagmi'
 import { providers } from 'ethers'
-import { type PublicClient, type WalletClient, type HttpTransport } from 'viem'
+import {
+  type PublicClient,
+  type WalletClient,
+  type HttpTransport,
+  parseUnits,
+} from 'viem'
 
 function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient
@@ -227,10 +232,7 @@ const MintEdition = () => {
       const feeNumerator = 250 // 2.5%
       // TODO: Set feeNumerator
 
-      const mintPriceWei = ethers.utils.parseUnits(
-        data.mintPrice.toString(),
-        'ether'
-      )
+      const mintPriceWei = parseUnits(data.mintPrice.toString(), 18)
       console.log(data.mintPrice.toString())
       console.log(mintPriceWei)
 
@@ -261,15 +263,15 @@ const MintEdition = () => {
         abi: editionabi,
         functionName: 'registerMint',
         args: [
-          data.songNbr,
+          BigInt(data.songNbr),
           ipfsUrl,
-          startTimeDateSeconds,
-          endTimeDateSeconds,
+          BigInt(startTimeDateSeconds),
+          BigInt(endTimeDateSeconds),
           mintPriceWei,
-          data.sadnftOwner,
-          data.sadnftOwnerSignature,
-          data.split,
-          feeNumerator,
+          data.sadnftOwner as `0x{string}`,
+          data.sadnftOwnerSignature as `0x{string}`,
+          data.split as `0x{string}`,
+          BigInt(feeNumerator),
         ],
       })
       handleResponse()

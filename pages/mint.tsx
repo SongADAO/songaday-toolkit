@@ -50,7 +50,7 @@ const Mint = () => {
         address: SONG_CONTRACT,
         abi: songabi,
         functionName: 'dailyMint',
-        args: [data.songNbr, data.ipfsHash],
+        args: [BigInt(data.songNbr), data.ipfsHash],
       })
 
       handleResponse()
