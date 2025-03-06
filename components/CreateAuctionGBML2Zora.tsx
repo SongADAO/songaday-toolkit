@@ -6,7 +6,6 @@ import {
   GBM_L2_ZORA_EDITION_MINTER,
   GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS,
 } from '@/utils/constants'
-import { ethers } from 'ethers'
 import fetchJson from '@/utils/fetchJson'
 import {
   Button,

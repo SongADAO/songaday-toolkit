@@ -18,7 +18,6 @@ import {
   Wrap,
   Checkbox,
 } from '@chakra-ui/react'
-import { ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
