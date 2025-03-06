@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useContractRead } from 'wagmi'
+import { useReadContract } from 'wagmi'
 import { readContract } from '@wagmi/core'
 import { wagmiConfig as config } from '@/utils/wagmi'
 
@@ -22,7 +22,7 @@ const FindOwner = () => {
   const [songNbr, setSongNbr] = useState<string>('')
   const [tokenOwner, setTokenOwner] = useState<string>('')
 
-  const { data: contractOwner } = useContractRead({
+  const { data: contractOwner } = useReadContract({
     abi: songabi,
     address: SONG_CONTRACT,
     functionName: 'owner',
