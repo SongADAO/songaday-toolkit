@@ -26,12 +26,12 @@ import {
   Tr,
   Tag,
 } from '@chakra-ui/react'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
-import { getAddress } from 'viem'
+import { getAddress, extractChain } from 'viem'
 import { readContract } from '@wagmi/core'
 import { mainnet } from 'viem/chains'
 import { base } from 'utils/base-chain'
@@ -338,6 +338,10 @@ const GBML2BaseWinners = () => {
 
       if (toDistribute.minted) {
         const hash = await writeContract(config, {
+          chain: extractChain({
+            chains: chains,
+            id: 1,
+          }),
           account: address,
           chainId: 1,
           address: SONG_CONTRACT,
@@ -427,6 +431,10 @@ const GBML2BaseWinners = () => {
         // console.log(ipfsHash)
 
         const hash = await writeContract(config, {
+          chain: extractChain({
+            chains: chains,
+            id: 1,
+          }),
           account: address,
           chainId: 1,
           address: SONG_CONTRACT,
@@ -468,6 +476,10 @@ const GBML2BaseWinners = () => {
 
     try {
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: auctionNetwork,
+        }),
         account: address,
         chainId: auctionNetwork,
         address: auctionAddress,

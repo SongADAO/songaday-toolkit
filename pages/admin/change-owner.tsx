@@ -16,7 +16,8 @@ import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { songabi } from '@/utils/abi/songabi'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { extractChain } from 'viem'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 const ChangeOwner = () => {
   const [newOwner, setNewOwner] = useState<string>('')
@@ -34,6 +35,11 @@ const ChangeOwner = () => {
       }
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: 1,
+        }),
+        chainId: 1,
         account: address,
         address: SONG_CONTRACT,
         abi: songabi,

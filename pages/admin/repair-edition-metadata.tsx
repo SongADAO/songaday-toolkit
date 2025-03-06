@@ -16,7 +16,8 @@ import toast from 'react-hot-toast'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { extractChain } from 'viem'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 const RepairEditionMetadata = () => {
   const [loading, setLoading] = useState(false)
@@ -38,6 +39,11 @@ const RepairEditionMetadata = () => {
       }
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: 1,
+        }),
+        chainId: 1,
         account: address,
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,

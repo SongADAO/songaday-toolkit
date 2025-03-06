@@ -38,14 +38,14 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
-import { type PublicClient } from 'viem'
+import { type PublicClient, extractChain } from 'viem'
 import { Contract, ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { readContract } from '@wagmi/core'
 import { encodeFunctionData } from 'viem'
 import SafeAppsSDK from '@gnosis.pm/safe-apps-sdk'
 import { mainnet, sepolia, zora } from 'viem/chains'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 const GBML2ZoraWinners = () => {
   const batchSize = 262144 // 256kB;
@@ -398,6 +398,10 @@ const GBML2ZoraWinners = () => {
 
       if (toDistribute.minted) {
         const hash = await writeContract(config, {
+          chain: extractChain({
+            chains: chains,
+            id: 1,
+          }),
           account: address,
           chainId: 1,
           address: SONG_CONTRACT,
@@ -508,6 +512,10 @@ const GBML2ZoraWinners = () => {
 
     try {
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: auctionNetwork,
+        }),
         account: address,
         chainId: auctionNetwork,
         address: auctionAddress,

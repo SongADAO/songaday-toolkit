@@ -36,8 +36,9 @@ import {
   http,
   parseAbi,
   encodeFunctionData,
+  extractChain,
 } from 'viem'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 type SongTrait = {
   trait_type: string
@@ -244,6 +245,10 @@ const CreateAuctionGBML2 = () => {
       }
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: GBM_L2_BASE_CHAIN,
+        }),
         account: address,
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_CONTRACT_ADDRESS,
@@ -384,6 +389,10 @@ const CreateAuctionGBML2 = () => {
       console.log(mintCalldata)
 
       // const hash = await writeContract(config, {
+      //   chain: extractChain({
+      //     chains: chains,
+      //     id: GBM_L2_BASE_CHAIN,
+      //   }),
       //   account: address,
       //   chainId: GBM_L2_BASE_CHAIN,
       //   address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
@@ -398,6 +407,10 @@ const CreateAuctionGBML2 = () => {
       // })
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: GBM_L2_BASE_CHAIN,
+        }),
         account: address,
         chainId: GBM_L2_BASE_CHAIN,
         address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,

@@ -16,11 +16,11 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
-import { formatEther } from 'viem'
+import { formatEther, extractChain } from 'viem'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient } from 'wagmi'
 import fetchGraphSoundxyz from '../utils/fetchGraphSoundxyz'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 const LATEST_SOUNDXYZ_EDITIONS = `
 query ArtistHighestRelease($filter: ArtistReleasesFilter, $after: String) {
@@ -257,6 +257,10 @@ const SoundxyzWinners = () => {
       console.log(BigInt(toDistribute.tokenId))
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: 1,
+        }),
         account: address,
         chainId: 1,
         address: SONG_CONTRACT,

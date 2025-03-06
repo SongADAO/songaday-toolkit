@@ -17,7 +17,8 @@ import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount } from 'wagmi'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { extractChain } from 'viem'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 type FormValues = {
   songNbr: string
@@ -46,6 +47,11 @@ const Mint = () => {
     setLoading(true)
     try {
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: 1,
+        }),
+        chainId: 1,
         account: address,
         address: SONG_CONTRACT,
         abi: songabi,

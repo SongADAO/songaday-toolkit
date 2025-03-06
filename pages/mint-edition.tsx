@@ -24,7 +24,7 @@ import { SplitsClient } from '@0xsplits/splits-sdk'
 import { useAccount } from 'wagmi'
 import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
-import { wagmiConfig as config } from '@/utils/wagmi'
+import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
 import * as React from 'react'
 import { usePublicClient, useWalletClient } from 'wagmi'
@@ -34,6 +34,7 @@ import {
   type WalletClient,
   type HttpTransport,
   parseUnits,
+  extractChain,
 } from 'viem'
 
 function publicClientToProvider(publicClient: PublicClient) {
@@ -260,6 +261,11 @@ const MintEdition = () => {
       console.log(feeNumerator)
 
       const hash = await writeContract(config, {
+        chain: extractChain({
+          chains: chains,
+          id: SONG_EDITION_CHAIN_ID,
+        }),
+        chainId: SONG_EDITION_CHAIN_ID,
         account: address,
         address: SONG_EDITION_CONTRACT,
         abi: editionabi,
