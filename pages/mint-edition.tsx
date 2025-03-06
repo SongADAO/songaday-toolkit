@@ -26,14 +26,9 @@ import { writeContract, waitForTransaction } from '@wagmi/core'
 import { editionabi } from '@/utils/abi/editionabi'
 
 import * as React from 'react'
-import {
-  type PublicClient,
-  usePublicClient,
-  useWalletClient,
-  type WalletClient,
-} from 'wagmi'
+import { usePublicClient, useWalletClient } from 'wagmi'
 import { providers } from 'ethers'
-import { type HttpTransport } from 'viem'
+import { type PublicClient, type WalletClient, type HttpTransport } from 'viem'
 
 function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient

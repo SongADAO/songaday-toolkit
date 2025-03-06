@@ -37,12 +37,8 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { writeContract, waitForTransaction } from '@wagmi/core'
-import {
-  useAccount,
-  type PublicClient,
-  usePublicClient,
-  useSwitchChain,
-} from 'wagmi'
+import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
+import { type PublicClient } from 'viem'
 import { Contract, ethers } from 'ethers'
 import { DateTime } from 'luxon'
 import { readContract } from '@wagmi/core'
