@@ -33,6 +33,10 @@ const getAllUnrefreshedSongs = async (
 
   const response = await data.json()
 
+  if (!response.success) {
+    return []
+  }
+
   const assets = [
     ...acc,
     ...response.assets
