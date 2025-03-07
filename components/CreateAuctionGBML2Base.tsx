@@ -263,6 +263,23 @@ const CreateAuctionGBML2 = () => {
         return
       }
 
+      const existingEditionTokenIdData = (await fetchJson(
+        `/api/get-edition-id/?songNbr=${songNbr}`
+      )) as { editionTokenId: number }
+
+      const existingEditionTokenId = existingEditionTokenIdData?.editionTokenId
+      // console.log(editionTokenId)
+
+      if (existingEditionTokenId) {
+        throw new Error('An edition already exists for this song.')
+      }
+
+      if (Number(songNbr) < 5909) {
+        throw new Error(
+          'The specified song number is not allowed for zora sdk mints. (wrong number entered?)'
+        )
+      }
+
       toast.success('Creating the edition')
       const duration = DateTime.fromISO(date).diff(DateTime.local())
 
