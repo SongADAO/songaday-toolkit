@@ -438,7 +438,7 @@ const CreateAuctionGBML2 = () => {
           BigInt(songNbr),
           BigInt(1),
           BigInt(endTimestamp),
-          editionTokenId,
+          BigInt(editionTokenId),
         ],
       })
 
