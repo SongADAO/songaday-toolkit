@@ -9,21 +9,21 @@ export const ROUTES = [
     name: 'Upload to IPFS',
     description: 'Upload anything to IPFS (Video, Image, Metadata)',
   },
-  {
-    path: '/upload-edition',
-    name: 'Upload Edition to IPFS',
-    description: 'Upload an ERC1155-Edition to IPFS (Video, Image, Metadata)',
-  },
+  // {
+  //   path: '/upload-edition',
+  //   name: 'Upload Edition to IPFS',
+  //   description: 'Upload an ERC1155-Edition to IPFS (Video, Image, Metadata)',
+  // },
   {
     path: '/mint',
     name: 'Mint Song',
     description: 'Mint a new song by giving IPFS hash of the metadata',
   },
-  {
-    path: '/mint-edition',
-    name: 'Mint Edition',
-    description: 'Mint a song edition by giving IPFS hash of the metadata',
-  },
+  // {
+  //   path: '/mint-edition',
+  //   name: 'Mint Edition',
+  //   description: 'Mint a song edition by giving IPFS hash of the metadata',
+  // },
   {
     path: '/auctions',
     name: 'Auctions',
@@ -45,21 +45,21 @@ export const ROUTES = [
     name: 'Index Songs',
     description: 'Index all songs in the Song A Day contract',
   },
-  {
-    path: '/soundxyz-winners',
-    name: 'Sound.xyz Winners',
-    description: 'Sound.xyz Winners',
-  },
+  // {
+  //   path: '/soundxyz-winners',
+  //   name: 'Sound.xyz Winners',
+  //   description: 'Sound.xyz Winners',
+  // },
   {
     path: '/gbm-l2-base-winners',
     name: 'GBM L2 Base Winners',
     description: 'GBM L2 Base Winners',
   },
-  {
-    path: '/gbm-l2-zora-winners',
-    name: 'GBM L2 Zora Winners',
-    description: 'GBM L2 Zora Winners',
-  },
+  // {
+  //   path: '/gbm-l2-zora-winners',
+  //   name: 'GBM L2 Zora Winners',
+  //   description: 'GBM L2 Zora Winners',
+  // },
 ]
 
 export const AUCTION_ROUTES = [
