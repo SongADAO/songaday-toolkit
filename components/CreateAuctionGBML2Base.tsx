@@ -201,6 +201,48 @@ const CreateAuctionGBML2 = () => {
     window.open(url)
   }
 
+  function extractTokenIdFromReceipt(receipt) {
+    // Look for the specific Zora token creation event
+    // The first log often contains the token ID in the third topic
+    if (receipt.logs && receipt.logs.length > 0) {
+      const firstLog = receipt.logs[0]
+      if (firstLog.topics && firstLog.topics.length >= 3) {
+        // Token ID is in the third topic (index 2)
+        const tokenIdHex = firstLog.topics[2]
+        // Convert hex to decimal
+        return BigInt(tokenIdHex)
+      }
+    }
+
+    // Fallback: Look through all logs for any topic that might contain the token ID
+    for (const log of receipt.logs) {
+      // Many Zora events include the token ID as the second topic
+      if (log.topics && log.topics.length >= 2) {
+        // Check if this is a known Zora event (you can add more signatures as needed)
+        if (
+          log.topics[0] ===
+            '0x5086d1bcea28999da9875111e3592688fbfa821db63214c695ca35768080c2fe' ||
+          log.topics[0] ===
+            '0x35fb03d0d293ef5b362761900725ce891f8f766b5a662cdd445372355448e7ca' ||
+          log.topics[0] ===
+            '0x6bb7ff708619ba0610cba295a58592e0451dee2622938c8755667688daf3529b' ||
+          log.topics[0] ===
+            '0x1b944478023872bf91b25a13fdba3a686fdb1bf4dbb872f850240fad4b8cc068' ||
+          log.topics[0] ===
+            '0x5837d55897cfc337f160a71d7b63a047abd50a3a8834f1c5d70f338846358c6d'
+        ) {
+          // The token ID might be in topic[1] or topic[2] depending on the event
+          // Try topic[1] first (common in Zora events)
+          const tokenIdHex = log.topics[1]
+          // Convert hex to decimal and return
+          return BigInt(tokenIdHex)
+        }
+      }
+    }
+
+    throw new Error('Could not extract token ID from transaction receipt')
+  }
+
   const createZoraEditionHandler = async () => {
     setEditionLoading(true)
     try {
@@ -285,7 +327,12 @@ const CreateAuctionGBML2 = () => {
       const hash = await baseWalletClient.writeContract(request)
 
       // wait for the response
-      await basePublicClient.waitForTransactionReceipt({ hash })
+      const receipt = await basePublicClient.waitForTransactionReceipt({ hash })
+
+      const editionTokenId = await extractTokenIdFromReceipt(receipt)
+
+      console.log(receipt)
+      console.log(editionTokenId)
 
       toast.success('Creating the edition')
     } catch (error) {
