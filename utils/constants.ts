@@ -177,6 +177,7 @@ export const GBM_L2_ZORA_EDITION_CONTRACT_ADDRESS =
   '0x430095df3b880cabd2891d7af0acba66d91371c4' // PROD
 export const GBM_L2_ZORA_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
 
+// Prod - Base
 export const GBM_L2_BASE_EDITION_MINTER =
   '0x04E2516A2c207E84a1839755675dfd8eF6302F0a'
 export const GBM_L2_BASE_CONTRACT_ADDRESS =
@@ -187,6 +188,18 @@ export const GBM_L2_BASE_EDITION_CONTRACT_ADDRESS =
 export const GBM_L2_BASE_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
 export const GBM_L2_BASE_SUBGRAPH =
   'https://api.goldsky.com/api/public/project_cls54edc9ynxy01tq9ibk30n4/subgraphs/songadaygbmbase/v0.0.4/gn'
+
+// Dev - Base Sepolia
+// export const GBM_L2_BASE_EDITION_MINTER =
+//   '0xd34872BE0cdb6b09d45FCa067B07f04a1A9aE1aE'
+// export const GBM_L2_BASE_CONTRACT_ADDRESS =
+//   '0xb4d5385439974259087eb2Ca87C20cE26AE1208b'
+// export const GBM_L2_BASE_CHAIN = 84532
+// export const GBM_L2_BASE_EDITION_CONTRACT_ADDRESS =
+//   '0xBa1263abFDeb4692b3d77364e7C7DFe31267Aa59' // PROD
+// export const GBM_L2_BASE_IOU_CONTRACT_ADDRESS = SONG_CONTRACT // PROD
+// export const GBM_L2_BASE_SUBGRAPH =
+//   'https://api.goldsky.com/api/public/project_cm6l715p4bt1d01v32hofbg9p/subgraphs/songadaygbmbasesepolia/v0.0.4/gn'
 
 export const BATCH_IDS = [
   1502, 1513, 1845, 1952, 1983, 2509, 3025, 3515, 3591, 4140, 4406, 4410, 4415,
