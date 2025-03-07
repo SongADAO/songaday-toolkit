@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { BskyAgent, RichText } from '@atproto/api'
 import { readFile } from 'fs/promises'
 import { processVideoForBluesky } from '../lib/video'

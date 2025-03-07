@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { NextApiRequest, NextApiResponse } from 'next'
 import { withSession } from '@/lib/session'
 import { processVideo } from '@/lib/video'

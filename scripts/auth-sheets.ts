@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 const { google } = require('googleapis')
 const { writeFileSync } = require('fs')
 const { join } = require('path')

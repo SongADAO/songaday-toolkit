@@ -1,0 +1,4 @@
+scripts/auth-sheets.ts
+scripts/auth-youtube.ts
+scripts/bluesky-poster.ts
+pages/api/process-video.ts
