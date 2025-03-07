@@ -331,9 +331,6 @@ const CreateAuctionGBML2 = () => {
 
       const editionTokenId = await extractTokenIdFromReceipt(receipt)
 
-      console.log(receipt)
-      console.log(editionTokenId)
-
       try {
         const response = (await fetchJson(
           `/api/save-edition-id/?songNbr=${songNbr}&editionTokenId=${editionTokenId}`
