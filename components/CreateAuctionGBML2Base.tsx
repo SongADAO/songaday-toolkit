@@ -1,4 +1,5 @@
 import { AppLayout } from '@/components/AppLayout'
+import { createNew1155Token } from '@zoralabs/protocol-sdk'
 import {
   GBM_L2_BASE_CONTRACT_ADDRESS,
   GBM_L2_BASE_CHAIN,
@@ -22,7 +23,12 @@ import {
 import { DateTime } from 'luxon'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useSwitchChain, usePublicClient } from 'wagmi'
+import {
+  useAccount,
+  useSwitchChain,
+  usePublicClient,
+  useWalletClient,
+} from 'wagmi'
 import {
   writeContract,
   waitForTransactionReceipt,
@@ -37,6 +43,7 @@ import {
   parseAbi,
   encodeFunctionData,
   extractChain,
+  parseEther,
 } from 'viem'
 import { wagmiConfig as config, chains } from '@/utils/wagmi'
 
@@ -105,15 +112,18 @@ const CreateAuctionGBML2 = () => {
       .toFormat('yyyy-LL-dd HH:mm:00')}`
   )
   const [loading, setLoading] = useState(false)
+  const [editionLoading, setEditionLoading] = useState(false)
   const [hypersubLoading, setHypersubLoading] = useState(false)
   const [solanaFormLoading, setSolanaFormLoading] = useState(false)
   const { isConnected, chain, address } = useAccount()
 
   const { switchChain } = useSwitchChain()
 
-  const basePublicClient = usePublicClient({ chainId: 8453 })
+  const basePublicClient = usePublicClient({ chainId: GBM_L2_BASE_CHAIN })
 
-  const zoraPublicClient = usePublicClient({ chainId: 7777777 })
+  const { data: baseWalletClient } = useWalletClient({
+    chainId: GBM_L2_BASE_CHAIN,
+  })
 
   const auctionNetwork = GBM_L2_BASE_CHAIN
 
@@ -191,6 +201,100 @@ const CreateAuctionGBML2 = () => {
     window.open(url)
   }
 
+  const createZoraEditionHandler = async () => {
+    setEditionLoading(true)
+    try {
+      if (!songNbr) {
+        toast.error('Song number is not present')
+        return
+      }
+
+      if (!ipfsHash) {
+        toast.error('Song edition ipfs hash is not present')
+        return
+      }
+
+      console.log(chain.id)
+      console.log(GBM_L2_BASE_CHAIN)
+      if (chain?.id !== GBM_L2_BASE_CHAIN) {
+        toast.error('Switch to edition L2')
+        return
+      }
+
+      toast.success('Creating the edition')
+      const duration = DateTime.fromISO(date).diff(DateTime.local())
+
+      const length = checked
+        ? 86400
+        : parseInt(duration.as('seconds').toString())
+
+      const nowTimestamp = Math.floor(new Date().getTime() / 1000)
+
+      const oneDayFromNow = nowTimestamp + 86400
+
+      const endTimestamp = nowTimestamp + length
+
+      const editionEndTimestamp = endTimestamp
+      // const editionEndTimestamp = '18446744073709551615' // Never end
+
+      const editionPrice = '0'
+      // const editionPrice = '5000000000000000'
+
+      const editionURI = 'ipfs://' + ipfsHash
+
+      console.log(duration)
+      console.log(oneDayFromNow)
+      console.log(endTimestamp)
+      console.log(editionEndTimestamp)
+      console.log(editionPrice)
+      console.log(editionURI)
+
+      if (endTimestamp < oneDayFromNow) {
+        throw new Error('End time must be at least 24 hours')
+      }
+
+      const { parameters } = await createNew1155Token({
+        contractAddress: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
+        token: {
+          tokenMetadataURI: editionURI,
+          salesConfig: {
+            // setting a price per token on the `salesConfig` will
+            // result in the token being created with a fixed price in addition
+            // to the mint fee.  In this case, creator rewards will not be earned
+            // on the mint fee, the `ZoraCreatorFixedPriceSaleStrategy` is setup
+            // as the minter for this token, and correspondingly the onchain
+            // secondary market feature will NOT be used for tokens minted using
+            // that minter.
+            pricePerToken: parseEther(editionPrice),
+            // Earliest time a token can be minted.  If undefined or 0, then it can be minted immediately.  Defaults to 0n.
+            saleStart: BigInt('0'),
+            // Market countdown, in seconds, that will start once the minimum mints for countdown is reached. Defaults to 24 hours.
+            marketCountdown: BigInt(length),
+            // Minimum quantity of mints that will trigger the countdown.  Defaults to 1111n
+            minimumMintsForCountdown: BigInt('0'),
+          },
+        },
+        account: address,
+        chainId: basePublicClient.chain.id,
+      })
+
+      // simulate the transaction
+      const { request } = await basePublicClient.simulateContract(parameters)
+
+      // execute the transaction
+      const hash = await baseWalletClient.writeContract(request)
+
+      // wait for the response
+      await basePublicClient.waitForTransactionReceipt({ hash })
+
+      toast.success('Creating the edition')
+    } catch (error) {
+      toast.error((error as any).error?.message || (error as any)?.message)
+    } finally {
+      setEditionLoading(false)
+    }
+  }
+
   const createAuctionHandler = async () => {
     setCreated(false)
     setLoading(true)
@@ -221,7 +325,7 @@ const CreateAuctionGBML2 = () => {
 
       const nowTimestamp = Math.floor(new Date().getTime() / 1000)
 
-      const oneHourFromNow = nowTimestamp + 86400
+      const oneDayFromNow = nowTimestamp + 86400
 
       const endTimestamp = nowTimestamp + length
 
@@ -234,13 +338,13 @@ const CreateAuctionGBML2 = () => {
       const editionURI = 'ipfs://' + ipfsHash
 
       console.log(duration)
-      console.log(oneHourFromNow)
+      console.log(oneDayFromNow)
       console.log(endTimestamp)
       console.log(editionEndTimestamp)
       console.log(editionPrice)
       console.log(editionURI)
 
-      if (endTimestamp < oneHourFromNow) {
+      if (endTimestamp < oneDayFromNow) {
         throw new Error('End time must be at least 24 hours')
       }
 
@@ -259,11 +363,12 @@ const CreateAuctionGBML2 = () => {
           BigInt(songNbr),
           BigInt(1),
           BigInt(endTimestamp),
-          editionURI,
-          GBM_L2_BASE_EDITION_MINTER,
-          BigInt(editionEndTimestamp),
-          BigInt('0'),
-          BigInt(editionPrice),
+          editionTokenId,
+          // editionURI,
+          // GBM_L2_BASE_EDITION_MINTER,
+          // BigInt(editionEndTimestamp),
+          // BigInt('0'),
+          // BigInt(editionPrice),
         ],
       })
 
@@ -314,7 +419,7 @@ const CreateAuctionGBML2 = () => {
           'function subscriptionOf(address account) external view returns (uint256 tokenId, uint256 refundableAmount, uint256 rewardPoints, uint256 expiresAt)',
         ]),
         // @ts-ignore next-line
-        client: { public: zoraPublicClient },
+        client: { public: basePublicClient },
       })
 
       const tokenHolders = await getTokenHolders(contract)
@@ -522,8 +627,27 @@ const CreateAuctionGBML2 = () => {
               {(chain?.id === GBM_L2_BASE_CHAIN && (
                 <Button
                   loadingText="Creating"
+                  isLoading={editionLoading}
+                  disabled={editionLoading || hypersubLoading}
+                  onClick={() => createZoraEditionHandler()}
+                >
+                  Create Zora Edition
+                </Button>
+              )) || (
+                <Button
+                  onClick={() => switchChain({ chainId: GBM_L2_BASE_CHAIN })}
+                >
+                  Switch Chain
+                </Button>
+              )}
+            </Wrap>
+
+            <Wrap>
+              {(chain?.id === GBM_L2_BASE_CHAIN && (
+                <Button
+                  loadingText="Creating"
                   isLoading={loading}
-                  disabled={loading || hypersubLoading}
+                  disabled={loading || editionLoading || hypersubLoading}
                   onClick={() => createAuctionHandler()}
                 >
                   Create Auction
@@ -542,7 +666,7 @@ const CreateAuctionGBML2 = () => {
                 <Button
                   loadingText="Sending Editions"
                   isLoading={hypersubLoading}
-                  disabled={loading || hypersubLoading}
+                  disabled={loading || editionLoading || hypersubLoading}
                   onClick={() => sendHypersubHandler()}
                 >
                   Send Hypersub Editions
