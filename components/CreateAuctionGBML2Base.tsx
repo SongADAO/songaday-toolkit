@@ -415,12 +415,29 @@ const CreateAuctionGBML2 = () => {
 
       const endTimestamp = nowTimestamp + length
 
+      const editionURI = 'ipfs://' + ipfsHash
+
       console.log(duration)
       console.log(oneDayFromNow)
       console.log(endTimestamp)
+      console.log(editionURI)
 
       if (endTimestamp < oneDayFromNow) {
         throw new Error('End time must be at least 24 hours')
+      }
+
+      const usedEditionTokenUri = await readContract(config, {
+        chainId: GBM_L2_BASE_CHAIN,
+        address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
+        abi: zoraeditionabi,
+        functionName: 'uri',
+        args: [BigInt(editionTokenId)],
+      })
+
+      if (editionURI !== usedEditionTokenUri) {
+        throw new Error(
+          `Token URI does not match the zora edition's token URI (zora token id: ${editionTokenId})`
+        )
       }
 
       const hash = await writeContract(config, {
