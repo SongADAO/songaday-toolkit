@@ -1,49 +1,45 @@
-import { INFURA_ID } from '@/utils/constants'
+import { getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { type Chain } from 'viem'
+import { fallback, http, webSocket } from 'wagmi'
 import {
   arbitrum,
-  optimism,
+  base,
+  baseSepolia,
   mainnet,
+  optimism,
   sepolia,
   zora,
-  baseSepolia,
-  // zoraSepolia,
-} from 'viem/chains'
-import { type Chain } from 'viem'
-import { base } from 'utils/base-chain'
+} from 'wagmi/chains'
 
-import { createConfig, fallback, http, webSocket } from 'wagmi'
+import {
+  // ALCHEMY_ID,
+  // CONDUIT_ID,
+  INFURA_ID,
+  USE_TESTNET,
+  WALLET_CONNECT_PROJECT_ID,
+} from '@/utils/constants'
 
-const walletConnectProjectId = '55df63e3faebd774218c3990b418f5cd'
-
-const chains: Chain[] = [
+export const chains: Chain[] = [
   mainnet,
   optimism,
   arbitrum,
   base,
   zora,
-  // Testnets
-  sepolia,
-  baseSepolia,
-  // zoraSepolia,
-  // Local
-  // hardhat,
+  ...(USE_TESTNET ? [baseSepolia, sepolia] : []),
 ]
 
-const wagmiConfig = createConfig({
-  // connectors: w3mConnectors({ projectId: walletConnectProjectId, chains }),
+export const wagmiConfig = getDefaultConfig({
+  appName: 'Song-A-Day',
   chains: [
     mainnet,
     optimism,
     arbitrum,
     base,
     zora,
-    // Testnets
-    sepolia,
-    baseSepolia,
-    // zoraSepolia,
-    // Local
-    // hardhat,
+    ...(USE_TESTNET ? [baseSepolia, sepolia] : []),
   ],
+  projectId: WALLET_CONNECT_PROJECT_ID,
+  ssr: false,
   transports: {
     [arbitrum.id]: fallback([
       webSocket(`wss://arbitrum-mainnet.infura.io/ws/v3/${INFURA_ID}`),
@@ -74,5 +70,3 @@ const wagmiConfig = createConfig({
     // [zora.id]: http(`https://zora-mainnet.g.alchemy.com/v2/${ALCHEMY_ID}`),
   },
 })
-
-export { wagmiConfig, chains, walletConnectProjectId }

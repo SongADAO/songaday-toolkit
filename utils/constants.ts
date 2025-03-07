@@ -127,6 +127,10 @@ export const BULK_ROUTES = [
   },
 ]
 
+export const USE_TESTNET = false
+
+export const WALLET_CONNECT_PROJECT_ID = '55df63e3faebd774218c3990b418f5cd'
+
 export const INFURA_ID = '60a7b2c16321439a917c9e74a994f7df'
 // export const INFURA_ID = '0251872b43d94c17a58a4e5f2591a84a'
 

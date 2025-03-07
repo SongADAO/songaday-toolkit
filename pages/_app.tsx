@@ -15,10 +15,12 @@ import '@fontsource/inter/700.css'
 import '@fontsource/inter/800.css'
 import '@fontsource/inter/900.css'
 import Head from 'next/head'
-import { EthereumClient } from '@web3modal/ethereum'
-import { Web3Modal } from '@web3modal/react'
-import { wagmiConfig, chains, walletConnectProjectId } from '@/utils/wagmi'
+import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { wagmiConfig } from '@/utils/wagmi'
 import { WagmiProvider } from 'wagmi'
+
+const queryClient = new QueryClient()
 
 const ClientOnly = ({ children }) => {
   const [isMounted, setIsMounted] = useState(false)
@@ -30,11 +32,10 @@ const ClientOnly = ({ children }) => {
 }
 
 const Noop = ({ children }: { children: ReactNode }) => <>{children}</>
+
 function MyApp({ Component, pageProps }: AppProps) {
   // @ts-ignore - Diff to add type of Layout in Component
   const Layout = Component.Layout || Noop
-
-  const ethereumClient = new EthereumClient(wagmiConfig, chains)
 
   return (
     <ClientOnly>
@@ -50,17 +51,17 @@ function MyApp({ Component, pageProps }: AppProps) {
           <link rel="manifest" href="/manifest.json" />
         </Head>
         <WagmiProvider config={wagmiConfig}>
-          <ChakraProvider theme={theme}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </ChakraProvider>
-          <Toaster position="bottom-center" />
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitProvider>
+              <ChakraProvider theme={theme}>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </ChakraProvider>
+              <Toaster position="bottom-center" />
+            </RainbowKitProvider>
+          </QueryClientProvider>
         </WagmiProvider>
-        <Web3Modal
-          projectId={walletConnectProjectId}
-          ethereumClient={ethereumClient}
-        />
       </SWRConfig>
     </ClientOnly>
   )
