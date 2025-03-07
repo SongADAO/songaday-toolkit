@@ -1,8 +1,8 @@
-import { ConnectWallet } from '@/components/ConnectWallet'
 import { ROUTES } from '@/utils/constants'
 import { Box, Heading, HStack, Spacer, Button } from '@chakra-ui/react'
 import { Link as NextLink } from '@chakra-ui/next-js'
 import { useState, useEffect } from 'react'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export const AppLayout = ({ children }) => {
   const [notificationsAllowed, setNotificationsAllowed] = useState(false)
@@ -50,7 +50,7 @@ export const AppLayout = ({ children }) => {
             ))}
           </HStack>
           <Spacer />
-          <ConnectWallet />
+          <ConnectButton />
         </HStack>
       </header>
       <Box as="main" p="4">
