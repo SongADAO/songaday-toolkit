@@ -9,7 +9,6 @@ export const AppLayout = ({ children }) => {
 
   function requestPermissions() {
     Notification.requestPermission().then((permission) => {
-      console.log(permission)
       setNotificationsAllowed(permission === 'granted' ? true : false)
     })
   }
