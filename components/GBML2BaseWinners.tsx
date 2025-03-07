@@ -33,8 +33,7 @@ import { writeContract, waitForTransactionReceipt } from '@wagmi/core'
 import { useAccount, usePublicClient, useSwitchChain } from 'wagmi'
 import { getAddress, extractChain } from 'viem'
 import { readContract } from '@wagmi/core'
-import { mainnet } from 'viem/chains'
-import { base } from 'utils/base-chain'
+import { mainnet, base } from 'viem/chains'
 
 // Auction Query
 // ===========================================================================
