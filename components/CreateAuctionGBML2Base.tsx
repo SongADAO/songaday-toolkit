@@ -21,7 +21,7 @@ import {
   Checkbox,
 } from '@chakra-ui/react'
 import { DateTime } from 'luxon'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import {
   useAccount,
@@ -105,6 +105,7 @@ const CreateAuctionGBML2 = () => {
   const [hypersubSent, setHypersubSent] = useState(false)
   const [songNbr, setSongNbr] = useState<string>('')
   const [ipfsHash, setIpfsHash] = useState<string>('')
+  const [zoraEditionTokenId, setZoraEditionTokenId] = useState<string>('')
   const [checked, setChecked] = useState(true)
   const [date, setDate] = useState<string>(
     `${DateTime.local()
@@ -348,6 +349,12 @@ const CreateAuctionGBML2 = () => {
 
       const editionTokenId = await extractTokenIdFromReceipt(receipt)
 
+      if (!editionTokenId) {
+        throw new Error('Could not extract token ID from transaction receipt')
+      }
+
+      setZoraEditionTokenId(String(editionTokenId))
+
       try {
         const response = (await fetchJson(
           `/api/save-edition-id/?songNbr=${songNbr}&editionTokenId=${editionTokenId}`
@@ -391,14 +398,7 @@ const CreateAuctionGBML2 = () => {
         return
       }
 
-      const editionTokenIdData = (await fetchJson(
-        `/api/get-edition-id/?songNbr=${songNbr}`
-      )) as { editionTokenId: number }
-
-      const editionTokenId = editionTokenIdData?.editionTokenId
-      // console.log(editionTokenId)
-
-      if (!editionTokenId) {
+      if (!zoraEditionTokenId) {
         throw new Error('could not find edition token id')
       }
 
@@ -431,12 +431,12 @@ const CreateAuctionGBML2 = () => {
         address: GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
         abi: zoraeditionabi,
         functionName: 'uri',
-        args: [BigInt(editionTokenId)],
+        args: [BigInt(zoraEditionTokenId)],
       })
 
       if (editionURI !== usedEditionTokenUri) {
         throw new Error(
-          `Token URI does not match the zora edition's token URI (zora token id: ${editionTokenId})`
+          `Token URI does not match the zora edition's token URI (zora token id: ${zoraEditionTokenId})`
         )
       }
 
@@ -455,7 +455,7 @@ const CreateAuctionGBML2 = () => {
           BigInt(songNbr),
           BigInt(1),
           BigInt(endTimestamp),
-          BigInt(editionTokenId),
+          BigInt(zoraEditionTokenId),
         ],
       })
 
@@ -647,6 +647,29 @@ const CreateAuctionGBML2 = () => {
     }
   }
 
+  async function fetchEditionTokenId() {
+    try {
+      const editionTokenIdData = (await fetchJson(
+        `/api/get-edition-id/?songNbr=${songNbr}`
+      )) as { editionTokenId: number }
+
+      const editionTokenId = editionTokenIdData?.editionTokenId
+      // console.log(editionTokenId)
+
+      if (editionTokenId) {
+        setZoraEditionTokenId(String(editionTokenId))
+      } else {
+        setZoraEditionTokenId('')
+      }
+    } catch (error) {
+      setZoraEditionTokenId('')
+    }
+  }
+
+  useEffect(() => {
+    fetchEditionTokenId()
+  }, [songNbr])
+
   return (
     <Stack spacing="6">
       {isConnected && (
@@ -676,6 +699,18 @@ const CreateAuctionGBML2 = () => {
                       placeholder="QvQSasdsaLKJHASDNasdalkasd"
                       value={ipfsHash}
                       onChange={(e) => setIpfsHash(e.target.value)}
+                    />
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl isRequired>
+                    <FormLabel>Edition Token ID</FormLabel>
+                    <Input
+                      type="text"
+                      placeholder="Zora Edition Token ID"
+                      value={zoraEditionTokenId}
+                      onChange={(e) => setZoraEditionTokenId()}
                     />
                   </FormControl>
                 </Box>
