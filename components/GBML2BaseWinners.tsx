@@ -181,6 +181,7 @@ const GBML2BaseWinners = () => {
       }
     })
 
+    // @ts-ignore next-line
     const results = await mainnetPublicClient.multicall({
       contracts: contracts,
       batchSize: batchSize,
