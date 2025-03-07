@@ -334,7 +334,21 @@ const CreateAuctionGBML2 = () => {
       console.log(receipt)
       console.log(editionTokenId)
 
-      toast.success('Creating the edition')
+      try {
+        const response = (await fetchJson(
+          `/api/save-edition-id/?songNbr=${songNbr}&editionTokenId=${editionTokenId}`
+        )) as { success: boolean }
+
+        if (!response.success) {
+          toast.error('Error saving the edition token id')
+          return
+        }
+      } catch (error) {
+        toast.error('Error saving the edition token id')
+        return
+      }
+
+      toast.success('Creating the edition. token id: ' + editionTokenId)
     } catch (error) {
       toast.error((error as any).error?.message || (error as any)?.message)
     } finally {
@@ -361,6 +375,17 @@ const CreateAuctionGBML2 = () => {
       if (chain?.id !== GBM_L2_BASE_CHAIN) {
         toast.error('Switch to auction L2')
         return
+      }
+
+      const editionTokenIdData = (await fetchJson(
+        `/api/get-edition-id/?songNbr=${songNbr}`
+      )) as { editionTokenId: number }
+
+      const editionTokenId = editionTokenIdData?.editionTokenId
+      // console.log(editionTokenId)
+
+      if (!editionTokenId) {
+        throw new Error('could not find edition token id')
       }
 
       toast.success('Creating the auction')
