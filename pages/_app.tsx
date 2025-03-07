@@ -20,6 +20,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { wagmiConfig } from '@/utils/wagmi'
 import { WagmiProvider } from 'wagmi'
 
+import '@rainbow-me/rainbowkit/styles.css'
+
 const queryClient = new QueryClient()
 
 const ClientOnly = ({ children }) => {

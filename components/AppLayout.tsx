@@ -50,7 +50,7 @@ export const AppLayout = ({ children }) => {
             ))}
           </HStack>
           <Spacer />
-          <ConnectButton />
+          <ConnectButton chainStatus="icon" showBalance={false} />
         </HStack>
       </header>
       <Box as="main" p="4">
