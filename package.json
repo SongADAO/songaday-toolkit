@@ -32,7 +32,7 @@
     "@types/sharp": "^0.29.4",
     "@types/tempy": "^0.3.0",
     "@web-std/file": "^3.0.0",
-    "@zoralabs/zdk": "^1.2.6",
+    "@zoralabs/protocol-sdk": "^0.13.4",
     "algoliasearch": "^4.13.1",
     "axios": "^1.7.9",
     "base-path-converter": "^1.0.2",
