@@ -1,6 +1,5 @@
 import App from 'next/app'
 import { ReactNode, useEffect, useState } from 'react'
-import { SWRConfig } from 'swr'
 import { Toaster } from 'react-hot-toast'
 import type { AppContext, AppProps } from 'next/app'
 import { theme } from '@/utils/theme'
@@ -42,29 +41,21 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ClientOnly>
       {/** @ts-ignore */}
-      <SWRConfig
-        value={{
-          fetcher: fetch,
-          shouldRetryOnError: false,
-          revalidateOnFocus: false,
-        }}
-      >
-        <Head>
-          <link rel="manifest" href="/manifest.json" />
-        </Head>
-        <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <RainbowKitProvider>
-              <ChakraProvider theme={theme}>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </ChakraProvider>
-              <Toaster position="bottom-center" />
-            </RainbowKitProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </SWRConfig>
+      <Head>
+        <link rel="manifest" href="/manifest.json" />
+      </Head>
+      <WagmiProvider config={wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider>
+            <ChakraProvider theme={theme}>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </ChakraProvider>
+            <Toaster position="bottom-center" />
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </ClientOnly>
   )
 }

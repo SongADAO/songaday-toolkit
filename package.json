@@ -59,7 +59,6 @@
     "react-icons": "^4.3.1",
     "recursive-fs": "^2.1.0",
     "sharp": "^0.29.3",
-    "swr": "^1.0.1",
     "tempy": "^2.0.0",
     "twitter-api-v2": "^1.18.2",
     "viem": "^2.16.2",
