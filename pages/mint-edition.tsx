@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ethers } from 'ethers'
 import { AppLayout } from '@/components/AppLayout'
 import {
@@ -147,6 +149,8 @@ const MintEdition = () => {
       return
     }
 
+    throw new Error('Needs updated to splits v2')
+
     setSplitLoading(true)
     try {
       if (chain?.id !== SONG_EDITION_CHAIN_ID) {
@@ -158,7 +162,6 @@ const MintEdition = () => {
       const splitsClient = new SplitsClient({
         chainId: chainIdNumber,
         provider: provider as any,
-        // @ts-ignore
         signer: signer,
       })
 
