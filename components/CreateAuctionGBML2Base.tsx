@@ -329,20 +329,9 @@ const CreateAuctionGBML2 = () => {
 
       const endTimestamp = nowTimestamp + length
 
-      const editionEndTimestamp = endTimestamp
-      // const editionEndTimestamp = '18446744073709551615' // Never end
-
-      const editionPrice = '0'
-      // const editionPrice = '5000000000000000'
-
-      const editionURI = 'ipfs://' + ipfsHash
-
       console.log(duration)
       console.log(oneDayFromNow)
       console.log(endTimestamp)
-      console.log(editionEndTimestamp)
-      console.log(editionPrice)
-      console.log(editionURI)
 
       if (endTimestamp < oneDayFromNow) {
         throw new Error('End time must be at least 24 hours')
@@ -364,11 +353,6 @@ const CreateAuctionGBML2 = () => {
           BigInt(1),
           BigInt(endTimestamp),
           editionTokenId,
-          // editionURI,
-          // GBM_L2_BASE_EDITION_MINTER,
-          // BigInt(editionEndTimestamp),
-          // BigInt('0'),
-          // BigInt(editionPrice),
         ],
       })
 
