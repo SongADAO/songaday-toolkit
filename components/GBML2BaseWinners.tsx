@@ -7,7 +7,7 @@ import {
   SONG_CONTRACT,
   TREASURY_CONTRACT,
   SONGADAY_MINTER,
-  GBM_L2_BASE_CONTRACT_ADDRESS,
+  GBM_L2_BASE_CONTRACT_ADDRESSES,
   GBM_L2_BASE_CHAIN,
   ZERO_ADDRESS,
   GBM_L2_BASE_EDITION_CONTRACT_ADDRESS,
@@ -43,6 +43,8 @@ interface Auction {
   // bidMultiplier: string;
   claimAt: string
   claimed: boolean
+  contractAddress: `0x${string}`
+  auctionContractAddress: `0x${string}`
   editionContractAddress: `0x${string}`
   editionTokenId: number
   endsAt: string
@@ -75,7 +77,8 @@ const AUCTIONS_QUERY = gql`
       # bidMultiplier
       claimAt
       claimed
-      # contractAddress
+      contractAddress
+      auctionContractAddress
       editionContractAddress
       editionTokenId
       endsAt
@@ -152,8 +155,6 @@ const GBML2BaseWinners = () => {
   const [isClaiming, setIsClaiming] = useState<boolean>(false)
 
   const auctionNetwork = GBM_L2_BASE_CHAIN
-
-  const auctionAddress = GBM_L2_BASE_CONTRACT_ADDRESS
 
   const sadContract = {
     chainId: 1,
@@ -232,11 +233,7 @@ const GBML2BaseWinners = () => {
 
   function initClaims() {
     try {
-      setClaims(
-        winners
-          .filter((winner) => winner.completed && !winner.claimed)
-          .map((claim) => claim.id)
-      )
+      setClaims(winners.filter((winner) => winner.completed && !winner.claimed))
     } catch (error) {
       console.log({ error })
       toast.error((error as any).message)
@@ -258,13 +255,17 @@ const GBML2BaseWinners = () => {
       const toDistribute = winners.find((winner) => {
         return winner.tokenId === tokenId
       })
-      // console.log(toDistribute)
+
+      const auctionContract = toDistribute.auctionContractAddress
+
+      console.log(toDistribute)
+      console.log(auctionContract)
 
       const winnerAddress = toDistribute.highestBidder
 
       const realHighestBidder = await readContract(config, {
         chainId: auctionNetwork,
-        address: auctionAddress,
+        address: auctionContract,
         abi: gbml2abi,
         functionName: 'getAuctionHighestBidder',
         args: [toDistribute.id],
@@ -391,12 +392,16 @@ const GBML2BaseWinners = () => {
       const toDistribute = winners.find((winner) => {
         return winner.tokenId === tokenId
       })
-      // console.log(toDistribute)
+
+      const auctionContract = toDistribute.auctionContractAddress
+
+      console.log(toDistribute)
+      console.log(auctionContract)
 
       if (!toDistribute.minted) {
         const editionTokenId = await readContract(config, {
           chainId: auctionNetwork,
-          address: auctionAddress,
+          address: auctionContract,
           abi: gbml2abi,
           functionName: 'getEditionTokenId',
           args: [toDistribute.id],
@@ -469,12 +474,30 @@ const GBML2BaseWinners = () => {
     }
   }
 
-  async function claim(claims) {
+  function getContractClaimable(claims, claimAddress) {
+    return claims.filter((claim) => {
+      return (
+        getAddress(claim.auctionContractAddress) === getAddress(claimAddress)
+      )
+    })
+  }
+
+  async function claim(claims, claimAddress) {
     setIsClaiming(true)
 
     // console.log(claims)
 
     try {
+      const addressClaims = getContractClaimable(claims, claimAddress)
+      // console.log(addressClaims)
+
+      const claimIds = addressClaims.map((claim) => claim.id)
+      // console.log(claimIds)
+
+      if (addressClaims.length === 0) {
+        throw new Error('No claims found for contract')
+      }
+
       const hash = await writeContract(config, {
         chain: extractChain({
           chains: chains,
@@ -482,10 +505,10 @@ const GBML2BaseWinners = () => {
         }),
         account: address,
         chainId: auctionNetwork,
-        address: auctionAddress,
+        address: claimAddress,
         abi: gbml2abi,
         functionName: 'claimMultiple',
-        args: [claims],
+        args: [claimIds],
       })
 
       toast.success('Waiting for tx to confirm')
@@ -521,13 +544,23 @@ const GBML2BaseWinners = () => {
 
           <Box>
             {(chain?.id === base.id && (
-              <Button
-                type="button"
-                isLoading={isClaiming}
-                onClick={() => claim(claims)}
-              >
-                Claim Funds
-              </Button>
+              <>
+                {GBM_L2_BASE_CONTRACT_ADDRESSES.map((contractAddress) => (
+                  <Box mb={2} key={contractAddress}>
+                    <Button
+                      type="button"
+                      isLoading={isClaiming}
+                      onClick={() => claim(claims, contractAddress)}
+                      isDisabled={
+                        getContractClaimable(claims, contractAddress).length ===
+                        0
+                      }
+                    >
+                      Claim Funds ({contractAddress})
+                    </Button>
+                  </Box>
+                ))}
+              </>
             )) || (
               <Button onClick={() => switchChain({ chainId: base.id })}>
                 Switch Chain
