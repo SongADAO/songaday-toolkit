@@ -127,7 +127,8 @@ export const BULK_ROUTES = [
   },
 ]
 
-export const USE_TESTNET = false
+// export const USE_TESTNET = false
+export const USE_TESTNET = true
 
 export const WALLET_CONNECT_PROJECT_ID = '55df63e3faebd774218c3990b418f5cd'
 
