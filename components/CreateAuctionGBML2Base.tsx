@@ -288,6 +288,9 @@ const CreateAuctionGBML2 = () => {
         ? 86400
         : parseInt(duration.as('seconds').toString())
 
+      // Edition ends one day after the auction.
+      const editionEndsAt = length + 86400
+
       const nowTimestamp = Math.floor(new Date().getTime() / 1000)
 
       const oneDayFromNow = nowTimestamp + 86400
@@ -329,7 +332,7 @@ const CreateAuctionGBML2 = () => {
             // Earliest time a token can be minted.  If undefined or 0, then it can be minted immediately.  Defaults to 0n.
             saleStart: BigInt('0'),
             // Market countdown, in seconds, that will start once the minimum mints for countdown is reached. Defaults to 24 hours.
-            marketCountdown: BigInt(length),
+            marketCountdown: BigInt(editionEndsAt),
             // Minimum quantity of mints that will trigger the countdown.  Defaults to 1111n
             minimumMintsForCountdown: BigInt('0'),
           },
