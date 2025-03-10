@@ -594,6 +594,10 @@ const GBML2BaseWinners = () => {
                       Ends At: {winner?.endsAtDate}
                     </Text>
 
+                    <Text fontSize="12px" mt={2}>
+                      Contract: {winner.auctionContractAddress}
+                    </Text>
+
                     <Text
                       display="flex"
                       alignItems="center"
