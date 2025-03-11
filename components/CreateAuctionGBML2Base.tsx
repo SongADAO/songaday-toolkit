@@ -713,7 +713,7 @@ const CreateAuctionGBML2 = () => {
                       type="text"
                       placeholder="Zora Edition Token ID"
                       value={zoraEditionTokenId}
-                      onChange={(e) => setZoraEditionTokenId()}
+                      onChange={(e) => setZoraEditionTokenId(e.target.value)}
                     />
                   </FormControl>
                 </Box>
