@@ -192,6 +192,9 @@ const CreateAuctionGBML2Zora = () => {
   const createAuctionHandler = async () => {
     setCreated(false)
     setLoading(true)
+
+    throw new Error('Not implemented')
+
     try {
       if (!songNbr) {
         toast.error('Song number is not present')
@@ -257,11 +260,12 @@ const CreateAuctionGBML2Zora = () => {
           BigInt(songNbr),
           BigInt(1),
           BigInt(endTimestamp),
-          editionURI,
-          GBM_L2_ZORA_EDITION_MINTER,
-          BigInt(editionEndTimestamp),
-          BigInt('0'),
-          BigInt(editionPrice),
+          BigInt(1), // FIX TS LINT. NOT REAL. WILL NOT WORK.
+          // editionURI,
+          // GBM_L2_ZORA_EDITION_MINTER,
+          // BigInt(editionEndTimestamp),
+          // BigInt('0'),
+          // BigInt(editionPrice),
         ],
       })
 
