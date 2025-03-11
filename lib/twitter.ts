@@ -123,7 +123,7 @@ export async function postTweetThread({
     if (tweetCount === '1') {
       // Single tweet with video and link
       console.log('Posting single tweet with video...')
-      const tweetText = `${description}\n\nhttps://songaday.world/${songNumber}`
+      const tweetText = `${description}\n\nbid on the 1/1:\nsongaday.world/${songNumber}`
       const tweet = await v2Client.tweet({
         text: tweetText,
         media: { media_ids: [mediaId] }

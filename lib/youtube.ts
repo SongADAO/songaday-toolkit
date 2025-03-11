@@ -92,7 +92,8 @@ export async function checkYouTubeAuth(): Promise<{ needsAuth: boolean; authUrl?
     // If no valid credentials, generate auth URL
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: ['https://www.googleapis.com/auth/youtube.upload']
+      scope: ['https://www.googleapis.com/auth/youtube.upload'],
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
     })
 
     return { 
@@ -105,7 +106,8 @@ export async function checkYouTubeAuth(): Promise<{ needsAuth: boolean; authUrl?
     const oauth2Client = await getOAuth2Client()
     const authUrl = oauth2Client.generateAuthUrl({
       access_type: 'offline',
-      scope: ['https://www.googleapis.com/auth/youtube.upload']
+      scope: ['https://www.googleapis.com/auth/youtube.upload'],
+      redirect_uri: 'urn:ietf:wg:oauth:2.0:oob'
     })
     return { 
       needsAuth: true, 

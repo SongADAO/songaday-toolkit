@@ -60,7 +60,7 @@ async function simulateRunner() {
     if (tweetCount === '1') {
       console.log('Single tweet format:')
       console.log('---')
-      console.log(`${tweetText}\n\nhttps://songaday.world/1234`)
+      console.log(`${tweetText}\n\nbid on the 1/1:\nsongaday.world/1234`)
       console.log('+ Video attachment')
       console.log('---')
     } else {

@@ -63,24 +63,42 @@ export class FarcasterPoster {
     }
   }
 
-  async postWithVideo(text: string, videoUrl: string, thumbnailUrl: string) {
+  async postWithVideo(text: string, videoUrl: string, thumbnailUrl: string, frameUrl?: string) {
     if (!this.initialized) {
       throw new Error('Farcaster client not initialized');
     }
 
     try {
+      // Create embeds array based on whether frameUrl is provided
+      const embeds: Embed[] = frameUrl ? [
+        // First embed is the URL for frame
+        {
+          url: frameUrl,
+          mimeType: "" // No mime type for URL
+        } as Embed,
+        // Second embed is the video
+        {
+          url: videoUrl,
+          mimeType: "application/vnd.apple.mpegurl",
+          metadata: {
+            thumbnailUrl
+          }
+        } as Embed
+      ] : [
+        // Just the video embed if no frameUrl
+        {
+          url: videoUrl,
+          mimeType: "application/vnd.apple.mpegurl",
+          metadata: {
+            thumbnailUrl
+          }
+        } as Embed
+      ];
+
       const cast = await makeCastAdd(
         {
           text,
-          embeds: [
-            {
-              url: videoUrl,
-              mimeType: "application/vnd.apple.mpegurl",
-              metadata: {
-                thumbnailUrl
-              }
-            } as Embed
-          ],
+          embeds,
           embedsDeprecated: [],
           mentions: [],
           mentionsPositions: [],
@@ -102,7 +120,7 @@ export class FarcasterPoster {
           return {
             success: true,
             hash: hashHex,
-            url: `https://warpcast.com/${config.FARCASTER_USERNAME}` // URL to the cast
+            url: `https://warpcast.com/${config.FARCASTER_USERNAME}/${hashHex}` // URL to the cast with hash
           };
         } else {
           throw new Error(`Failed to submit cast to hub: ${submitResult.error}`);
@@ -112,6 +130,55 @@ export class FarcasterPoster {
       }
     } catch (err) {
       logging.error('Error posting to Farcaster:', err);
+      throw err;
+    }
+  }
+
+  async postLink(text: string, url: string) {
+    if (!this.initialized) {
+      throw new Error('Farcaster client not initialized');
+    }
+
+    try {
+      const cast = await makeCastAdd(
+        {
+          text,
+          embeds: [
+            {
+              url: url,
+            } as Embed
+          ],
+          embedsDeprecated: [],
+          mentions: [],
+          mentionsPositions: [],
+          type: 0
+        } as CastAddBody,
+        {
+          fid: config.FARCASTER_FID,
+          network: FarcasterNetwork.MAINNET,
+        },
+        this.signer
+      );
+
+      if (cast.isOk()) {
+        const submitResult = await this.client.submitMessage(cast.value);
+        
+        if (submitResult.isOk()) {
+          const hashHex = Buffer.from(cast.value.hash).toString('hex');
+          logging.info('Successfully posted link to Farcaster. Cast hash:', hashHex);
+          return {
+            success: true,
+            hash: hashHex,
+            url: `https://warpcast.com/${config.FARCASTER_USERNAME}/${hashHex}` // URL to the cast
+          };
+        } else {
+          throw new Error(`Failed to submit cast to hub: ${submitResult.error}`);
+        }
+      } else {
+        throw new Error(`Failed to create cast: ${cast.error}`);
+      }
+    } catch (err) {
+      logging.error('Error posting link to Farcaster:', err);
       throw err;
     }
   }

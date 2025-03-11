@@ -41,7 +41,7 @@ export const config = {
   },
 }
 
-const LYRICS_PATH = '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/SONG A DAY LYRICS CHORDS'
+const LYRICS_PATH = '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/SONG A DAY LYRICS CHORDS'
 
 // First get the duration
 const getDuration = async (videoPath: string): Promise<number> => {
@@ -105,6 +105,7 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
     }
 
     metadata.tweetCount = tweetCount
+    console.log('Set tweet count in metadata:', metadata.tweetCount)
 
     // Get tweet text
     console.log('5. Getting tweet text...')
@@ -213,12 +214,9 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
     console.log('8. Updating spreadsheet...')
     await updateSongSheet({
       songNumber: metadata.songNbr,
-      title: metadata.title,
       date: metadata.date,
       lyrics,
-      localVideoPath: videoFile.filepath,
-      localImagePath: imagePath,
-      metadata
+      youtubeUrl: metadata.youtubeUrl
     })
     console.log('9. Spreadsheet updated successfully')
 
@@ -317,11 +315,15 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
 
           const farcasterText = `${metadata.description || ''}\nsongaday.world/${metadata.songNbr}`
           
+          // Create frameUrl for the songaday.world link
+          const frameUrl = `https://songaday.world/${metadata.songNbr}`
+          
           console.log('Posting to Farcaster...')
           const farcasterResult = await farcasterPoster.postWithVideo(
             farcasterText,
             videoUrl,
-            thumbnailUrl
+            thumbnailUrl,
+            frameUrl // Pass the frame URL for Farcaster frames functionality
           )
           console.log('Successfully posted to Farcaster:', farcasterResult)
           farcasterUrl = farcasterResult.url
@@ -371,12 +373,18 @@ export default withSession(async (req: NextApiRequest, res: NextApiResponse) => 
     exec(`open "${auctionsUrl}"`)
 
     console.log('Posting to Twitter...')
+    console.log('Tweet count value:', metadata.tweetCount || 'undefined')
+    
+    // Ensure tweetCount is properly set before posting
+    const tweetCountToUse = metadata.tweetCount || '2'  // Default to 2 if somehow missing
+    console.log('Using tweet count:', tweetCountToUse)
+    
     const twitterResult = await postTweetThread({
       videoPath: videoFile.filepath,
       description: metadata.description || '',
       songNumber: metadata.songNbr,
       imagePath: imagePath,
-      tweetCount: metadata.tweetCount
+      tweetCount: tweetCountToUse
     })
     console.log('Twitter thread posted:', twitterResult.firstTweetUrl)
 
