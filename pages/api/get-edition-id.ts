@@ -15,12 +15,10 @@ export default withSession<{ success: boolean; editionTokenId: number }>(
       join(projectPath, `/output/${songNbr}/edition_token_id.txt`)
     )
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        editionTokenId: Number(String(editionTokenId).trim()),
-      })
+    res.status(200).json({
+      success: true,
+      editionTokenId: Number(String(editionTokenId).trim()),
+    })
   }
 )
 
