@@ -2,11 +2,11 @@ import { copyFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 
 const DROPBOX_PATHS = {
-  LYRICS: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/SONG A DAY LYRICS CHORDS',
-  VIDEO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
-  AUDIO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
-  IMAGE: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
-  GIF: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Gif'
+  LYRICS: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/SONG A DAY LYRICS CHORDS',
+  VIDEO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
+  AUDIO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
+  IMAGE: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
+  GIF: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Gif'
 }
 
 export async function saveToDropbox(

@@ -19,7 +19,7 @@ export async function getOAuth2Client(): Promise<OAuth2Client> {
   const oauth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
-    redirect_uris[0]
+    'urn:ietf:wg:oauth:2.0:oob'
   )
 
   try {

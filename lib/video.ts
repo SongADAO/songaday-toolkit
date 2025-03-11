@@ -5,10 +5,10 @@ import ffmpeg from 'fluent-ffmpeg'
 import fs from 'fs'
 
 const DROPBOX_PATHS = {
-  VIDEO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
-  AUDIO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
-  IMAGE: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
-  GIF: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Gif'
+  VIDEO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
+  AUDIO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
+  IMAGE: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
+  GIF: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Gif'
 }
 
 // Helper function to get video duration
@@ -242,10 +242,10 @@ export async function processVideoForFarcaster(videoPath: string, songNumber: st
           '-hls_playlist_type vod'
         ]);
 
-      // If video is longer than 60 seconds, trim it
-      if (duration > 60) {
-        console.log(`Video longer than 60 seconds, trimming for ${resolution.name}...`);
-        command = command.setDuration(60);
+      // If video is longer than 300 seconds (5 minutes), trim it
+      if (duration > 300) {
+        console.log(`Video longer than 300 seconds, trimming for ${resolution.name}...`);
+        command = command.setDuration(300);
       }
 
       command

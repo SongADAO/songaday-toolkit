@@ -16,16 +16,16 @@ export const API_KEYS = {
 
 // Dropbox paths
 export const PATHS = {
-  LYRICS: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/SONG A DAY LYRICS CHORDS',
-  VIDEO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
-  AUDIO: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
-  IMAGE: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
-  METADATA: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Metadata unclean',
+  LYRICS: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/SONG A DAY LYRICS CHORDS',
+  VIDEO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Video',
+  AUDIO: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Song',
+  IMAGE: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/EverySongADayPNG',
+  METADATA: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/HUGH MANN/Every Single Song A Day Ever/Every Song A Day Metadata unclean',
   OUTPUT: '/Users/jonathanmann/songaday-toolkit copy/output',
   
   // Auth paths
-  YOUTUBE_CLIENT_SECRET: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/python_scripts/home for wayward files needed in scripts/client_secret_298332297239-26f4ipajoihjjjtqadu0bnt24kaaqfah.apps.googleusercontent.com.json',
-  SHEETS_CLIENT_SECRET: '/Users/jonathanmann/Library/CloudStorage/Dropbox-SongADAO/Jonathan Mann/python_scripts/home for wayward files needed in scripts/client_secret_717772408281-lt7t2iajs42un4drqv5eqqnrr6lqh0b3.apps.googleusercontent.com.json'
+  YOUTUBE_CLIENT_SECRET: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/python_scripts/home for wayward files needed in scripts/client_secret_298332297239-26f4ipajoihjjjtqadu0bnt24kaaqfah.apps.googleusercontent.com.json',
+  SHEETS_CLIENT_SECRET: '/Users/jonathanmann/SongADAO Dropbox/Jonathan Mann/python_scripts/home for wayward files needed in scripts/client_secret_717772408281-lt7t2iajs42un4drqv5eqqnrr6lqh0b3.apps.googleusercontent.com.json'
 }
 
 // Helper function to get output path for a song number

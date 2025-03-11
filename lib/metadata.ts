@@ -11,6 +11,7 @@ export interface InitialMetadata {
   description?: string
   youtubeUrl?: string
   farcasterUrl?: string
+  tweetCount?: string
   year?: number
   lyrics?: string
   location?: string
