@@ -264,12 +264,17 @@ const CreateAuctionGBML2 = () => {
         return
       }
 
-      const existingEditionTokenIdData = (await fetchJson(
-        `/api/get-edition-id/?songNbr=${songNbr}`
-      )) as { editionTokenId: number }
+      let existingEditionTokenId = 0
+      try {
+        const existingEditionTokenIdData = (await fetchJson(
+          `/api/get-edition-id/?songNbr=${songNbr}`
+        )) as { editionTokenId: number }
 
-      const existingEditionTokenId = existingEditionTokenIdData?.editionTokenId
-      // console.log(editionTokenId)
+        existingEditionTokenId = existingEditionTokenIdData?.editionTokenId
+        // console.log(editionTokenId)
+      } catch (error) {
+        // No edition exists yet
+      }
 
       if (existingEditionTokenId) {
         throw new Error('An edition already exists for this song.')
