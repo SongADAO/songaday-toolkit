@@ -271,7 +271,7 @@ const CreateAuctionGBML2 = () => {
         )) as { editionTokenId: number }
 
         existingEditionTokenId = existingEditionTokenIdData?.editionTokenId
-        // console.log(editionTokenId)
+        // console.log(existingEditionTokenId)
       } catch (error) {
         // No edition exists yet
       }
